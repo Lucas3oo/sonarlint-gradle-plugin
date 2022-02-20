@@ -1,0 +1,84 @@
+
+plugins {
+  id 'java-gradle-plugin'
+  //id 'eclipse'
+  //id 'java-library'
+
+  // Apply the Plugin Publish Plugin to make plugin publication possible
+  id "com.gradle.plugin-publish" version "0.20.0"
+
+  // Apply the Maven Publish Plugin to have it generate the publication metadata
+  id 'maven-publish'
+
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'org.sonarsource.sonarlint.core:sonarlint-core:8.0.2.42487'
+  testImplementation 'org.mockito:mockito-core:3.7.7'
+  testImplementation 'org.mockito:mockito-junit-jupiter:3.7.7'
+  testImplementation('org.assertj:assertj-core:3.22.0')
+  testImplementation('org.junit.jupiter:junit-jupiter')
+  testImplementation(platform('org.junit:junit-bom:5.8.2'))
+}
+
+group = 'se.solrike.sonarlint'
+version = '1.0.0-beta'
+
+test {
+  useJUnitPlatform()
+}
+
+
+gradlePlugin {
+  plugins {
+    sonarlintPlugin {
+      id = 'se.solrike.sonarlint'
+      implementationClass = 'se.solrike.sonarlint.SonarlintPlugin'
+    }
+  }
+}
+
+
+
+
+pluginBundle {
+  // These settings are set for the whole plugin bundle
+  website = 'https://github.com/johndoe/GradlePlugins'
+  vcsUrl = 'https://github.com/johndoe/GradlePlugins'
+
+  // tags and description can be set for the whole bundle here, but can also
+  // be set / overridden in the config for specific plugins
+  description = 'SonarLint code analysis using stand-alone SonarLint engine.'
+
+  // The plugins block can contain multiple plugin entries. The name for
+  // each plugin block below (greetingsPlugin, goodbyePlugin)does not
+  // affect the plugin configuration, but they need to be unique for each plugin.
+
+  // Plugin config blocks can set the displayName, description and tags for
+  // each plugin. displayName is mandatory. If no tags or description are set
+  // the tags or description from the pluginBundle block will be used,
+  // but they must be set in one of the two places.
+
+  plugins {
+    sonarlintPlugin {
+      // id is captured from java-gradle-plugin configuration
+      displayName = 'SonarLint plugin'
+      tags = ['sonarlint']
+    }
+  }
+}
+
+//eclipse {
+//  classpath {
+//    downloadJavadoc = true
+//    downloadSources = true
+//  }
+//}
+// to upgrade the metainfo about which gradle version we shall use. Run ./gradlew wrapper after you have updated the version. The commit the new wrapper files except the gradlew.bat
+wrapper {
+  gradleVersion = '7.4'
+}
