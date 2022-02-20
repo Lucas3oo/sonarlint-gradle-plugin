@@ -1,5 +1,7 @@
 package se.solrike.sonarlint;
 
+import java.util.List;
+
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -39,7 +41,7 @@ public class SonarlintPlugin implements Plugin<Project> {
     SonarlintExtension extension = createExtension(project, reportsBaseDir);
     createConfiguration(project);
     createPluginConfiguration(project);
-    createTask(project, extension);
+    createTasks(project, extension);
   }
 
   private void createConfiguration(Project project) {
@@ -78,59 +80,64 @@ public class SonarlintPlugin implements Plugin<Project> {
     task.setCompileClasspath(sourceSet.getCompileClasspath());
     // list of directories, all output directories (compiled classes, processed resources, etc.)
     task.setClassFiles(sourceSet.getOutput());
-    task.setIsTestSource(sourceSet.getName().equals("test"));
+    task.getIsTestSource().set(sourceSet.getName().equals("test"));
   }
 
   // lazy create the tasks
-  protected void createTask(Project project, SonarlintExtension extension) {
+  protected void createTasks(Project project, SonarlintExtension extension) {
     project.getPlugins()
         .withType(JavaBasePlugin.class)
         .configureEach(javaBasePlugin -> getSourceSetContainer(project).all(sourceSet -> {
           String name = sourceSet.getTaskName(TASK_NAME, null);
 
           sLogger.debug("Creating sonarlint task for {}", sourceSet);
-
-          TaskProvider<Sonarlint> taskProvider = project.getTasks().register(name, Sonarlint.class, task -> {
-            String description = String.format("Run SonarLint analysis for the source set '%s'", sourceSet.getName());
-            task.setDescription(description);
-            task.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP);
-            // let the task depend on all java compile tasks since sonarlint also needs classes
-            // for its analysis
-            task.dependsOn(sourceSet.getClassesTaskName());
-            configureForSourceSet(sourceSet, task);
-
-            task.getExcludeRules().set(extension.getExcludeRules());
-            task.getIncludeRules().set(extension.getIncludeRules());
-            task.getMaxIssues().set(extension.getMaxIssues());
-            task.getIgnoreFailures().set(extension.getIgnoreFailures());
-            task.getRuleParameters().set(extension.getRuleParameters());
-            task.getShowIssues().set(extension.getShowIssues());
-            task.getReportsDir().set(extension.getReportsDir());
-            task.getReports().addAll(extension.getReports().getAsMap().values());
-
-          });
-
-          // let "check" task depend on sonarlint so it gets run automatically
-          project.getTasks().named(JavaBasePlugin.CHECK_TASK_NAME).configure(t -> {
-            t.dependsOn(taskProvider);
-          });
+          TaskProvider<Sonarlint> taskProvider = createTask(project, extension, name);
+          String description = String.format("Run SonarLint analysis for the source set '%s'", sourceSet.getName());
+          taskProvider.get().setDescription(description);
+          // let the task depend on all java compile tasks since sonarlint also needs classes
+          // for its analysis
+          taskProvider.get().dependsOn(sourceSet.getClassesTaskName());
+          configureForSourceSet(sourceSet, taskProvider.get());
 
         }));
 
+    // also create a task if the node plugin is applied
+    if (project.getPluginManager().hasPlugin("com.github.node-gradle.node")) {
+      List<String> taskNames = List.of("Main", "Test");
+      for (String taskName : taskNames) {
+        TaskProvider<Sonarlint> taskProvider = createTask(project, extension, TASK_NAME + "Node" + taskName);
+        String description = String.format("Run SonarLint analysis for node %s classes", taskName.toLowerCase());
+        taskProvider.get().setDescription(description);
+      }
+    }
+  }
+
+  protected TaskProvider<Sonarlint> createTask(Project project, SonarlintExtension extension, String taskName) {
+    TaskProvider<Sonarlint> taskProvider = project.getTasks().register(taskName, Sonarlint.class, task -> {
+      task.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP);
+
+      task.getExcludeRules().set(extension.getExcludeRules());
+      task.getIncludeRules().set(extension.getIncludeRules());
+      task.getMaxIssues().set(extension.getMaxIssues());
+      task.getIgnoreFailures().set(extension.getIgnoreFailures());
+      task.getRuleParameters().set(extension.getRuleParameters());
+      task.getShowIssues().set(extension.getShowIssues());
+      task.getReportsDir().set(extension.getReportsDir());
+      task.getReports().addAll(extension.getReports().getAsMap().values());
+
+    });
+
+    // let "check" task depend on sonarlint so it gets run automatically
+    project.getTasks().named(JavaBasePlugin.CHECK_TASK_NAME).configure(t -> {
+      t.dependsOn(taskProvider);
+    });
+
+    return taskProvider;
   }
 
   private SourceSetContainer getSourceSetContainer(Project project) {
     return project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
   }
-
-  // private SourceSetContainer getSourceSetContainer(Project project) {
-  // if (GradleVersion.current().compareTo(GradleVersion.version("7.1")) < 0) {
-  // return project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
-  // }
-  // else {
-  // return project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
-  // }
-  // }
 
   protected void verifyGradleVersion(GradleVersion version) {
     if (version.compareTo(SUPPORTED_VERSION) < 0) {

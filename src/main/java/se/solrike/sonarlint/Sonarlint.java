@@ -17,6 +17,7 @@ import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.CompileClasspath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
@@ -36,7 +37,6 @@ public abstract class Sonarlint extends SourceTask {
 
   private FileCollection mCompileClasspath;
   private FileCollection mClassFiles;
-  private boolean mIsTestSource = false;
 
   /**
    * List of rules to exclude from the analysis. E.g 'java:S1186'.
@@ -60,7 +60,12 @@ public abstract class Sonarlint extends SourceTask {
    * @return true if failures should be ignored
    */
   @Input
+  @Optional
   public abstract Property<Boolean> getIgnoreFailures();
+
+  @Input
+  @Optional
+  public abstract Property<Boolean> getIsTestSource();
 
   /**
    * The maximum number of issues that are tolerated before breaking the build or setting the
@@ -69,6 +74,7 @@ public abstract class Sonarlint extends SourceTask {
    * @return the maximum number of issues allowed
    */
   @Input
+  @Optional
   public abstract Property<Integer> getMaxIssues();
 
   /**
@@ -77,6 +83,7 @@ public abstract class Sonarlint extends SourceTask {
    * @return true if issues shall be displayed
    */
   @Input
+  @Optional
   public abstract Property<Boolean> getShowIssues();
 
   /**
@@ -93,6 +100,7 @@ public abstract class Sonarlint extends SourceTask {
    * @return the directory
    */
   @OutputDirectory
+  @Optional
   public abstract DirectoryProperty getReportsDir();
 
   /**
@@ -106,6 +114,7 @@ public abstract class Sonarlint extends SourceTask {
   public abstract MapProperty<String, Map<String, String>> getRuleParameters();
 
   @CompileClasspath
+  @Optional
   public FileCollection getCompileClasspath() {
     return mCompileClasspath;
   }
@@ -115,21 +124,13 @@ public abstract class Sonarlint extends SourceTask {
   }
 
   @Classpath
+  @Optional
   public FileCollection getClassFiles() {
     return mClassFiles;
   }
 
   public void setClassFiles(FileCollection sourceSetOutput) {
     mClassFiles = sourceSetOutput;
-  }
-
-  public void setIsTestSource(boolean isTestSource) {
-    mIsTestSource = isTestSource;
-  }
-
-  @Input
-  public boolean isIsTestSource() {
-    return mIsTestSource;
   }
 
   /**
@@ -188,6 +189,8 @@ public abstract class Sonarlint extends SourceTask {
     getLogger().error("RuleParams: " + getRuleParameters().getOrNull());
     Configuration pluginConfiguration = getProject().getConfigurations().getByName(SonarlintPlugin.PLUGINS_CONFIG_NAME);
     getLogger().error("Plugins: {}", pluginConfiguration.getFiles());
+    getLogger().error("Source: {}", getSource().getAsFileTree().getFiles());
+    getLogger().error("IsTestSurce: {}", getIsTestSource().getOrElse(false));
 
   }
 

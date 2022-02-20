@@ -3,6 +3,7 @@ package se.solrike.sonarlint.impl;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +19,10 @@ import org.sonarsource.sonarlint.core.analysis.api.AnalysisResults;
 import org.sonarsource.sonarlint.core.client.api.common.RuleKey;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneAnalysisConfiguration;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneGlobalConfiguration;
+import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneGlobalConfiguration.Builder;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneSonarLintEngine;
 import org.sonarsource.sonarlint.core.commons.Language;
+import org.sonarsource.sonarlint.core.commons.Version;
 
 import se.solrike.sonarlint.Sonarlint;
 import se.solrike.sonarlint.SonarlintPlugin;
@@ -34,6 +37,8 @@ public class SonarlintAction {
    *
    * @param task
    *          - the gradle task
+   *
+   * @return list of sonarlint issues
    */
   public List<IssueEx> run(Sonarlint task) {
 
@@ -46,10 +51,16 @@ public class SonarlintAction {
   protected List<IssueEx> analyze(Sonarlint task, Logger logger) {
 
     Project project = task.getProject();
-    Set<File> compileClasspath = task.getCompileClasspath().getFiles();
-    Set<File> classFiles = task.getClassFiles().getFiles();
+    Set<File> compileClasspath = Collections.emptySet();
+    if (task.getCompileClasspath() != null) {
+      compileClasspath = task.getCompileClasspath().getFiles();
+    }
+    Set<File> classFiles = Collections.emptySet();
+    if (task.getClassFiles() != null) {
+      classFiles = task.getClassFiles().getFiles();
+    }
     Set<File> sourceFiles = task.getSource().getFiles();
-    boolean isTestSource = task.isIsTestSource();
+    boolean isTestSource = task.getIsTestSource().getOrElse(false);
     Set<String> excludeRules = task.getExcludeRules().get();
     Set<String> includeRules = task.getIncludeRules().get();
     Map<String, Map<String, String>> ruleParameters = task.getRuleParameters().get();
@@ -62,23 +73,34 @@ public class SonarlintAction {
     Configuration pluginConfiguration = project.getConfigurations().getByName(SonarlintPlugin.PLUGINS_CONFIG_NAME);
     Path[] plugins = pluginConfiguration.getFiles().stream().map(File::toPath).toArray(Path[]::new);
 
+    NodePluginUtil nodeUtil = new NodePluginUtil();
+
     if (isTestSource) {
       sonarProperties.put("sonar.java.test.libraries", libs);
       sonarProperties.put("sonar.java.test.binaries", binaries);
     }
 
     // Java sourceCompatibility
-    String sourceCompatibility = project.getProperties().get("sourceCompatibility").toString();
-    sonarProperties.put("sonar.java.source", sourceCompatibility);
+    if (project.getProperties().containsKey("sourceCompatibility")) {
+      String sourceCompatibility = project.getProperties().get("sourceCompatibility").toString();
+      sonarProperties.put("sonar.java.source", sourceCompatibility);
+    }
 
-    StandaloneGlobalConfiguration config = StandaloneGlobalConfiguration.builder()
+    Builder builder = StandaloneGlobalConfiguration.builder()
         .addEnabledLanguages(Language.values())
         .addPlugins(plugins)
         .setLogOutput(new GradleClientLogOutput(logger))
         .setWorkDir(project.mkdir("build/sonarlint").toPath())
-        // .setNodeJs(....., null)
-        .setSonarLintUserHome(project.getBuildDir().toPath())
-        .build();
+        .setSonarLintUserHome(project.getBuildDir().toPath());
+
+    if (project.getExtensions().findByName("node") != null) {
+      // this assumes that the node plugin has been configured with download=true
+      Path nodeExec = nodeUtil.getNodeExec(project);
+      logger.debug("node exec: {}", nodeExec);
+      builder.setNodeJs(nodeExec, Version.create(nodeUtil.getNodeVersion(project)));
+    }
+
+    StandaloneGlobalConfiguration config = builder.build();
 
     StandaloneSonarLintEngine engine = new StandaloneSonarLintEngineImpl(config);
     Path projectDir = project.getProjectDir().toPath();

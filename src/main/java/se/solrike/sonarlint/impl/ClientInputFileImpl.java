@@ -26,7 +26,9 @@ public class ClientInputFileImpl implements ClientInputFile {
     mCharset = charset;
   }
 
+  @SuppressWarnings("all")
   @Override
+  @Deprecated
   public String getPath() {
     return mPath.toString();
   }

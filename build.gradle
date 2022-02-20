@@ -1,6 +1,7 @@
 
 plugins {
   id 'java-gradle-plugin'
+  id 'groovy'
   //id 'eclipse'
   //id 'java-library'
 
@@ -27,6 +28,24 @@ dependencies {
 
 group = 'se.solrike.sonarlint'
 version = '1.0.0-beta'
+sourceCompatibility = '11'
+
+tasks.withType(GroovyCompile) {
+  configure(options) {
+      options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked' // examples
+  }
+}
+
+sourceSets {
+  main {
+      java {
+          srcDirs = [] // don't compile Java code twice
+      }
+      groovy {
+          srcDirs = [ 'src/main/groovy', 'src/main/java' ]
+      }
+  }
+}
 
 test {
   useJUnitPlatform()

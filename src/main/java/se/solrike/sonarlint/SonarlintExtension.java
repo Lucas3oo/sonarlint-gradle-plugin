@@ -45,6 +45,8 @@ public interface SonarlintExtension {
 
   /**
    * The default directory where reports will be generated.
+   *
+   * @return reports main directory
    */
   DirectoryProperty getReportsDir();
 
