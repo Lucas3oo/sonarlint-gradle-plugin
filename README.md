@@ -9,6 +9,8 @@ Gradle plugin for SonarLint code analysis.
 Apply the plugin to your project.
 Refer [the Gradle Plugin portal](https://plugins.gradle.org/plugin/se.solrike.sonarlint) about the detail of installation procedure.
 
+Gradle 7.0 or later must be used.
+
 ### Configure SonarLint Plugin
 
 Configure `sonarlint` extension to configure the behaviour of tasks:
@@ -20,6 +22,7 @@ sonarlint {
     ignoreFailures = false
     maxIssues = 0
     reportsDir = 'someFolder' // default build/reports/sonarlint
+    // note that rule parameter names are case sensitive
     ruleParameters = [
       'java:S1176' : [
         'forClasses':'**.api.**',      // need javadoc for public methods in package matching 'api'
