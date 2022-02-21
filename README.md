@@ -79,12 +79,12 @@ sonarlintTest {
 
 ### Apply to Node project
 
-Apply this plugin with the [com.github.node-gradle.node](https://plugins.gradle.org/plugin/com.github.node-gradle.node) plugin to your project,
+Apply this plugin with the [com.github.node-gradle.node](https://plugins.gradle.org/plugin/com.github.node-gradle.node) plugin to your project and configure it to download node executable,
 then `Sonarlint` task will be generated for main and test classes E.g. `sonarlintNodeMain` and `sonarlintNodeTest`
 
 Unlike with the Java plugin the source sets needs to be assigned manually.
 
-Sonarlint needs a node executable in order to perform the analysis. This plugin will get the location of node from the Node plugin and the Node plugin needs to be configured to download node.
+Sonarlint needs a node executable in order to perform the analysis. This plugin will get the location of node executable from the Node plugin and the Node plugin needs to be configured to download node.
 
 #### Configure the SonarLint Task when using Node plugin
 

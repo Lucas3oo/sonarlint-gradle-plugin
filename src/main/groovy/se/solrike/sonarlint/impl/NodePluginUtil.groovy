@@ -18,6 +18,17 @@ public class NodePluginUtil {
     return null;
   }
 
+  boolean getDownload(Project project) {
+    Object extension = project.getExtensions().findByName("node");
+    if (extension != null) {
+      if (extension.hasProperty("download")) {
+        return extension.download.getOrNull();
+      }
+    }
+    return false;
+  }
+
+
   Directory getNodeWorkDir(Project project) {
     Object extension = project.getExtensions().findByName("node");
     if (extension != null) {

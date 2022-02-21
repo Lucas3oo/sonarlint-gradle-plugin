@@ -73,8 +73,6 @@ public class SonarlintAction {
     Configuration pluginConfiguration = project.getConfigurations().getByName(SonarlintPlugin.PLUGINS_CONFIG_NAME);
     Path[] plugins = pluginConfiguration.getFiles().stream().map(File::toPath).toArray(Path[]::new);
 
-    NodePluginUtil nodeUtil = new NodePluginUtil();
-
     if (isTestSource) {
       sonarProperties.put("sonar.java.test.libraries", libs);
       sonarProperties.put("sonar.java.test.binaries", binaries);
@@ -93,14 +91,16 @@ public class SonarlintAction {
         .setWorkDir(project.mkdir("build/sonarlint").toPath())
         .setSonarLintUserHome(project.getBuildDir().toPath());
 
-    if (project.getExtensions().findByName("node") != null) {
-      // this assumes that the node plugin has been configured with download=true
-
-      // TODO print on error if the dowanlod=true isn't configured
-
+    NodePluginUtil nodeUtil = new NodePluginUtil();
+    if (nodeUtil.getDownload(project)) {
+      // this means that the node plugin has been configured with download=true
       Path nodeExec = nodeUtil.getNodeExec(project);
       logger.debug("node exec: {}", nodeExec);
       builder.setNodeJs(nodeExec, Version.create(nodeUtil.getNodeVersion(project)));
+    }
+    else {
+      logger.error("Node plugin 'com.github.node-gradle.node' is not applied or configured with download=true."
+          + " Sonarlint analysis will not be performed on JavaScript/TypeScript source code");
     }
 
     StandaloneGlobalConfiguration config = builder.build();
