@@ -88,7 +88,7 @@ Sonarlint needs a node executable in order to perform the analysis. This plugin 
 
 #### Configure the SonarLint Task when using Node plugin
 
-This example has TypeScript code under `project/mycomponent/src`
+This example has TypeScript code under `projects/mycomponent/src`
 
 ```groovy
 plugins {

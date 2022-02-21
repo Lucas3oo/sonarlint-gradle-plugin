@@ -95,6 +95,9 @@ public class SonarlintAction {
 
     if (project.getExtensions().findByName("node") != null) {
       // this assumes that the node plugin has been configured with download=true
+
+      // TODO print on error if the dowanlod=true isn't configured
+
       Path nodeExec = nodeUtil.getNodeExec(project);
       logger.debug("node exec: {}", nodeExec);
       builder.setNodeJs(nodeExec, Version.create(nodeUtil.getNodeVersion(project)));
