@@ -183,14 +183,14 @@ public abstract class Sonarlint extends SourceTask {
   }
 
   private void logTaskParameters() {
-    getLogger().error("SonarLint reports " + getReports().getAsMap());
-    getLogger().error("Exclude rules: " + getExcludeRules().getOrNull());
-    getLogger().error("Include rules: " + getIncludeRules().getOrNull());
-    getLogger().error("RuleParams: " + getRuleParameters().getOrNull());
+    getLogger().debug("SonarLint reports " + getReports().getAsMap());
+    getLogger().debug("Exclude rules: " + getExcludeRules().getOrNull());
+    getLogger().debug("Include rules: " + getIncludeRules().getOrNull());
+    getLogger().debug("RuleParams: " + getRuleParameters().getOrNull());
     Configuration pluginConfiguration = getProject().getConfigurations().getByName(SonarlintPlugin.PLUGINS_CONFIG_NAME);
-    getLogger().error("Plugins: {}", pluginConfiguration.getFiles());
-    getLogger().error("Source: {}", getSource().getAsFileTree().getFiles());
-    getLogger().error("IsTestSurce: {}", getIsTestSource().getOrElse(false));
+    getLogger().debug("Plugins: {}", pluginConfiguration.getFiles());
+    getLogger().debug("Source: {}", getSource().getAsFileTree().getFiles());
+    getLogger().debug("IsTestSurce: {}", getIsTestSource().getOrElse(false));
 
   }
 

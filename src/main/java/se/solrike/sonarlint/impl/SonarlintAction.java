@@ -92,15 +92,17 @@ public class SonarlintAction {
         .setSonarLintUserHome(project.getBuildDir().toPath());
 
     NodePluginUtil nodeUtil = new NodePluginUtil();
-    if (nodeUtil.getDownload(project)) {
-      // this means that the node plugin has been configured with download=true
-      Path nodeExec = nodeUtil.getNodeExec(project);
-      logger.debug("node exec: {}", nodeExec);
-      builder.setNodeJs(nodeExec, Version.create(nodeUtil.getNodeVersion(project)));
-    }
-    else {
-      logger.error("Node plugin 'com.github.node-gradle.node' is not applied or configured with download=true."
-          + " Sonarlint analysis will not be performed on JavaScript/TypeScript source code");
+    if (project.getExtensions().findByName("node") != null) {
+      if (nodeUtil.getDownload(project)) {
+        // this means that the node plugin has been configured with download=true
+        Path nodeExec = nodeUtil.getNodeExec(project);
+        logger.debug("node exec: {}", nodeExec);
+        builder.setNodeJs(nodeExec, Version.create(nodeUtil.getNodeVersion(project)));
+      }
+      else {
+        logger.error("Node plugin 'com.github.node-gradle.node' is not configured with download=true."
+            + " Sonarlint analysis will not be performed on JavaScript/TypeScript source code");
+      }
     }
 
     StandaloneGlobalConfiguration config = builder.build();

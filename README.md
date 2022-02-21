@@ -77,6 +77,7 @@ sonarlintTest {
 ```
 
 
+
 ### Apply to Node project
 
 Apply this plugin with the [com.github.node-gradle.node](https://plugins.gradle.org/plugin/com.github.node-gradle.node) plugin to your project and configure it to download node executable,
@@ -136,7 +137,8 @@ dependencies {
 
 ## Sonarlint version mapping
 
-By default, this Gradle Plugin uses the Sonarlint core version listed in this table.
+By default, this Gradle Plugin uses the [Sonarlint core](https://github.com/SonarSource/sonarlint-core) version listed in this table.
+
 
 
 |Gradle Plugin|SonarLint|
@@ -147,4 +149,26 @@ By default, this Gradle Plugin uses the Sonarlint core version listed in this ta
 ## Sonarlint rules
 
 By default SonarLint has different rules for production code and test code. For instance for test code there is a rule that checks for asserts in unit tests.
+
+### Suppress rules in Java
+If you need to deactivate a rule for a project then add the rule to the `excludeRules` list.
+If you need to just suppress an issue in a file you can use `@SuppressWarnings("all")` or `@SuppressWarnings` with rule keys: `@SuppressWarnings("java:S2077")` or `@SuppressWarnings({"java:S1118", "java:S3546"})`.
+(In Eclipse you might need to suppress the warning about unhandled token in the annotation.)
+
+## SonarLint plugins
+* [Java](https://github.com/SonarSource/sonar-java/blob/master/sonar-java-plugin/src/main/resources/static/documentation.md)
+* [JavaScript/TypeScript/CSS](https://github.com/SonarSource/SonarJS/blob/master/sonar-javascript-plugin/src/main/resources/static/documentation.md)
+
+
+## Release notes
+
+### 1.0.0-beta
+Sonarlint analysis for Java and Node(JavaScript/TypeScript).
+For Node projects the node plugin `com.github.node-gradle.node` needs to be configured to download node.
+This plugin picks the node executable from that but since the node path contains info about the OS and architecture it is a bit messy to get that correct on all platforms. Right now it is only tested on mac and linux on x86 platform.
+
+Improvements that might be implemented are:
+* Support to specify sonarlint properties. For instance the node exec can be configured that way using 'sonar.nodejs.executable'.
+* Support to find node on the $PATH using org.sonarsource.sonarlint.core.NodeJsHelper
+* Support for a list of suppressed issues like Checkstyle and Spotbug have.
 
