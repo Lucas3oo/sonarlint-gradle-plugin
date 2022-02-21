@@ -95,7 +95,7 @@ This example has TypeScript code under `projects/mycomponent/src`
 plugins {
   id 'base'
   id 'com.github.node-gradle.node' version '3.2.1'
-  id 'se.solrike.sonarlint' version '1.0.0-beta'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.1'
 }
 repositories {
   mavenCentral()
@@ -162,7 +162,7 @@ If you need to just suppress an issue in a file you can use `@SuppressWarnings("
 
 ## Release notes
 
-### 1.0.0-beta
+### 1.0.0-beta.1
 Sonarlint analysis for Java and Node(JavaScript/TypeScript).
 For Node projects the node plugin `com.github.node-gradle.node` needs to be configured to download node.
 This plugin picks the node executable from that but since the node path contains info about the OS and architecture it is a bit messy to get that correct on all platforms. Right now it is only tested on mac and linux on x86 platform.
