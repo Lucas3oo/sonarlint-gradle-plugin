@@ -2,11 +2,9 @@
 plugins {
   id 'java-gradle-plugin'
   id 'groovy'
-  //id 'eclipse'
-  //id 'java-library'
 
   // Apply the Plugin Publish Plugin to make plugin publication possible
-  id "com.gradle.plugin-publish" version "0.20.0"
+  id 'com.gradle.plugin-publish' version '0.20.0'
 
   // Apply the Maven Publish Plugin to have it generate the publication metadata
   id 'maven-publish'
@@ -32,7 +30,7 @@ sourceCompatibility = '11'
 
 tasks.withType(GroovyCompile) {
   configure(options) {
-      options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked' // examples
+      options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
   }
 }
 
@@ -52,6 +50,7 @@ test {
 }
 
 
+// publish the plugin like: ./gradlew publishPlugins
 gradlePlugin {
   plugins {
     sonarlintPlugin {
@@ -61,17 +60,14 @@ gradlePlugin {
   }
 }
 
-
-
-
 pluginBundle {
   // These settings are set for the whole plugin bundle
-  website = 'https://github.com/johndoe/GradlePlugins'
-  vcsUrl = 'https://github.com/johndoe/GradlePlugins'
+  website = 'https://github.com/Lucas3oo/sonarlint-gradle-plugin'
+  vcsUrl = 'https://github.com/Lucas3oo/sonarlint-gradle-plugin'
 
   // tags and description can be set for the whole bundle here, but can also
   // be set / overridden in the config for specific plugins
-  description = 'SonarLint code analysis using stand-alone SonarLint engine.'
+  description = 'SonarLint static code analysis using stand-alone SonarLint engine, for Java and Node projects.'
 
   // The plugins block can contain multiple plugin entries. The name for
   // each plugin block below (greetingsPlugin, goodbyePlugin)does not
@@ -86,7 +82,8 @@ pluginBundle {
     sonarlintPlugin {
       // id is captured from java-gradle-plugin configuration
       displayName = 'SonarLint plugin'
-      tags = ['sonarlint']
+      tags = ['sonarlint', 'java', 'node', 'code quality', 'lint',
+        'static code analysis', 'static analysis', 'code analysis', 'codesmells' ]
     }
   }
 }
