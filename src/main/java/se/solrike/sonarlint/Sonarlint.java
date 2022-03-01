@@ -68,8 +68,7 @@ public abstract class Sonarlint extends SourceTask {
   public abstract Property<Boolean> getIsTestSource();
 
   /**
-   * The maximum number of issues that are tolerated before breaking the build or setting the
-   * failure property.
+   * The maximum number of issues that are tolerated before breaking the build or setting the failure property.
    *
    * @return the maximum number of issues allowed
    */
@@ -104,9 +103,8 @@ public abstract class Sonarlint extends SourceTask {
   public abstract DirectoryProperty getReportsDir();
 
   /**
-   * Map of rule parameters for customizing the rules. E.g. regex for parameter names. The key
-   * is the rule name. In the inner map the key is the parameter name, e.g. 'Exclude'. Note the
-   * parameter names are case sensitive.
+   * Map of rule parameters for customizing the rules. E.g. regex for parameter names. The key is the rule name. In the
+   * inner map the key is the parameter name, e.g. 'Exclude'. Note the parameter names are case sensitive.
    *
    * @return the map of rules
    */
@@ -134,10 +132,10 @@ public abstract class Sonarlint extends SourceTask {
   }
 
   /**
-   * The sources for this task are relatively relocatable even though it produces output that
-   * includes absolute paths. This is a compromise made to ensure that results can be reused
-   * between different builds. The downside is that up-to-date results, or results loaded from
-   * cache can show different absolute paths than would be produced if the task was executed.
+   * The sources for this task are relatively relocatable even though it produces output that includes absolute paths.
+   * This is a compromise made to ensure that results can be reused between different builds. The downside is that
+   * up-to-date results, or results loaded from cache can show different absolute paths than would be produced if the
+   * task was executed.
    */
   @Override
   @PathSensitive(PathSensitivity.RELATIVE)

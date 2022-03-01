@@ -36,8 +36,7 @@ public interface SonarlintExtension {
   Property<Boolean> getIgnoreFailures();
 
   /**
-   * The maximum number of issues that are tolerated before breaking the build. Defaults to
-   * <code>0</code>.
+   * The maximum number of issues that are tolerated before breaking the build. Defaults to <code>0</code>.
    *
    * @return max number of issues without fail the build.
    */
@@ -51,9 +50,8 @@ public interface SonarlintExtension {
   DirectoryProperty getReportsDir();
 
   /**
-   * Map of rule parameters for customizing the rules. E.g. regex for parameter names. The key
-   * is the rule name. In the inner map the key is the parameter name, e.g. 'Exclude'. Note the
-   * parameter names are case sensitive.
+   * Map of rule parameters for customizing the rules. E.g. regex for parameter names. The key is the rule name. In the
+   * inner map the key is the parameter name, e.g. 'Exclude'. Note the parameter names are case sensitive.
    *
    * @return the map of rules
    */
@@ -75,8 +73,8 @@ public interface SonarlintExtension {
   NamedDomainObjectContainer<SonarlintReport> getReports();
 
   // not needed in Gradle 7.4 at least
-  // default void reports(Action<? super NamedDomainObjectContainer<SonarlintReport>> action) {
-  // action.execute(getReports());
-  // }
+//  default void reports(Action<? super NamedDomainObjectContainer<SonarlintReport>> action) {
+//    action.execute(getReports());
+//  }
 
 }

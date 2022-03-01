@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SonarlintPlugin implements Plugin<Project> {
 
-  private final Logger sLogger = LoggerFactory.getLogger(SonarlintPlugin.class);
+  private static final Logger sLogger = LoggerFactory.getLogger(SonarlintPlugin.class);
   private static final GradleVersion SUPPORTED_VERSION = GradleVersion.version("7.0");
 
   public static final String CONFIG_NAME = "sonarlint";

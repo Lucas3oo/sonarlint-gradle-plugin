@@ -1,6 +1,7 @@
 package se.solrike.sonarlint.impl;
 
-import static java.util.Map.*;
+import static java.util.Map.entry;
+import static java.util.Map.ofEntries;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.gradle.api.Project;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFile;
@@ -53,6 +55,7 @@ public class ReportAction {
         catch (IOException e) {
           throw new RuntimeException(e);
         }
+        mProject.getLogger().error("Report generated at: {}", file);
       }
     });
   }
@@ -68,7 +71,8 @@ public class ReportAction {
   protected void writeHtmlReport(BufferedWriter writer, List<IssueEx> issues) throws IOException {
     writer.write(getHtmlHeader());
     for (IssueEx issue : issues) {
-      writer.write(String.format("<h1>%s (%s)</h1>%n", issue.getMessage(), issue.getRuleKey()));
+      writer.write(
+          String.format("<h1>%s (%s)</h1>%n", StringEscapeUtils.escapeHtml4(issue.getMessage()), issue.getRuleKey()));
       writer.write(String.format("<p>%s %s</p>%n", getIssueTypeIcon(issue.getType()),
           getIssueSeverityIcon(issue.getSeverity())));
       writer.write(String.format("<p>%s:%d:%d</p>%n", issue.getInputFileRelativePath(), issue.getStartLine(),

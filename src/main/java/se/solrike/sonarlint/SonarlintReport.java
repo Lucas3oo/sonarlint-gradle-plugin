@@ -20,9 +20,9 @@ import org.gradle.api.provider.Property;
  * <pre>
  * sonarlint {
  *     reports {
- *         html.enabled = false
+ *         html.enabled = false // default false
  *         text {
- *             enabled = true
+ *             enabled = true // default false
  *             // override default report file location for text report
  *             outputLocation = layout.buildDirectory.file('my_sonarlint.txt')
  *         }
