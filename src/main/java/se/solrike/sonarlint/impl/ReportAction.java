@@ -9,7 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.gradle.api.Project;
@@ -70,9 +72,31 @@ public class ReportAction {
 
   protected void writeHtmlReport(BufferedWriter writer, List<IssueEx> issues) throws IOException {
     writer.write(getHtmlHeader());
+
+    // summary
+    writer.write("<h1>Summary</h1>\n");
+    writer.write("<list>\n");
+    // type, count
+    Map<String, Long> issueCountPerType = issues.stream()
+        .collect(Collectors.groupingBy(IssueEx::getType, Collectors.counting()));
+    for (Entry<String, Long> issueType : issueCountPerType.entrySet()) {
+      writer.write(String.format("<li>%s: %d</li>%n", getIssueTypeIcon(issueType.getKey()), issueType.getValue()));
+    }
+    writer.write("</list>\n");
+
+    // TOC
+    writer.write("<h1>TOC</h1>\n" + "<list>\n");
     for (IssueEx issue : issues) {
-      writer.write(
-          String.format("<h1>%s (%s)</h1>%n", StringEscapeUtils.escapeHtml4(issue.getMessage()), issue.getRuleKey()));
+      writer.write(String.format("<li>%s %s, <a href=\"#%d\">%s (%s)</a> at %s</li>%n",
+          getIssueTypeIcon(issue.getType()), getIssueSeverityIcon(issue.getSeverity()), issue.getId(),
+          StringEscapeUtils.escapeHtml4(issue.getMessage()), issue.getRuleKey(), issue.getFileName()));
+    }
+    writer.write("</list>\n");
+
+    // all issues
+    for (IssueEx issue : issues) {
+      writer.write(String.format("<h1 id=\"%d\">%s (%s)</h1>%n", issue.getId(),
+          StringEscapeUtils.escapeHtml4(issue.getMessage()), issue.getRuleKey()));
       writer.write(String.format("<p>%s %s</p>%n", getIssueTypeIcon(issue.getType()),
           getIssueSeverityIcon(issue.getSeverity())));
       writer.write(String.format("<p>%s:%d:%d</p>%n", issue.getInputFileRelativePath(), issue.getStartLine(),

@@ -80,7 +80,8 @@ public class SonarlintPlugin implements Plugin<Project> {
     task.setCompileClasspath(sourceSet.getCompileClasspath());
     // list of directories, all output directories (compiled classes, processed resources, etc.)
     task.setClassFiles(sourceSet.getOutput());
-    task.getIsTestSource().set(sourceSet.getName().equals("test"));
+    // if the source set is "test" or "testFixtures" or any with test in the name consider it as test source
+    task.getIsTestSource().set(sourceSet.getName().contains("test"));
   }
 
   // lazy create the tasks

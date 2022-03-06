@@ -17,9 +17,15 @@ public class IssueEx implements Issue {
 
   private Issue mSonarlintIssue;
   private Optional<StandaloneRuleDetails> mRulesDetails;
+  private final int mId;
 
-  public IssueEx(Issue sonarlintIssue) {
+  public IssueEx(int id, Issue sonarlintIssue) {
+    mId = id;
     mSonarlintIssue = sonarlintIssue;
+  }
+
+  public int getId() {
+    return mId;
   }
 
   @Override
@@ -98,6 +104,17 @@ public class IssueEx implements Issue {
 
   public void setRulesDetails(Optional<StandaloneRuleDetails> rulesDetails) {
     mRulesDetails = rulesDetails;
+  }
+
+  public String getFileName() {
+    ClientInputFile inputFile = mSonarlintIssue.getInputFile();
+    if (inputFile != null) {
+      String path = inputFile.relativePath();
+      return path.substring(path.lastIndexOf("/") + 1);
+    }
+    else {
+      return "global";
+    }
   }
 
 }

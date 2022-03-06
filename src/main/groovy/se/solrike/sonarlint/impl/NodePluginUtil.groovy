@@ -53,7 +53,7 @@ public class NodePluginUtil {
 
   String getArch() {
     String arch = System.getProperty("os.arch").toLowerCase();
-    if (arch.contains("x86_64")) {
+    if (arch.contains("64")) {
       return "x64";
     }
     if (arch.contains("arm")) {

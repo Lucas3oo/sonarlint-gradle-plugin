@@ -11,10 +11,11 @@ import org.sonarsource.sonarlint.core.client.api.common.analysis.IssueListener;
  */
 public class IssueCollector implements IssueListener {
   private List<IssueEx> mIssues = new LinkedList<>();
+  private int mNextId;
 
   @Override
   public void handle(Issue issue) {
-    mIssues.add(new IssueEx(issue));
+    mIssues.add(new IssueEx(mNextId++, issue));
   }
 
   public List<IssueEx> getIssues() {

@@ -100,7 +100,7 @@ This example has TypeScript code under `projects/` and `src/`
 plugins {
   id 'base'
   id 'com.github.node-gradle.node' version '3.2.1'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.1'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.4'
 }
 repositories {
   mavenCentral()
@@ -148,7 +148,7 @@ Only a subset of languages are supported by Sonarlint. For other languages the p
 ```groovy
 plugins {
   id 'base'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.1'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.4'
 }
 repositories {
   mavenCentral()
@@ -202,6 +202,13 @@ If you need to just suppress an issue in a file you can use `@SuppressWarnings("
 
 ## Release notes
 
+### 1.0.0-beta.4
+Fix OS and architecture detection for node executable when running on amd64.
+
+### 1.0.0-beta.3
+* when using test fixture plugin the source set wasn't marked as test source so wrong set of sonarlint rules was applied.
+* include summary and TOC in the html report
+
 ### 1.0.0-beta.2
 * Fix html report issue with rule Web:S5256. Some rules description has html tags which are not escaped.
 * When a report is generate the path will be printed on the console.
@@ -214,7 +221,6 @@ This plugin picks the node executable from that but since the node path contains
 
 ### future
 Improvements that might be implemented are:
-* generate TOC in the html report
 * Support to specify sonarlint properties. For instance the node exec can be configured that way using 'sonar.nodejs.executable'.
 * Support to find node on the $PATH using org.sonarsource.sonarlint.core.NodeJsHelper
 * Support for a list of suppressed issues like Checkstyle and Spotbug have.
@@ -224,6 +230,5 @@ Improvements that might be implemented are:
 * generate findbugs XML so e.g. Jenkins plugins can be used to show the issues
 * make sure up-to-date checks are resonable
 * link to rules description in the report
-* add a summary section in the html report.
 * it might exists more issue types: "SECURITY_HOTSPOT" but they are not in sonarlint
 
