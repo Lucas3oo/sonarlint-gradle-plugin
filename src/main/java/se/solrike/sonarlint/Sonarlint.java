@@ -152,7 +152,7 @@ public abstract class Sonarlint extends SourceTask {
     SonarlintAction action = new SonarlintAction();
     List<IssueEx> issues = action.run(this);
 
-    String resultMessage = String.format("%d SonarLint issue(s) where found. Max issue(s) allowed: %d.", issues.size(),
+    String resultMessage = String.format("%d SonarLint issue(s) were found. Max issue(s) allowed: %d.", issues.size(),
         getMaxIssues().getOrElse(0));
     logger.error(resultMessage);
 
