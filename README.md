@@ -100,7 +100,7 @@ This example has TypeScript code under `projects/` and `src/`
 plugins {
   id 'base'
   id 'com.github.node-gradle.node' version '3.2.1'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.4'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.5'
 }
 repositories {
   mavenCentral()
@@ -148,7 +148,7 @@ Only a subset of languages are supported by Sonarlint. For other languages the p
 ```groovy
 plugins {
   id 'base'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.4'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.5'
 }
 repositories {
   mavenCentral()
@@ -201,6 +201,9 @@ If you need to just suppress an issue in a file you can use `@SuppressWarnings("
 
 
 ## Release notes
+
+### 1.0.0-beta.5
+Fix typo in printouts. Thanks @doofy for contributing!
 
 ### 1.0.0-beta.4
 Fix OS and architecture detection for node executable when running on amd64.
