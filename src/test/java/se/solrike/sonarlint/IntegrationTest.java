@@ -62,7 +62,7 @@ class IntegrationTest {
     // then the gradle build shall fail
     assertThat(buildResult.task(":sonarlintMain").getOutcome()).isEqualTo(TaskOutcome.FAILED);
     // and the 3 sonarlint rules violated are
-    assertThat(buildResult.getOutput()).contains("3 SonarLint issue(s) where found.");
+    assertThat(buildResult.getOutput()).contains("3 SonarLint issue(s) were found.");
     assertThat(buildResult.getOutput()).contains("java:S1186", "java:S1118", "java:S1220");
 
     System.err.println(buildResult.getOutput());
