@@ -1,4 +1,5 @@
 plugins {
+  id 'eclipse'
   id 'java-gradle-plugin'
   id 'groovy'
 
@@ -26,6 +27,7 @@ dependencies {
 group = 'se.solrike.sonarlint'
 version = '1.0.0-beta.5'
 sourceCompatibility = '11'
+targetCompatibility = '11'
 
 tasks.withType(GroovyCompile) {
   configure(options) {
@@ -41,6 +43,19 @@ sourceSets {
       groovy {
           srcDirs = [ 'src/main/groovy', 'src/main/java' ]
       }
+  }
+}
+
+javadoc {
+  enabled = false
+}
+groovydoc {
+  enabled = false
+}
+
+eclipse {
+  classpath {
+    defaultOutputDir = file('bin.nosync')
   }
 }
 
@@ -89,5 +104,5 @@ pluginBundle {
 
 // to upgrade the metainfo about which gradle version we shall use. Run ./gradlew wrapper after you have updated the version. The commit the new wrapper files except the gradlew.bat
 wrapper {
-  gradleVersion = '7.4'
+  gradleVersion = '7.5.1'
 }
