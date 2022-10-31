@@ -88,8 +88,8 @@ public class SonarlintAction {
         .addEnabledLanguages(Language.values())
         .addPlugins(plugins)
         .setLogOutput(new GradleClientLogOutput(logger))
-        .setWorkDir(project.mkdir("build/sonarlint").toPath())
-        .setSonarLintUserHome(project.getBuildDir().toPath());
+        .setWorkDir(project.getBuildDir().toPath().resolve("sonarlint"))
+        .setSonarLintUserHome(project.getProjectDir().toPath());
 
     NodePluginUtil nodeUtil = new NodePluginUtil();
     if (project.getExtensions().findByName("node") != null) {

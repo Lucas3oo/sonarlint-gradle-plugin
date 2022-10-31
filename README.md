@@ -7,7 +7,12 @@ Gradle plugin for SonarLint code analysis.
 ### Apply to your project
 
 Apply the plugin to your project.
-Refer [the Gradle Plugin portal](https://plugins.gradle.org/plugin/se.solrike.sonarlint) about the detail of installation procedure.
+
+```groovy
+plugins {
+  id 'se.solrike.sonarlint' version '1.0.0-beta.6'
+}
+```
 
 Gradle 7.0 or later must be used.
 
@@ -100,7 +105,7 @@ This example has TypeScript code under `projects/` and `src/`
 plugins {
   id 'base'
   id 'com.github.node-gradle.node' version '3.2.1'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.5'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.6'
 }
 repositories {
   mavenCentral()
@@ -201,6 +206,9 @@ If you need to just suppress an issue in a file you can use `@SuppressWarnings("
 
 
 ## Release notes
+
+### 1.0.0-beta.6
+The working folder for the Sonarlint engine is now properly under the project's build folder. Sonarlint's user home is the project's folder.
 
 ### 1.0.0-beta.5
 Fix typo in printouts. Thanks @doofy for contributing!
