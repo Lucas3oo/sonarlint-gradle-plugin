@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-class IntegrationTest {
+class KotlinIntegrationTest {
 
   @TempDir
   Path mProjectDir;
@@ -26,18 +26,21 @@ class IntegrationTest {
   void setup() throws IOException {
     mBuildFile = Files.createFile(mProjectDir.resolve("build.gradle"));
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(mBuildFile.toFile()))) {
-      writer.write("plugins { id ('java-library') \n  id('se.solrike.sonarlint')  }\n");
+      writer.write(
+          "plugins { id('org.jetbrains.kotlin.jvm') version '1.6.21' \n id ('java-library') \n  id('se.solrike.sonarlint')  }\n");
       // @formatter:off
       writer.write("repositories {\n"
           + "  mavenCentral()\n"
           + "}\n");
       writer.write("sonarlint {\n"
           + "  dependencies {\n"
-          + "    sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'\n"
-          + "    sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.15.0.30507'\n"
-          + "    sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:9.9.0.19492' // both JS and TS\n"
-          + "    sonarlintPlugins 'org.sonarsource.typescript:sonar-typescript-plugin:2.1.0.4359'\n"
-          + "    sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'\n"
+          + "    implementation(platform('org.jetbrains.kotlin:kotlin-bom'))\n"
+          + "    implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk8')\n"
+          + "    implementation('com.google.guava:guava:31.0.1-jre')\n"
+          + "    testImplementation('org.jetbrains.kotlin:kotlin-test')\n"
+          + "    testImplementation('org.jetbrains.kotlin:kotlin-test-junit')\n"
+          + "    sonarlintPlugins('org.sonarsource.java:sonar-java-plugin:7.15.0.30507')\n"
+          + "    sonarlintPlugins('org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456')\n"
           + "  }\n"
           + "}\n");
       // @formatter:on
@@ -47,23 +50,23 @@ class IntegrationTest {
     }
 
     // setup for java project
-    Files.createDirectories(mProjectDir.resolve("src/main/java/"));
+    Files.createDirectories(mProjectDir.resolve("src/main/kotlin/"));
 
   }
 
   @Test
   void testSonarlintMain() throws IOException {
     // given a java class with
-    createJavaFile(Files.createFile(mProjectDir.resolve("src/main/java/Hello.java")));
+    createJavaFile(Files.createFile(mProjectDir.resolve("src/main/kotlin/Hello.kt")));
 
-    // when sonarlintMain is run
-    BuildResult buildResult = runGradle(false, List.of("sonarlintMain"));
+    // when sonarlintKotlinMain is run
+    BuildResult buildResult = runGradle(false, List.of("sonarlintKotlinMain"));
 
     // then the gradle build shall fail
-    assertThat(buildResult.task(":sonarlintMain").getOutcome()).isEqualTo(TaskOutcome.FAILED);
-    // and the 3 sonarlint rules violated are
-    assertThat(buildResult.getOutput()).contains("3 SonarLint issue(s) were found.");
-    assertThat(buildResult.getOutput()).contains("java:S1186", "java:S1118", "java:S1220");
+    assertThat(buildResult.task(":sonarlintKotlinMain").getOutcome()).isEqualTo(TaskOutcome.FAILED);
+    // and the 1 sonarlint rules violated are
+    assertThat(buildResult.getOutput()).contains("1 SonarLint issue(s) were found.");
+    assertThat(buildResult.getOutput()).contains("kotlin:S1481");
 
     System.err.println(buildResult.getOutput());
 
@@ -85,12 +88,12 @@ class IntegrationTest {
   void createJavaFile(Path javaFile) {
     // @formatter:off
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(javaFile.toFile()))) {
-      writer.write("public class Hello {\n"
-          + "\n"
-          + "  public static void get() {\n"
-          + "\n"
-          + "  }\n"
-          + "}\n");
+      writer.write("class Hello {\n"
+                 + "  fun someLibraryMethod(): Boolean {\n"
+                 + "    val i = 1\n"
+                 + "    return true\n"
+                 + "  }\n"
+                 + "}\n");
     }
     catch (IOException e) {
       throw new RuntimeException(e);

@@ -1,5 +1,7 @@
 # sonarlint-gradle-plugin
 Gradle plugin for SonarLint code analysis.
+Supports Java, Node and Kotlin.
+But possible to configure it for other languages that Sonarlint has plugins for like Scala.
 
 
 ## Usage
@@ -10,7 +12,7 @@ Apply the plugin to your project.
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.6'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.7'
 }
 ```
 
@@ -42,14 +44,15 @@ Configure `sonarlintPlugins` to apply any SonarLint plugin:
 ```groovy
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
-  sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.8.1.28740'
-  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:8.8.0.17228' // both JS and TS
+  sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.15.0.30507'
+  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:9.9.0.19492' // both JS and TS
   sonarlintPlugins 'org.sonarsource.typescript:sonar-typescript-plugin:2.1.0.4359'
-  sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.5.0.3376'
+  sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'
   // include a plugin not in Maven repo
   sonarlintPlugins files("${System.getProperty('user.home')}/.p2/pool/plugins/org.sonarlint.eclipse.core_7.2.1.42550/plugins/sonar-secrets-plugin-1.1.0.36766.jar")
 }
 ```
+
 
 ### Apply to Java project
 
@@ -85,7 +88,6 @@ sonarlintTest {
   ignoreFailures = true
 }
 ```
-
 
 
 ### Apply to Node project
@@ -138,15 +140,53 @@ tasks.named('sonarlintNodeTest') {
 }
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
-  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:8.8.0.17228' // both JS and TS
+  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:+' // both JS and TS
   sonarlintPlugins 'org.sonarsource.typescript:sonar-typescript-plugin:2.1.0.4359'
-  sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.5.0.3376'
+  sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'
+}
+```
+
+### Apply to Kotlin project
+If the project has the kotlin plugin applied then
+then `Sonarlint` task will be generated for main and test classes E.g. `sonarlintKotlinMain` and `sonarlintKotlinTest`.
+
+Typical `gradle.build.kts`:
+
+```kotlin
+plugins {
+  // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
+  id("org.jetbrains.kotlin.jvm") version "1.6.21"
+  id("se.solrike.sonarlint") version "1.0.0-beta.7"
+  // Apply the java-library plugin for API and implementation separation.
+  `java-library`
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  // Align versions of all Kotlin components
+  implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+  // Use the Kotlin JDK 8 standard library.
+  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+  // This dependency is used internally, and not exposed to consumers on their own compile classpath.
+  implementation("com.google.guava:guava:31.0.1-jre")
+  // Use the Kotlin test library.
+  testImplementation("org.jetbrains.kotlin:kotlin-test")
+  // Use the Kotlin JUnit integration.
+  testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+
+  sonarlintPlugins("org.sonarsource.java:sonar-java-plugin:7.15.0.30507")
+  sonarlintPlugins("org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456")
 }
 ```
 
 
+
 ### Apply to Xxx project
-Only a subset of languages are supported by Sonarlint. For other languages the plugin will not be auto applied. Instead it has to be defined explicitly in the build.gradle.
+Only a subset of languages are supported by Sonarlint. For other languages the plugin will not be auto applied.
+Instead it has to be defined explicitly in the `build.gradle`.
 
 #### Create the SonarLint Task when it is not auto created
 
@@ -206,6 +246,9 @@ If you need to just suppress an issue in a file you can use `@SuppressWarnings("
 
 
 ## Release notes
+
+### 1.0.0-beta.7
+Add support for Kotlin projects. The tasks for Kotlin will be automatically created.
 
 ### 1.0.0-beta.6
 The working folder for the Sonarlint engine is now properly under the project's build folder. Sonarlint's user home is the project's folder.

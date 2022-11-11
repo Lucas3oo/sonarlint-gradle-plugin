@@ -1,48 +1,44 @@
 plugins {
   id 'eclipse'
-  id 'java-gradle-plugin'
   id 'groovy'
-
   // Apply the Plugin Publish Plugin to make plugin publication possible
-  id 'com.gradle.plugin-publish' version '0.20.0'
-
-  // Apply the Maven Publish Plugin to have it generate the publication metadata
-  id 'maven-publish'
+  id 'com.gradle.plugin-publish' version '1.0.0'
 }
 
 repositories {
   mavenCentral()
 }
-
+// latest core ? 8.11.0.56591
 dependencies {
   implementation 'org.apache.commons:commons-text:1.9'
   implementation 'org.sonarsource.sonarlint.core:sonarlint-core:8.0.2.42487'
-  testImplementation 'org.mockito:mockito-core:3.7.7'
-  testImplementation 'org.mockito:mockito-junit-jupiter:3.7.7'
   testImplementation('org.assertj:assertj-core:3.22.0')
   testImplementation('org.junit.jupiter:junit-jupiter')
   testImplementation(platform('org.junit:junit-bom:5.8.2'))
 }
 
 group = 'se.solrike.sonarlint'
-version = '1.0.0-beta.6'
+version = '1.0.0-beta.7'
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
 tasks.withType(GroovyCompile) {
   configure(options) {
-      options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
+    options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
   }
 }
 
 sourceSets {
   main {
-      java {
-          srcDirs = [] // don't compile Java code twice
-      }
-      groovy {
-          srcDirs = [ 'src/main/groovy', 'src/main/java' ]
-      }
+    java {
+      srcDirs = [] // don't compile Java code twice
+    }
+    groovy {
+      srcDirs = [
+        'src/main/groovy',
+        'src/main/java'
+      ]
+    }
   }
 }
 
@@ -55,7 +51,25 @@ groovydoc {
 
 eclipse {
   classpath {
-    defaultOutputDir = file('bin.nosync')
+    defaultOutputDir = file('bin.nosync/main')
+    file {
+      whenMerged {
+        def src = entries.find { it.path == 'src/main/java' }
+        if (src) src.output = 'bin.nosync/main'
+        src = entries.find { it.path == 'src/main/resources' }
+        if (src) src.output = 'bin.nosync/main'
+        src = entries.find { it.path == 'src/main/groovy' }
+        if (src) src.output = 'bin.nosync/main'
+        src = entries.find { it.path == '.apt_generated' }
+        if (src) src.output = 'bin.nosync/main'
+        src = entries.find { it.path == 'src/test/java' }
+        if (src) src.output = 'bin.nosync/test'
+        src = entries.find { it.path == 'src/test/resources' }
+        if (src) src.output = 'bin.nosync/test'
+        src = entries.find { it.path == '.apt_generated_tests' }
+        if (src) src.output = 'bin.nosync/test'
+      }
+    }
   }
 }
 
@@ -70,6 +84,9 @@ gradlePlugin {
     sonarlintPlugin {
       id = 'se.solrike.sonarlint'
       implementationClass = 'se.solrike.sonarlint.SonarlintPlugin'
+      displayName = 'SonarLint plugin'
+      description = 'SonarLint static code analysis using stand-alone SonarLint engine, for ' +
+          'Java, Kotlin and Node projects. Min Gradle version 7.0.'
     }
   }
 }
@@ -78,28 +95,20 @@ pluginBundle {
   // These settings are set for the whole plugin bundle
   website = 'https://github.com/Lucas3oo/sonarlint-gradle-plugin'
   vcsUrl = 'https://github.com/Lucas3oo/sonarlint-gradle-plugin'
-
-  // tags and description can be set for the whole bundle here, but can also
-  // be set / overridden in the config for specific plugins
-  description = 'SonarLint static code analysis using stand-alone SonarLint engine, for Java and Node projects. Min Gradle version 7.0.'
-
-  // The plugins block can contain multiple plugin entries. The name for
-  // each plugin block below (greetingsPlugin, goodbyePlugin)does not
-  // affect the plugin configuration, but they need to be unique for each plugin.
-
-  // Plugin config blocks can set the displayName, description and tags for
-  // each plugin. displayName is mandatory. If no tags or description are set
-  // the tags or description from the pluginBundle block will be used,
-  // but they must be set in one of the two places.
-
-  plugins {
-    sonarlintPlugin {
-      // id is captured from java-gradle-plugin configuration
-      displayName = 'SonarLint plugin'
-      tags = ['sonarlint', 'java', 'node', 'code quality', 'lint',
-        'static code analysis', 'static analysis', 'code analysis', 'codesmells' ]
-    }
-  }
+  pluginTags = [
+    sonarlintPlugin: [
+      'sonarlint',
+      'java',
+      'kotlin',
+      'node',
+      'code quality',
+      'lint',
+      'static code analysis',
+      'static analysis',
+      'code analysis',
+      'codesmells'
+    ]
+  ]
 }
 
 // to upgrade the metainfo about which gradle version we shall use. Run ./gradlew wrapper after you have updated the version. The commit the new wrapper files except the gradlew.bat

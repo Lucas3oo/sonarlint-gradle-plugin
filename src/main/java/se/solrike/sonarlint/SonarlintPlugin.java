@@ -88,9 +88,8 @@ public class SonarlintPlugin implements Plugin<Project> {
   protected void createTasks(Project project, SonarlintExtension extension) {
     project.getPlugins()
         .withType(JavaBasePlugin.class)
-        .configureEach(javaBasePlugin -> getSourceSetContainer(project).all(sourceSet -> {
+        .configureEach(javaBasePlugin -> getJavaSourceSetContainer(project).all(sourceSet -> {
           String name = sourceSet.getTaskName(TASK_NAME, null);
-
           sLogger.debug("Creating sonarlint task for {}", sourceSet);
           TaskProvider<Sonarlint> taskProvider = createTask(project, extension, name);
           String description = String.format("Run SonarLint analysis for the source set '%s'", sourceSet.getName());
@@ -99,10 +98,9 @@ public class SonarlintPlugin implements Plugin<Project> {
           // for its analysis
           taskProvider.get().dependsOn(sourceSet.getClassesTaskName());
           configureForSourceSet(sourceSet, taskProvider.get());
-
         }));
 
-    // also create a task if the node plugin is applied
+    // also create tasks if the node plugin is applied
     if (project.getPluginManager().hasPlugin("com.github.node-gradle.node")) {
       List<String> taskNames = List.of("Main", "Test");
       for (String taskName : taskNames) {
@@ -111,6 +109,20 @@ public class SonarlintPlugin implements Plugin<Project> {
         taskProvider.get().setDescription(description);
       }
     }
+
+    // also create tasks if the kotlin plugin is applied
+    project.getPlugins()
+        .withId("org.jetbrains.kotlin.jvm", kotlinPlugin -> getJavaSourceSetContainer(project).all(sourceSet -> {
+          String name = sourceSet.getTaskName(TASK_NAME + "Kotlin", null);
+          sLogger.debug("Creating sonarlint task for {}", sourceSet);
+          TaskProvider<Sonarlint> taskProvider = createTask(project, extension, name);
+          String description = String.format("Run SonarLint analysis for the source set '%s'", sourceSet.getName());
+          taskProvider.get().setDescription(description);
+          // let the task depend on all kotlin compile tasks since sonarlint also needs classes
+          // for its analysis
+          taskProvider.get().dependsOn(sourceSet.getClassesTaskName());
+          configureForSourceSet(sourceSet, taskProvider.get());
+        }));
   }
 
   protected TaskProvider<Sonarlint> createTask(Project project, SonarlintExtension extension, String taskName) {
@@ -136,7 +148,7 @@ public class SonarlintPlugin implements Plugin<Project> {
     return taskProvider;
   }
 
-  private SourceSetContainer getSourceSetContainer(Project project) {
+  private SourceSetContainer getJavaSourceSetContainer(Project project) {
     return project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
   }
 
