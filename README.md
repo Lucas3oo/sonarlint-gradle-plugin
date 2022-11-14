@@ -140,7 +140,7 @@ tasks.named('sonarlintNodeTest') {
 }
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
-  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:+' // both JS and TS
+  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:9.9.0.19492' // both JS and TS
   sonarlintPlugins 'org.sonarsource.typescript:sonar-typescript-plugin:2.1.0.4359'
   sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'
 }
