@@ -1,8 +1,10 @@
 # sonarlint-gradle-plugin
 Gradle plugin for SonarLint code analysis.
-Supports Java, Node and Kotlin.
-But possible to configure it for other languages that Sonarlint has plugins for like Scala.
+Supports Java, Node, Kotlin and Scala.
+But possible to configure it for other languages that Sonarlint has plugins for like Ruby.
 
+
+[[_TOC_]]
 
 ## Usage
 
@@ -12,7 +14,7 @@ Apply the plugin to your project.
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.7'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.8'
 }
 ```
 
@@ -107,7 +109,7 @@ This example has TypeScript code under `projects/` and `src/`
 plugins {
   id 'base'
   id 'com.github.node-gradle.node' version '3.2.1'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.6'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.8'
 }
 repositories {
   mavenCentral()
@@ -147,8 +149,12 @@ dependencies {
 ```
 
 ### Apply to Kotlin project
-If the project has the kotlin plugin applied then
-then `Sonarlint` task will be generated for main and test classes E.g. `sonarlintKotlinMain` and `sonarlintKotlinTest`.
+If the project has the Kotlin plugin applied then that means the Java plugin is applied too.
+The `Sonarlint` task will be generated for main and test classes. E.g. `sonarlintMain` and `sonarlintTest`.
+The source code and resources for the 'main' source set will be scanned using all the SonarLint plugins you
+configure. So if you have both Java and Kotlin source code then configure all
+the language plugins for your code. Like both `org.sonarsource.java:sonar-java-plugin:7.15.0.30507`
+and `org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456` and any additionally plugin you need.
 
 Typical `gradle.build.kts`:
 
@@ -156,9 +162,7 @@ Typical `gradle.build.kts`:
 plugins {
   // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
   id("org.jetbrains.kotlin.jvm") version "1.6.21"
-  id("se.solrike.sonarlint") version "1.0.0-beta.7"
-  // Apply the java-library plugin for API and implementation separation.
-  `java-library`
+  id("se.solrike.sonarlint") version "1.0.0-beta.8"
 }
 
 repositories {
@@ -177,10 +181,59 @@ dependencies {
   // Use the Kotlin JUnit integration.
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 
-  sonarlintPlugins("org.sonarsource.java:sonar-java-plugin:7.15.0.30507")
   sonarlintPlugins("org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456")
 }
+
+// configure the tasks directly since the overloaded "extensions" like sonarlintMain will really work in Kotlin DSL
+tasks.sonarlintMain {
+  maxIssues.set(1)
+}
+
 ```
+
+### Apply to Scala project
+If the project has the Scala plugin applied then that means the Java plugin is applied too.
+The `Sonarlint` task will be generated for main and test classes. E.g. `sonarlintMain` and `sonarlintTest`.
+The source code and resources for the 'main' source set will be scanned using all the SonarLint plugins you
+configure. So if you have both Java and Scala source code then configure all
+the language plugins for your code. Like both `org.sonarsource.java:sonar-java-plugin:7.15.0.30507`
+and `org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905` and any additionally plugin you need.
+
+
+
+```groovy
+plugins {
+  id 'scala'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.8'
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  // Use Scala 2.13 in our library project
+  implementation 'org.scala-lang:scala-library:2.13.7'
+  // This dependency is used internally, and not exposed to consumers on their own compile classpath.
+  implementation 'com.google.guava:guava:31.0.1-jre'
+  // Use Scalatest for testing our library
+  testImplementation 'junit:junit:4.13.2'
+  testImplementation 'org.scalatest:scalatest_2.13:3.2.10'
+  testImplementation 'org.scalatestplus:junit-4-13_2.13:3.2.2.0'
+  // Need scala-xml at test runtime
+  testRuntimeOnly 'org.scala-lang.modules:scala-xml_2.13:1.2.0'
+
+  sonarlintPlugins 'org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905'
+}
+
+sonarlintMain {
+  excludeRules = ['scala:S1481']
+  ignoreFailures = true
+}
+```
+
+
+
 
 
 
@@ -193,7 +246,7 @@ Instead it has to be defined explicitly in the `build.gradle`.
 ```groovy
 plugins {
   id 'base'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.5'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.8'
 }
 repositories {
   mavenCentral()
@@ -246,6 +299,9 @@ If you need to just suppress an issue in a file you can use `@SuppressWarnings("
 
 
 ## Release notes
+### 1.0.0-beta.8
+Re-think about the Kotlin support. In fact the sonarlintMain task created will cover Kotlin code too since
+the Kotlin plugin is also applying the Java plugin. So there is no need for dedicated Sonarlint task for Kotlin.
 
 ### 1.0.0-beta.7
 Add support for Kotlin projects. The tasks for Kotlin will be automatically created.
