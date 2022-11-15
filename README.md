@@ -1,10 +1,24 @@
 # sonarlint-gradle-plugin
-Gradle plugin for SonarLint code analysis.
+Gradle plugin for sonarlint code analysis.
 Supports Java, Node, Kotlin and Scala.
-But possible to configure it for other languages that Sonarlint has plugins for like Ruby.
+But possible to configure it for other languages that sonarlint has plugins for like Ruby.
 
 
-[[_TOC_]]
+1. [Usage](#usage)
+    1. [Apply to your project](#apply-to-your-project)
+    1. [Configure sonarlint Plugin](#configure-sonarlint-plugin)
+    1. [Apply to Java project](#apply-to-java-project)
+    1. [Apply to Node project](#apply-to-node-project)
+    1. [Apply to Kotlin project](#apply-to-kotlin-project)
+    1. [Apply to Scala project](#apply-to-scala-project)
+    1. [Apply to Xxx project](#apply-to-xxx-project)
+1. [sonarlint version mapping](#sonarlint-version-mapping)
+1. [sonarlint rules](#sonarlint-rules)
+1. [sonarlint plugins](#sonarlint-plugins)
+1. [Release notes](#release-notes)
+
+
+
 
 ## Usage
 
@@ -20,7 +34,7 @@ plugins {
 
 Gradle 7.0 or later must be used.
 
-### Configure SonarLint Plugin
+### Configure sonarlint Plugin
 
 Configure `sonarlint` extension to configure the behaviour of tasks:
 
@@ -41,12 +55,14 @@ sonarlint {
 }
 ```
 
-Configure `sonarlintPlugins` to apply any SonarLint plugin:
+Configure `sonarlintPlugins` to apply any sonarlint plugin:
 
 ```groovy
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
   sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.15.0.30507'
+  sonarlintPlugins 'org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456'
+  sonarlintPlugins 'org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905'
   sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:9.9.0.19492' // both JS and TS
   sonarlintPlugins 'org.sonarsource.typescript:sonar-typescript-plugin:2.1.0.4359'
   sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'
@@ -65,7 +81,7 @@ If [the `java-test-fixtures` plugin](https://docs.gradle.org/current/userguide/j
  is applied then the task will be called `sonarlintTestFixtures` since there will be a source set called testFixtures.
 
 
-#### Configure the SonarLint Task
+#### Configure the sonarlint Task
 
 Configure `Sonarlint` directly, to set task-specific properties.
 
@@ -101,7 +117,7 @@ Unlike with the Java plugin the source sets needs to be assigned manually.
 
 Sonarlint needs a node executable in order to perform the analysis. This plugin will get the location of node executable from the Node plugin and the Node plugin needs to be configured to download node.
 
-#### Configure the SonarLint Task when using Node plugin
+#### Configure the sonarlint Task when using Node plugin
 
 This example has TypeScript code under `projects/` and `src/`
 
@@ -151,7 +167,7 @@ dependencies {
 ### Apply to Kotlin project
 If the project has the Kotlin plugin applied then that means the Java plugin is applied too.
 The `Sonarlint` task will be generated for main and test classes. E.g. `sonarlintMain` and `sonarlintTest`.
-The source code and resources for the 'main' source set will be scanned using all the SonarLint plugins you
+The source code and resources for the 'main' source set will be scanned using all the sonarlint plugins you
 configure. So if you have both Java and Kotlin source code then configure all
 the language plugins for your code. Like both `org.sonarsource.java:sonar-java-plugin:7.15.0.30507`
 and `org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456` and any additionally plugin you need.
@@ -194,7 +210,7 @@ tasks.sonarlintMain {
 ### Apply to Scala project
 If the project has the Scala plugin applied then that means the Java plugin is applied too.
 The `Sonarlint` task will be generated for main and test classes. E.g. `sonarlintMain` and `sonarlintTest`.
-The source code and resources for the 'main' source set will be scanned using all the SonarLint plugins you
+The source code and resources for the 'main' source set will be scanned using all the sonarlint plugins you
 configure. So if you have both Java and Scala source code then configure all
 the language plugins for your code. Like both `org.sonarsource.java:sonar-java-plugin:7.15.0.30507`
 and `org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905` and any additionally plugin you need.
@@ -233,15 +249,11 @@ sonarlintMain {
 ```
 
 
-
-
-
-
 ### Apply to Xxx project
 Only a subset of languages are supported by Sonarlint. For other languages the plugin will not be auto applied.
 Instead it has to be defined explicitly in the `build.gradle`.
 
-#### Create the SonarLint Task when it is not auto created
+#### Create the sonarlint Task when it is not auto created
 
 ```groovy
 plugins {
@@ -266,26 +278,22 @@ dependencies {
 ```
 
 
+## sonarlint version mapping
 
-
-## Sonarlint version mapping
-
-By default, this Gradle Plugin uses the [Sonarlint core](https://github.com/SonarSource/sonarlint-core) version listed in this table.
+By default, this Gradle Plugin uses the [sonarlint core](https://github.com/SonarSource/sonarlint-core) version listed in this table.
 
 
 
-|Gradle Plugin|SonarLint|
+|Gradle Plugin|sonarlint|
 |-----:|-----:|
 | 1.0.0| 8.0.2.42487|
 
 
-## Sonarlint rules
+## sonarlint rules
 
-By default SonarLint has different rules for production code and test code. For instance for test code there is a rule that checks for asserts in unit tests.
+By default sonarlint has different rules for production code and test code. For instance for test code there is a rule that checks for asserts in unit tests.
 
 Rules are described [here](https://rules.sonarsource.com/). Note that some rules are for SonarCube or SonarCloud only.
-
-
 
 
 ### Suppress rules in Java
@@ -293,9 +301,10 @@ If you need to deactivate a rule for a project then add the rule to the `exclude
 If you need to just suppress an issue in a file you can use `@SuppressWarnings("all")` or `@SuppressWarnings` with rule keys: `@SuppressWarnings("java:S2077")` or `@SuppressWarnings({"java:S1118", "java:S3546"})`.
 (In Eclipse you might need to suppress the warning about unhandled token in the annotation.)
 
-## SonarLint plugins
+## sonarlint plugins
 * [Java](https://github.com/SonarSource/sonar-java/blob/master/sonar-java-plugin/src/main/resources/static/documentation.md)
 * [JavaScript/TypeScript/CSS](https://github.com/SonarSource/SonarJS/blob/master/sonar-javascript-plugin/src/main/resources/static/documentation.md)
+* [Kotlin](https://github.com/SonarSource/sonar-kotlin/blob/master/sonar-kotlin-plugin/src/main/resources/static/documentation.md)
 
 
 ## Release notes
