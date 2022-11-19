@@ -86,7 +86,8 @@ gradlePlugin {
       implementationClass = 'se.solrike.sonarlint.SonarlintPlugin'
       displayName = 'SonarLint plugin'
       description = 'SonarLint static code analysis using stand-alone SonarLint engine, for ' +
-          'Java, Kotlin and Node projects. Min Gradle version 7.0.'
+          'Java, Kotlin, Scala and Node projects. But other languages are also possible to lint. ' +
+          'Min Gradle version 7.0.'
     }
   }
 }

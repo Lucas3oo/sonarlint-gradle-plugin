@@ -6,6 +6,7 @@ But possible to configure it for other languages that sonarlint has plugins for 
 
 1. [Usage](#usage)
     1. [Apply to your project](#apply-to-your-project)
+    1. [Tasks in this plugin](#tasks-in-this-plugin)
     1. [Configure sonarlint Plugin](#configure-sonarlint-plugin)
     1. [Apply to Java project](#apply-to-java-project)
     1. [Apply to Node project](#apply-to-node-project)
@@ -14,6 +15,7 @@ But possible to configure it for other languages that sonarlint has plugins for 
     1. [Apply to Xxx project](#apply-to-xxx-project)
 1. [sonarlint version mapping](#sonarlint-version-mapping)
 1. [sonarlint rules](#sonarlint-rules)
+    1. [Suppress rules in Java](#suppress-rules-in-java)
 1. [sonarlint plugins](#sonarlint-plugins)
 1. [Release notes](#release-notes)
 
@@ -34,6 +36,21 @@ plugins {
 
 Gradle 7.0 or later must be used.
 
+
+### Tasks in this plugin
+The plugin defines two tasks; one for the actual linting and one to list available rules and configuration for the rules.
+In a Java project there will be one sonarlint task automatically created for each source  set.
+Typically `sonarlintMain` and `sonarlintTest`, see more below.
+The task for listing the rules has to be manually created, see more below.
+
+```groovy
+task sonarlintListRules(type: se.solrike.sonarlint.SonarlintListRules) {
+  description = 'List sonarlint rules'
+  group = 'verification'
+}
+```
+
+
 ### Configure sonarlint Plugin
 
 Configure `sonarlint` extension to configure the behaviour of tasks:
@@ -41,7 +58,7 @@ Configure `sonarlint` extension to configure the behaviour of tasks:
 ```groovy
 sonarlint {
   excludeRules = ['java:S1186']
-  includeRules = ['java:S1696', 'java:S4266']
+  includeRules = ['java:S1176', 'java:S1696', 'java:S4266']
   ignoreFailures = false
   maxIssues = 0 // default 0
   reportsDir = 'someFolder' // default build/reports/sonarlint
@@ -49,7 +66,7 @@ sonarlint {
   ruleParameters = [
     'java:S1176' : [
       'forClasses':'**.api.**',      // need javadoc for public methods in package matching 'api'
-      'exclusion': '**.internal.**'] // do not need javadoc for classes under 'internal'
+      'exclusion': '**.private.**'] // do not need javadoc for classes under 'private'. Default is **.internal.**
   ]
   showIssues = true // default true
 }
@@ -61,10 +78,14 @@ Configure `sonarlintPlugins` to apply any sonarlint plugin:
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
   sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.15.0.30507'
+  // both JS and TS but requires the use of node plugin; com.github.node-gradle.node
+  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:9.9.0.19492'
   sonarlintPlugins 'org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456'
+  sonarlintPlugins 'org.sonarsource.php:sonar-php-plugin:3.25.0.9077'
+  sonarlintPlugins 'org.sonarsource.python:sonar-python-plugin:3.17.0.10029'
+  sonarlintPlugins 'org.sonarsource.slang:sonar-ruby-plugin:1.11.0.3905'
   sonarlintPlugins 'org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905'
-  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:9.9.0.19492' // both JS and TS
-  sonarlintPlugins 'org.sonarsource.typescript:sonar-typescript-plugin:2.1.0.4359'
+  sonarlintPlugins 'org.sonarsource.sonarlint.omnisharp:sonarlint-omnisharp-plugin:1.4.0.50839'
   sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'
   // include a plugin not in Maven repo
   sonarlintPlugins files("${System.getProperty('user.home')}/.p2/pool/plugins/org.sonarlint.eclipse.core_7.2.1.42550/plugins/sonar-secrets-plugin-1.1.0.36766.jar")
@@ -159,15 +180,15 @@ tasks.named('sonarlintNodeTest') {
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
   sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:9.9.0.19492' // both JS and TS
-  sonarlintPlugins 'org.sonarsource.typescript:sonar-typescript-plugin:2.1.0.4359'
   sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'
 }
 ```
 
 ### Apply to Kotlin project
-If the project has the Kotlin plugin applied then that means the Java plugin is applied too.
+If the project has [the `kotlin` plugin](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm) applied then that
+means the Java plugin is applied too.
 The `Sonarlint` task will be generated for main and test classes. E.g. `sonarlintMain` and `sonarlintTest`.
-The source code and resources for the 'main' source set will be scanned using all the sonarlint plugins you
+The source code and resources for the 'main' and 'test' source sets will be scanned using all the sonarlint plugins you
 configure. So if you have both Java and Kotlin source code then configure all
 the language plugins for your code. Like both `org.sonarsource.java:sonar-java-plugin:7.15.0.30507`
 and `org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456` and any additionally plugin you need.
@@ -177,7 +198,7 @@ Typical `gradle.build.kts`:
 ```kotlin
 plugins {
   // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-  id("org.jetbrains.kotlin.jvm") version "1.6.21"
+  id("org.jetbrains.kotlin.jvm") version "1.7.21"
   id("se.solrike.sonarlint") version "1.0.0-beta.8"
 }
 
@@ -200,7 +221,7 @@ dependencies {
   sonarlintPlugins("org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456")
 }
 
-// configure the tasks directly since the overloaded "extensions" like sonarlintMain will really work in Kotlin DSL
+// configure the tasks directly since the overloaded "extensions" like sonarlintMain will not work in Kotlin DSL
 tasks.sonarlintMain {
   maxIssues.set(1)
 }
@@ -208,13 +229,13 @@ tasks.sonarlintMain {
 ```
 
 ### Apply to Scala project
-If the project has the Scala plugin applied then that means the Java plugin is applied too.
+If the project has [the `scala` plugin](https://docs.gradle.org/current/userguide/scala_plugin.html) applied then that
+means the Java plugin is applied too.
 The `Sonarlint` task will be generated for main and test classes. E.g. `sonarlintMain` and `sonarlintTest`.
-The source code and resources for the 'main' source set will be scanned using all the sonarlint plugins you
+The source code and resources for the 'main' and 'test' source sets will be scanned using all the sonarlint plugins you
 configure. So if you have both Java and Scala source code then configure all
 the language plugins for your code. Like both `org.sonarsource.java:sonar-java-plugin:7.15.0.30507`
 and `org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905` and any additionally plugin you need.
-
 
 
 ```groovy
@@ -253,7 +274,7 @@ sonarlintMain {
 Only a subset of languages are supported by Sonarlint. For other languages the plugin will not be auto applied.
 Instead it has to be defined explicitly in the `build.gradle`.
 
-#### Create the sonarlint Task when it is not auto created
+#### Create the sonarlint task when it is not auto created
 
 ```groovy
 plugins {
@@ -296,6 +317,97 @@ By default sonarlint has different rules for production code and test code. For 
 Rules are described [here](https://rules.sonarsource.com/). Note that some rules are for SonarCube or SonarCloud only.
 
 
+To list all the rules in your configured plugins you will have to create the task manually. Complete example:
+
+```groovy
+plugins {
+  id 'se.solrike.sonarlint' version '1.0.0-beta.8'
+  id 'com.github.node-gradle.node' version '3.2.1'
+}
+repositories {
+  mavenCentral()
+}
+dependencies {
+  sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
+  sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.15.0.30507'
+  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:9.9.0.19492' // both JS and TS
+  sonarlintPlugins 'org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456'
+  sonarlintPlugins 'org.sonarsource.php:sonar-php-plugin:3.25.0.9077'
+  sonarlintPlugins 'org.sonarsource.python:sonar-python-plugin:3.17.0.10029'
+  sonarlintPlugins 'org.sonarsource.slang:sonar-ruby-plugin:1.11.0.3905'
+  sonarlintPlugins 'org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905'
+  sonarlintPlugins 'org.sonarsource.sonarlint.omnisharp:sonarlint-omnisharp-plugin:1.4.0.50839'
+  sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'
+  sonarlintPlugins files("./sonar-secrets-plugin-1.1.0.36766.jar")
+}
+node {
+  version = '14.17.2'
+  npmVersion = '6.14.13'
+  download = true
+}
+
+task sonarlintListRules(type: se.solrike.sonarlint.SonarlintListRules) {
+  description = 'List sonarlint rules'
+  group = 'verification'
+}
+
+sonarlint {
+  excludeRules = ['java:S1185']
+  includeRules = ['java:S1176', 'Web:LongJavaScriptCheck']
+  ruleParameters = [
+    'java:S1176' : [
+      'forClasses':'**.api.**',
+      'exclusion': '**.private.**']  // default **.internal.**
+  ]
+}
+```
+
+When the task `sonarlintListRules` is executed the list on the console will be similar to (shorted):
+
+```
+...
+[x] csharpsquid:S4423 - Weak SSL/TLS protocols should not be used - [cwe, owasp-a3, owasp-a6, owasp-m3, privacy, sans-top25-porous] - C#
+[x] csharpsquid:S4426 - Cryptographic keys should be robust - [cwe, owasp-a3, owasp-a6, owasp-m5, privacy] - C#
+...
+[x] java:S1175 - The signature of "finalize()" should match that of "Object.finalize()" - [pitfall] - Java
+[x] java:S1176 - Public types, methods and fields (API) should be documented with Javadoc - [convention] - Java
+    forClasses : **.api.**
+    exclusion : **.private.**
+[x] java:S1181 - Throwable and Error should not be caught - [bad-practice, cert, cwe, error-handling] - Java
+[x] java:S1182 - Classes that override "clone" should be "Cloneable" and call "super.clone()" - [cert, convention, cwe] - Java
+[ ] java:S1185 - Overriding methods should do more than simply call the same method in the super class - [clumsy, redundant] - Java
+[x] java:S1186 - Methods should not be empty - [suspicious] - Java
+[ ] java:S1188 - Anonymous classes should not have too many lines - [] - Java
+    Max : 20
+[x] java:S1190 - Future keywords should not be used as names - [obsolete, pitfall] - Java
+...
+[ ] xml:S1120 - Source code should be indented consistently - [convention] - XML
+    tabSize : 2
+    indentSize : 2
+[x] xml:S1134 - Track uses of "FIXME" tags - [cwe] - XML
+[x] xml:S1135 - Track uses of "TODO" tags - [cwe] - XML
+...
+```
+
+The first column indicates if the rule is enabled/included or not.
+
+Since most of the rules have tags you can easily grep on those. E.g.:
+
+    ./gradlew sonarlintListRules | grep aws
+
+And the result will be:
+
+```
+[x] java:S6241 - Region should be set explicitly when creating a new "AwsClient" - [aws, startup-time] - Java
+[x] java:S6242 - Credentials Provider should be set explicitly when creating a new "AwsClient" - [aws, startup-time] - Java
+[x] java:S6243 - Reusable resources should be initialized at construction time of Lambda functions - [aws] - Java
+[x] java:S6244 - Consumer Builders should be used - [aws] - Java
+[x] java:S6246 - Lambdas should not invoke other lambdas synchronously - [aws] - Java
+[x] java:S6262 - AWS region should not be set with a hardcoded String - [aws] - Java
+```
+
+
+
 ### Suppress rules in Java
 If you need to deactivate a rule for a project then add the rule to the `excludeRules` list.
 If you need to just suppress an issue in a file you can use `@SuppressWarnings("all")` or `@SuppressWarnings` with rule keys: `@SuppressWarnings("java:S2077")` or `@SuppressWarnings({"java:S1118", "java:S3546"})`.
@@ -309,6 +421,8 @@ If you need to just suppress an issue in a file you can use `@SuppressWarnings("
 
 ## Release notes
 ### 1.0.0-beta.8
+Adding task to list all the rules and how they are configured.
+
 Re-think about the Kotlin support. In fact the sonarlintMain task created will cover Kotlin code too since
 the Kotlin plugin is also applying the Java plugin. So there is no need for dedicated Sonarlint task for Kotlin.
 

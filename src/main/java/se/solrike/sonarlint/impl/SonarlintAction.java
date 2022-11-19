@@ -91,8 +91,8 @@ public class SonarlintAction {
         .setWorkDir(project.getBuildDir().toPath().resolve("sonarlint"))
         .setSonarLintUserHome(project.getProjectDir().toPath());
 
-    NodePluginUtil nodeUtil = new NodePluginUtil();
     if (project.getExtensions().findByName("node") != null) {
+      NodePluginUtil nodeUtil = new NodePluginUtil();
       if (nodeUtil.getDownload(project)) {
         // this means that the node plugin has been configured with download=true
         Path nodeExec = nodeUtil.getNodeExec(project);
@@ -105,15 +105,12 @@ public class SonarlintAction {
       }
     }
 
-    StandaloneGlobalConfiguration config = builder.build();
-
-    StandaloneSonarLintEngine engine = new StandaloneSonarLintEngineImpl(config);
     Path projectDir = project.getProjectDir().toPath();
     List<ClientInputFileImpl> fileList = sourceFiles.stream()
         .map(f -> new ClientInputFileImpl(projectDir, f.toPath(), isTestSource, StandardCharsets.UTF_8))
         .collect(Collectors.toList());
 
-    StandaloneAnalysisConfiguration configuration = StandaloneAnalysisConfiguration.builder()
+    StandaloneAnalysisConfiguration analysisConfiguration = StandaloneAnalysisConfiguration.builder()
         .setBaseDir(project.getProjectDir().toPath())
         .addInputFiles(fileList)
         .addExcludedRules(getRuleKeys(excludeRules))
@@ -122,8 +119,10 @@ public class SonarlintAction {
         .putAllExtraProperties(sonarProperties)
         .build();
 
+    StandaloneGlobalConfiguration globalConfiguration = builder.build();
+    StandaloneSonarLintEngine engine = new StandaloneSonarLintEngineImpl(globalConfiguration);
     IssueCollector collector = new IssueCollector();
-    AnalysisResults results = engine.analyze(configuration, collector, new GradleClientLogOutput(logger),
+    AnalysisResults results = engine.analyze(analysisConfiguration, collector, new GradleClientLogOutput(logger),
         new GradleProgressMonitor(logger));
 
     List<IssueEx> issues = collector.getIssues();

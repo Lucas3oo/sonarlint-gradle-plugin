@@ -161,13 +161,11 @@ public abstract class Sonarlint extends SourceTask {
     reportAction.report();
 
     // optionally generate console info
-    if (Boolean.TRUE.equals(getShowIssues().getOrElse(Boolean.TRUE))) {
+    if (Boolean.TRUE.equals(getShowIssues().getOrElse(Boolean.TRUE)) && logger.isErrorEnabled()) {
       for (IssueEx issue : issues) {
-        if (logger.isErrorEnabled()) {
-          logger.error("\n{} {} {} {} at: {}:{}:{}", reportAction.getIssueTypeIcon(issue.getType()),
-              reportAction.getIssueSeverityIcon(issue.getSeverity()), issue.getRuleKey(), issue.getMessage(),
-              issue.getInputFileRelativePath(), issue.getStartLine(), issue.getStartLineOffset());
-        }
+        logger.error("\n{} {} {} {} at: {}:{}:{}", reportAction.getIssueTypeIcon(issue.getType()),
+            reportAction.getIssueSeverityIcon(issue.getSeverity()), issue.getRuleKey(), issue.getMessage(),
+            issue.getInputFileRelativePath(), issue.getStartLine(), issue.getStartLineOffset());
       }
     }
 

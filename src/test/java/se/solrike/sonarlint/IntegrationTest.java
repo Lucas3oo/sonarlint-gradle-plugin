@@ -28,18 +28,20 @@ class IntegrationTest {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(mBuildFile.toFile()))) {
       writer.write("plugins { id ('java-library') \n  id('se.solrike.sonarlint')  }\n");
       // @formatter:off
-      writer.write("repositories {\n"
+      writer.write(""
+          + "repositories {\n"
           + "  mavenCentral()\n"
           + "}\n");
-      writer.write("sonarlint {\n"
+      writer.write(""
+          + "sonarlint {\n"
           + "  dependencies {\n"
-          + "    sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'\n"
           + "    sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.15.0.30507'\n"
-          + "    sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:9.9.0.19492' // both JS and TS\n"
-          + "    sonarlintPlugins 'org.sonarsource.typescript:sonar-typescript-plugin:2.1.0.4359'\n"
-          + "    sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'\n"
           + "  }\n"
-          + "}\n");
+          + "  includeRules = ['java:S1176']\n"
+          + "}\n"
+          + "task sonarlintListRules(type: se.solrike.sonarlint.SonarlintListRules) {\n"
+          + "}\n"
+          );
       // @formatter:on
     }
     catch (IOException e) {
@@ -69,6 +71,23 @@ class IntegrationTest {
 
   }
 
+  @Test
+  void testSonarlintListRules() throws IOException {
+    // given java plugin is configured and the sonarlint list rules task is created in the setup
+    // and java:S1176 rule is included which is default excluded.
+
+    // when sonarlintListRules is run
+    BuildResult buildResult = runGradle(true, List.of("sonarlintListRules"));
+
+    // then the gradle build shall succeed
+    assertThat(buildResult.task(":sonarlintListRules").getOutcome()).isEqualTo(TaskOutcome.SUCCESS);
+    // and the rules listed shall at least be
+    assertThat(buildResult.getOutput()).contains("[x] java:S1176", "[ ] java:S6411", "[x] java:S6437");
+
+    System.err.println(buildResult.getOutput());
+
+  }
+
   BuildResult runGradle(List<String> args) {
     return runGradle(true, args);
   }
@@ -83,19 +102,18 @@ class IntegrationTest {
   }
 
   void createJavaFile(Path javaFile) {
-    // @formatter:off
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(javaFile.toFile()))) {
-      writer.write("public class Hello {\n"
-          + "\n"
+      // @formatter:off
+      writer.write(""
+          + "public class Hello {\n"
           + "  public static void get() {\n"
-          + "\n"
           + "  }\n"
           + "}\n");
+      // @formatter:on
     }
     catch (IOException e) {
       throw new RuntimeException(e);
     }
-    // @formatter:on
 
   }
 
