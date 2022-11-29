@@ -41,7 +41,7 @@ Gradle 7.0 or later must be used.
 The plugin defines two tasks; one for the actual linting and one to list available rules and configuration for the rules.
 In a Java project there will be one sonarlint task automatically created for each source  set.
 Typically `sonarlintMain` and `sonarlintTest`, see more below.
-The task for listing the rules has to be manually created, see more below.
+The task for listing the rules `sonarlintListRules` has to be manually created, see more below.
 
 ```groovy
 task sonarlintListRules(type: se.solrike.sonarlint.SonarlintListRules) {
