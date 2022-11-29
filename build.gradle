@@ -49,25 +49,21 @@ groovydoc {
   enabled = false
 }
 
+// folder names that ends with 'nosync' will not be synced to iCloud drive.
 eclipse {
   classpath {
-    defaultOutputDir = file('bin.nosync/main')
+    def mainOutputDir = 'bin.nosync/main'
+    defaultOutputDir = file(mainOutputDir)
     file {
       whenMerged {
-        def src = entries.find { it.path == 'src/main/java' }
-        if (src) src.output = 'bin.nosync/main'
-        src = entries.find { it.path == 'src/main/resources' }
-        if (src) src.output = 'bin.nosync/main'
-        src = entries.find { it.path == 'src/main/groovy' }
-        if (src) src.output = 'bin.nosync/main'
-        src = entries.find { it.path == '.apt_generated' }
-        if (src) src.output = 'bin.nosync/main'
-        src = entries.find { it.path == 'src/test/java' }
-        if (src) src.output = 'bin.nosync/test'
-        src = entries.find { it.path == 'src/test/resources' }
-        if (src) src.output = 'bin.nosync/test'
-        src = entries.find { it.path == '.apt_generated_tests' }
-        if (src) src.output = 'bin.nosync/test'
+        entries.findAll({it.kind == 'src'}).each {
+          if (it.path.contains('main') || it.path == '.apt_generated') {
+            it.output = mainOutputDir
+          }
+          else if (it.path.contains('test')) {
+            it.output = 'bin.nosync/test'
+          }
+        }
       }
     }
   }
@@ -82,12 +78,13 @@ test {
 gradlePlugin {
   plugins {
     sonarlintPlugin {
-      id = 'se.solrike.sonarlint'
+      id = group
       implementationClass = 'se.solrike.sonarlint.SonarlintPlugin'
-      displayName = 'SonarLint plugin'
-      description = 'SonarLint static code analysis using stand-alone SonarLint engine, for ' +
+      displayName = 'Sonarlint plugin'
+      description = 'Sonarlint static code analysis using stand-alone Sonarlint engine, for ' +
           'Java, Kotlin, Scala and Node projects. But other languages are also possible to lint. ' +
-          'Min Gradle version 7.0.'
+          '\nIt is possible to include and exclude rules and also list the rules in the Sonarlist plugins you depend on. ' +
+          '\nMin Gradle version 7.0.'
     }
   }
 }
@@ -95,7 +92,7 @@ gradlePlugin {
 pluginBundle {
   // These settings are set for the whole plugin bundle
   website = 'https://github.com/Lucas3oo/sonarlint-gradle-plugin'
-  vcsUrl = 'https://github.com/Lucas3oo/sonarlint-gradle-plugin'
+  vcsUrl = website
   pluginTags = [
     sonarlintPlugin: [
       'sonarlint',
