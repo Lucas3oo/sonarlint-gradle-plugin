@@ -314,7 +314,7 @@ By default, this Gradle Plugin uses the [sonarlint core](https://github.com/Sona
 
 By default sonarlint has different rules for production code and test code. For instance for test code there is a rule that checks for asserts in unit tests.
 
-Rules are described [here](https://rules.sonarsource.com/). Note that some rules are for SonarCube or SonarCloud only.
+Rules are described [here](https://rules.sonarsource.com/). Note that some rules are for SonarQube or SonarCloud only.
 
 
 To list all the rules in your configured plugins you will have to create the task manually. Complete example:
