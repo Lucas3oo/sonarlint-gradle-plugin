@@ -39,7 +39,7 @@ class KotlinIntegrationTest {
           + "  implementation('com.google.guava:guava:31.0.1-jre')\n"
           + "  testImplementation('org.jetbrains.kotlin:kotlin-test')\n"
           + "  testImplementation('org.jetbrains.kotlin:kotlin-test-junit')\n"
-          + "  sonarlintPlugins('org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456')\n"
+          + "  sonarlintPlugins('org.sonarsource.kotlin:sonar-kotlin-plugin:2.13.0.2116')\n"
           + "}\n");
       // @formatter:on
     }

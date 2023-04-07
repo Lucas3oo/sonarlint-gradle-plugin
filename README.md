@@ -1,7 +1,7 @@
 # sonarlint-gradle-plugin
 Gradle plugin for sonarlint code analysis.
 Supports Java, Node, Kotlin and Scala.
-But possible to configure it for other languages that sonarlint has plugins for like Ruby.
+But possible to configure it for other languages that sonarlint has plugins for like Ruby and Golang.
 
 
 1. [Usage](#usage)
@@ -77,18 +77,20 @@ Configure `sonarlintPlugins` to apply any sonarlint plugin:
 ```groovy
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
-  sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.15.0.30507'
-  // both JS and TS but requires the use of node plugin; com.github.node-gradle.node
-  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:9.9.0.19492'
-  sonarlintPlugins 'org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456'
+  sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.17.0.31219'
+  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:10.0.1.20755' // both JS and TS but requires com.github.node-gradle.node
+  sonarlintPlugins 'org.sonarsource.kotlin:sonar-kotlin-plugin:2.13.0.2116'
   sonarlintPlugins 'org.sonarsource.php:sonar-php-plugin:3.25.0.9077'
   sonarlintPlugins 'org.sonarsource.python:sonar-python-plugin:3.17.0.10029'
+  sonarlintPlugins 'org.sonarsource.slang:sonar-go-plugin:1.12.0.4259'
   sonarlintPlugins 'org.sonarsource.slang:sonar-ruby-plugin:1.11.0.3905'
   sonarlintPlugins 'org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905'
   sonarlintPlugins 'org.sonarsource.sonarlint.omnisharp:sonarlint-omnisharp-plugin:1.4.0.50839'
+  sonarlintPlugins 'org.sonarsource.text:sonar-text-plugin:2.0.1.611'
   sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'
-  // include a plugin not in Maven repo
+  // include a plugin not in Maven repo but can be grabbed from the IDEs
   sonarlintPlugins files("${System.getProperty('user.home')}/.p2/pool/plugins/org.sonarlint.eclipse.core_7.2.1.42550/plugins/sonar-secrets-plugin-1.1.0.36766.jar")
+  sonarlintPlugins files("./sonar-cfamily-plugin-6.43.0.61486.jar")
 }
 ```
 
@@ -179,7 +181,7 @@ tasks.named('sonarlintNodeTest') {
 }
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
-  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:9.9.0.19492' // both JS and TS
+  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:10.0.1.20755' // both JS and TS
   sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'
 }
 ```
@@ -190,8 +192,8 @@ means the Java plugin is applied too.
 The `Sonarlint` task will be generated for main and test classes. E.g. `sonarlintMain` and `sonarlintTest`.
 The source code and resources for the 'main' and 'test' source sets will be scanned using all the sonarlint plugins you
 configure. So if you have both Java and Kotlin source code then configure all
-the language plugins for your code. Like both `org.sonarsource.java:sonar-java-plugin:7.15.0.30507`
-and `org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456` and any additionally plugin you need.
+the language plugins for your code. Like both `org.sonarsource.java:sonar-java-plugin:7.17.0.31219`
+and `org.sonarsource.kotlin:sonar-kotlin-plugin:2.13.0.2116` and any additionally plugin you need.
 
 Typical `gradle.build.kts`:
 
@@ -218,7 +220,7 @@ dependencies {
   // Use the Kotlin JUnit integration.
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 
-  sonarlintPlugins("org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456")
+  sonarlintPlugins("org.sonarsource.kotlin:sonar-kotlin-plugin:2.13.0.2116")
 }
 
 // configure the tasks directly since the overloaded "extensions" like sonarlintMain will not work in Kotlin DSL
@@ -234,7 +236,7 @@ means the Java plugin is applied too.
 The `Sonarlint` task will be generated for main and test classes. E.g. `sonarlintMain` and `sonarlintTest`.
 The source code and resources for the 'main' and 'test' source sets will be scanned using all the sonarlint plugins you
 configure. So if you have both Java and Scala source code then configure all
-the language plugins for your code. Like both `org.sonarsource.java:sonar-java-plugin:7.15.0.30507`
+the language plugins for your code. Like both `org.sonarsource.java:sonar-java-plugin:7.17.0.31219`
 and `org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905` and any additionally plugin you need.
 
 
@@ -329,9 +331,9 @@ repositories {
 }
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
-  sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.15.0.30507'
-  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:9.9.0.19492' // both JS and TS
-  sonarlintPlugins 'org.sonarsource.kotlin:sonar-kotlin-plugin:2.10.0.1456'
+  sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.17.0.31219'
+  sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:10.0.1.20755' // both JS and TS
+  sonarlintPlugins 'org.sonarsource.kotlin:sonar-kotlin-plugin:2.13.0.2116'
   sonarlintPlugins 'org.sonarsource.php:sonar-php-plugin:3.25.0.9077'
   sonarlintPlugins 'org.sonarsource.python:sonar-python-plugin:3.17.0.10029'
   sonarlintPlugins 'org.sonarsource.slang:sonar-ruby-plugin:1.11.0.3905'
