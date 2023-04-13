@@ -1,0 +1,13 @@
+name: build
+run-name: ${{ github.actor }} is building the sonarlint gradle plugin
+on: [push]
+jobs:
+  build-gradle-plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version-file: ./.java-version
+          distribution: temurin
+      - run: ./gradlew build
