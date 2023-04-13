@@ -10,4 +10,10 @@ jobs:
         with:
           java-version-file: ./.java-version
           distribution: temurin
-      - run: ./gradlew build
+          cache: gradle
+      - run: ./gradlew build --no-daemon
+      - run: mkdir staging && cp build/libs/*.jar staging
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Package
+          path: staging
