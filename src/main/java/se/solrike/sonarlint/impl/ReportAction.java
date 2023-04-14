@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +40,8 @@ public class ReportAction {
     mProject = project;
     mTask = task;
     mIssues = issues;
-    mReportRenders = ofEntries(entry("text", this::writeTextReport), entry("html", this::writeHtmlReport));
+    mReportRenders = ofEntries(entry("text", this::writeTextReport), entry("html", this::writeHtmlReport),
+        entry("xml", this::writeXmlReport));
   }
 
   @SuppressWarnings("all")
@@ -64,7 +66,7 @@ public class ReportAction {
     });
   }
 
-  protected void writeTextReport(BufferedWriter writer, Iterable<IssueEx> issues) throws IOException {
+  protected void writeTextReport(Writer writer, Iterable<IssueEx> issues) throws IOException {
     for (IssueEx issue : issues) {
       writer.write(String.format("%n%s %s %s %s at: %s:%d:%d%n%n", getIssueTypeIcon(issue.getType()),
           getIssueSeverityIcon(issue.getSeverity()), issue.getRuleKey(), issue.getMessage(),
@@ -72,7 +74,7 @@ public class ReportAction {
     }
   }
 
-  protected void writeHtmlReport(BufferedWriter writer, Collection<IssueEx> issues) throws IOException {
+  protected void writeHtmlReport(Writer writer, Collection<IssueEx> issues) throws IOException {
     writer.write(getHtmlHeader());
 
     // summary
@@ -106,8 +108,8 @@ public class ReportAction {
       Optional<StandaloneRuleDetails> rulesDetails = issue.getRulesDetails();
       if (rulesDetails.isPresent()) {
         writer.write(rulesDetails.get().getHtmlDescription());
-        writer.newLine();
-        writer.newLine();
+        writer.write("\n");
+        writer.write("\n");
       }
     }
     writer.write("</body>\n</html>");
@@ -127,6 +129,23 @@ public class ReportAction {
         + "  </style>\n"
         + "</head>\n"
         + "<body>\n";
+    // @formatter:on
+  }
+
+  protected void writeXmlReport(Writer writer, Collection<IssueEx> issues) throws IOException {
+
+  }
+
+  /**
+   *
+   * @return spotbugs xml header
+   */
+  protected String getXmlHeader() {
+    // @formatter:off
+    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        + "\n"
+        + "<BugCollection version=\"4.7.1\" sequence=\"0\" timestamp=\"\" analysisTimestamp=\"\" release=\"\">\n"
+        + "";
     // @formatter:on
   }
 
@@ -168,6 +187,6 @@ public class ReportAction {
 
   @FunctionalInterface
   public interface Render {
-    void render(BufferedWriter t, List<IssueEx> u) throws IOException;
+    void render(Writer t, List<IssueEx> u) throws IOException;
   }
 }

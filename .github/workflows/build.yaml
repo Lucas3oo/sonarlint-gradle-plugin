@@ -22,6 +22,10 @@ jobs:
         uses: jwgmeligmeyling/spotbugs-github-action@v1.2
         with:
           path: 'build/reports/spotbugs/*.xml'
+      - name: Publish Sonarlint Results
+        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
+        with:
+          path: 'build/sonarlint.xml'
       - uses: actions/upload-artifact@v3
         with:
           name: Package

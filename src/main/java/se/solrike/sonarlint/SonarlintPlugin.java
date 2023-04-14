@@ -76,8 +76,6 @@ public class SonarlintPlugin implements Plugin<Project> {
   }
 
   protected void configureTaskForJavaSourceSet(final SourceSet sourceSet, Sonarlint task) {
-//    SourceDirectorySet source = sourceSet.getAllJava();
-//    source.plus(sourceSet.getResources());
     // get all sources for the source set including any language and resources
     task.setSource(sourceSet.getAllSource());
     task.setCompileClasspath(sourceSet.getCompileClasspath());
@@ -112,21 +110,6 @@ public class SonarlintPlugin implements Plugin<Project> {
         taskProvider.get().setDescription(description);
       }
     }
-
-    // also create tasks if the kotlin plugin is applied
-//    project.getPlugins()
-//        .withId("org.jetbrains.kotlin.jvm", kotlinPlugin -> getJavaSourceSetContainer(project).all(sourceSet -> {
-//          String name = sourceSet.getTaskName(TASK_NAME + "Kotlin", null);
-//          sLogger.debug("Creating sonarlint task for Kotlin {}", sourceSet);
-//          TaskProvider<Sonarlint> taskProvider = createTask(project, extension, name);
-//          String description = String.format("Run SonarLint analysis for the Kotlin source set '%s'",
-//              sourceSet.getName());
-//          taskProvider.get().setDescription(description);
-//          // let the task depend on all kotlin compile tasks since sonarlint also needs classes
-//          // for its analysis
-//          taskProvider.get().dependsOn(sourceSet.getClassesTaskName());
-//          configureForSourceSet(sourceSet, taskProvider.get());
-//        }));
   }
 
   protected TaskProvider<Sonarlint> createTask(Project project, SonarlintExtension extension, String taskName) {

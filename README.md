@@ -33,7 +33,7 @@ Apply the plugin to your project.
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.8'
+  id 'se.solrike.sonarlint' version '1.0.0'
 }
 ```
 
@@ -121,6 +121,7 @@ sonarlintMain {
       // default location build/reports/sonarlint/sonarlintMain.html
       outputLocation = layout.buildDirectory.file('my_sonarlint_super_report.html')
     }
+    xml.enabled = true // default false
   }
 }
 ```
@@ -151,7 +152,7 @@ This example has TypeScript code under `projects/` and `src/`
 plugins {
   id 'base'
   id 'com.github.node-gradle.node' version '3.2.1'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.8'
+  id 'se.solrike.sonarlint' version '1.0.0'
 }
 repositories {
   mavenCentral()
@@ -204,7 +205,7 @@ Typical `gradle.build.kts`:
 plugins {
   // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
   id("org.jetbrains.kotlin.jvm") version "1.7.21"
-  id("se.solrike.sonarlint") version "1.0.0-beta.8"
+  id("se.solrike.sonarlint") version "1.0.0"
 }
 
 repositories {
@@ -246,7 +247,7 @@ and `org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905` and any additionally 
 ```groovy
 plugins {
   id 'scala'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.8'
+  id 'se.solrike.sonarlint' version '1.0.0'
 }
 
 repositories {
@@ -284,7 +285,7 @@ Instead it has to be defined explicitly in the `build.gradle`.
 ```groovy
 plugins {
   id 'base'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.8'
+  id 'se.solrike.sonarlint' version '1.0.0'
 }
 repositories {
   mavenCentral()
@@ -326,7 +327,7 @@ To list all the rules in your configured plugins you will have to create the tas
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.8'
+  id 'se.solrike.sonarlint' version '1.0.0'
   id 'com.github.node-gradle.node' version '3.2.1'
 }
 repositories {
@@ -425,6 +426,11 @@ If you need to just suppress an issue in a file you can use `@SuppressWarnings("
 
 
 ## Release notes
+### 1.0.0
+Adding option to generate Spotbugs/Findbugs XML for the issues so for instance Jenkins' code quality reports can be used.
+Also Github action from https://github.com/jwgmeligmeyling/spotbugs-github-action can be used.
+Include reference to the Golang sonarlint plugin.
+
 ### 1.0.0-beta.8
 Adding task to list all the rules and how they are configured.
 
@@ -465,7 +471,6 @@ Improvements that might be implemented are:
 * specify stylesheet for the html reports
 * Be able to specify the source sets in the sonarlint DSL
 * specify the sonarlint-core version via a toolsversion property and invoke it via WorkerAPI
-* generate findbugs XML so e.g. Jenkins plugins can be used to show the issues
 * make sure up-to-date checks are resonable
 * link to rules description in the report
 * it might exists more issue types: "SECURITY_HOTSPOT" but they are not in sonarlint

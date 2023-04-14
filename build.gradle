@@ -4,7 +4,6 @@ plugins {
   // Apply the Plugin Publish Plugin to make plugin publication possible
   id 'com.gradle.plugin-publish' version '1.0.0'
   id 'com.github.spotbugs' version '5.0.13'
-
 }
 
 repositories {
@@ -12,15 +11,19 @@ repositories {
 }
 // latest core ? 8.11.0.56591
 dependencies {
-  implementation 'org.apache.commons:commons-text:1.9'
-  implementation 'org.sonarsource.sonarlint.core:sonarlint-core:8.0.2.42487'
+  implementation('org.apache.commons:commons-text:1.9')
+  implementation('org.sonarsource.sonarlint.core:sonarlint-core:8.0.2.42487')
+
+  testImplementation('org.mockito:mockito-core:3.7.7')
+  testImplementation('org.mockito:mockito-junit-jupiter:3.7.7')
+
   testImplementation('org.assertj:assertj-core:3.22.0')
   testImplementation('org.junit.jupiter:junit-jupiter')
   testImplementation(platform('org.junit:junit-bom:5.8.2'))
 }
 
 group = 'se.solrike.sonarlint'
-version = '1.0.0-beta.8'
+version = '1.0.0'
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
@@ -105,8 +108,9 @@ gradlePlugin {
       implementationClass = 'se.solrike.sonarlint.SonarlintPlugin'
       displayName = 'Sonarlint plugin'
       description = 'Sonarlint static code analysis using stand-alone Sonarlint engine, for ' +
-          'Java, Kotlin, Scala and Node projects. But other languages are also possible to lint. ' +
+          'Java, Kotlin, Scala and Node.js projects. But other languages are also possible to lint like Ruby and Golang. ' +
           '\nIt is possible to include and exclude rules and also list the rules in the Sonarlist plugins you depend on. ' +
+          '\nThe plugin can produce Spotbugs compatible XML reports which can be used by Github actions or Jenkins. ' +
           '\nMin Gradle version 7.0.'
     }
   }
@@ -118,17 +122,18 @@ pluginBundle {
   vcsUrl = website
   pluginTags = [
     sonarlintPlugin: [
-      'sonarlint',
+      'code analysis',
+      'code quality',
+      'codesmells',
       'java',
       'kotlin',
-      'scala',
-      'node',
-      'code quality',
       'lint',
-      'static code analysis',
+      'node',
+      'scala',
+      'sonarlint',
+      'spotbugs',
       'static analysis',
-      'code analysis',
-      'codesmells'
+      'static code analysis'
     ]
   ]
 }

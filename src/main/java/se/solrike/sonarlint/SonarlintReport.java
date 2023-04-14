@@ -26,6 +26,7 @@ import org.gradle.api.provider.Property;
  *             // override default report file location for text report
  *             outputLocation = layout.buildDirectory.file('my_sonarlint.txt')
  *         }
+ *         xml.enabled = true // default false
  *     }
  * }
  * </pre>

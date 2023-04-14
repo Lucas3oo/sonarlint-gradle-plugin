@@ -43,6 +43,11 @@ class IntegrationTest {
           + "}\n"
           + "task sonarlintListRules(type: se.solrike.sonarlint.SonarlintListRules) {\n"
           + "}\n"
+          + "sonarlintMain {\n"
+          + "  reports {"
+          + "    xml.enabled = true\n"
+          + "  }\n"
+          + "}\n"
           );
       // @formatter:on
     }
