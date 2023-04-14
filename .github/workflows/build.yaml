@@ -18,11 +18,12 @@ jobs:
         with:
           files: |
             build/test-results/test/*.xml
-      - name: Publish Spotbugs Results
-        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
-        with:
-          path: 'build/reports/spotbugs/*.xml'
-      - name: Publish Sonarlint Results
+#      - name: Publish Spotbugs Results
+#        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
+#        with:
+#          path: 'build/reports/spotbugs/*.xml'
+      - name: Sonarlint
+        title: Publish Sonarlint Results
         uses: jwgmeligmeyling/spotbugs-github-action@v1.2
         with:
           path: 'build/sonarlint.xml'

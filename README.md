@@ -19,6 +19,8 @@ But possible to configure it for other languages that sonarlint has plugins for 
 1. [sonarlint version mapping](#sonarlint-version-mapping)
 1. [sonarlint rules](#sonarlint-rules)
     1. [Suppress rules in Java](#suppress-rules-in-java)
+1. [sonarlint CI reports](#sonarlint-ci-reports)
+    1. [Github actions](#github-actions)
 1. [sonarlint plugins](#sonarlint-plugins)
 1. [Release notes](#release-notes)
 
@@ -121,7 +123,7 @@ sonarlintMain {
       // default location build/reports/sonarlint/sonarlintMain.html
       outputLocation = layout.buildDirectory.file('my_sonarlint_super_report.html')
     }
-    xml.enabled = true // default false
+    xml.enabled = false // default false
   }
 }
 ```
@@ -412,12 +414,34 @@ And the result will be:
 [x] java:S6262 - AWS region should not be set with a hardcoded String - [aws] - Java
 ```
 
-
-
 ### Suppress rules in Java
 If you need to deactivate a rule for a project then add the rule to the `excludeRules` list.
 If you need to just suppress an issue in a file you can use `@SuppressWarnings("all")` or `@SuppressWarnings` with rule keys: `@SuppressWarnings("java:S2077")` or `@SuppressWarnings({"java:S1118", "java:S3546"})`.
 (In Eclipse you might need to suppress the warning about unhandled token in the annotation.)
+
+
+## sonarlint CI reports
+The sonarlint gradle plugin can generate Spotbugs/Findbugs compatible XML reports
+
+Enable it as follows:
+
+```groovy
+sonarlintMain {
+  reports {
+    xml.enabled = false // default false
+  }
+}
+```
+
+### Github actions
+If you are using Github actions you can use the same action for sonarlint as you are using for Spotbugs. E.g:
+
+
+```yaml
+```
+
+
+
 
 ## sonarlint plugins
 * [Java](https://github.com/SonarSource/sonar-java/blob/master/sonar-java-plugin/src/main/resources/static/documentation.md)
