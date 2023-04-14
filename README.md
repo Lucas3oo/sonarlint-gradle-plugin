@@ -1,4 +1,7 @@
 # sonarlint-gradle-plugin
+![build workflow](https://github.com/Lucas3oo/sonarlint-gradle-plugin/actions/workflows/build.yaml/badge.svg)
+
+
 Gradle plugin for sonarlint code analysis.
 Supports Java, Node, Kotlin and Scala.
 But possible to configure it for other languages that sonarlint has plugins for like Ruby and Golang.
