@@ -110,7 +110,7 @@ public class IssueEx implements Issue {
     ClientInputFile inputFile = mSonarlintIssue.getInputFile();
     if (inputFile != null) {
       String path = inputFile.relativePath();
-      return path.substring(path.lastIndexOf("/") + 1);
+      return path.substring(path.lastIndexOf('/') + 1);
     }
     else {
       return "global";

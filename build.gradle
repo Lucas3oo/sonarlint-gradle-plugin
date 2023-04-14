@@ -3,6 +3,8 @@ plugins {
   id 'groovy'
   // Apply the Plugin Publish Plugin to make plugin publication possible
   id 'com.gradle.plugin-publish' version '1.0.0'
+  id 'com.github.spotbugs' version '5.0.13'
+
 }
 
 repositories {
@@ -71,6 +73,27 @@ eclipse {
 
 test {
   useJUnitPlatform()
+}
+
+// Spotbugs
+spotbugsMain {
+  effort = 'less' // 'default', 'less' or 'max'
+  excludeFilter = file('./plugin-config/spotbugs/exclude.xml')
+  ignoreFailures = true
+  showStackTraces = false
+  dependencies {
+    // http://find-sec-bugs.github.io
+    spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
+    spotbugsPlugins 'com.mebigfatguy.sb-contrib:sb-contrib:7.4.7'
+    spotbugs 'com.github.spotbugs:spotbugs:4.7.1'
+  }
+  reports {
+    xml.enabled = true
+    html.enabled = true
+  }
+}
+spotbugsTest {
+  enabled = false
 }
 
 

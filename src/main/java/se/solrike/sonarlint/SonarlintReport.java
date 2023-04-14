@@ -54,7 +54,7 @@ public abstract class SonarlintReport implements Named {
 
   @Override
   public String toString() {
-    return getEnabled().getOrElse(false) + ", location: " + getOutputLocation().getOrNull();
+    return getEnabled().getOrElse(Boolean.FALSE) + ", location: " + getOutputLocation().getOrNull();
   }
 
 }

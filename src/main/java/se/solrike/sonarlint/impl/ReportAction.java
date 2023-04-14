@@ -7,6 +7,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,12 +48,12 @@ public class ReportAction {
 
     // generate reports
     reports.forEach((name, report) -> {
-      if (report.getEnabled().getOrElse(false)) {
+      if (report.getEnabled().getOrElse(Boolean.FALSE)) {
         RegularFile file = report.getOutputLocation().getOrElse(getDefaultReportOutputLocation(name).get());
         File parentDir = file.getAsFile().getParentFile();
         mProject.mkdir(parentDir);
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAsFile()))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAsFile(), Charset.forName("UTF-8")))) {
           mReportRenders.get(name).render(writer, mIssues);
         }
         catch (IOException e) {
@@ -62,7 +64,7 @@ public class ReportAction {
     });
   }
 
-  protected void writeTextReport(BufferedWriter writer, List<IssueEx> issues) throws IOException {
+  protected void writeTextReport(BufferedWriter writer, Iterable<IssueEx> issues) throws IOException {
     for (IssueEx issue : issues) {
       writer.write(String.format("%n%s %s %s %s at: %s:%d:%d%n%n", getIssueTypeIcon(issue.getType()),
           getIssueSeverityIcon(issue.getSeverity()), issue.getRuleKey(), issue.getMessage(),
@@ -70,7 +72,7 @@ public class ReportAction {
     }
   }
 
-  protected void writeHtmlReport(BufferedWriter writer, List<IssueEx> issues) throws IOException {
+  protected void writeHtmlReport(BufferedWriter writer, Collection<IssueEx> issues) throws IOException {
     writer.write(getHtmlHeader());
 
     // summary

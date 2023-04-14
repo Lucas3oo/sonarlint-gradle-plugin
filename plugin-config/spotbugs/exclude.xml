@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter xmlns="https://github.com/spotbugs/filter/3.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/release-3.1/spotbugs/etc/findbugsfilter.xsd">
+
+  <Match>
+    <!-- EI: May expose internal representation by returning reference to mutable object -->
+    <BugPattern name="EI_EXPOSE_REP" />
+  </Match>
+  <Match>
+    <!-- EI2: May expose internal representation by incorporating reference to mutable object -->
+    <BugPattern name="EI_EXPOSE_REP2" />
+  </Match>
+  <Match>
+    <!-- Constrained method converts checked exception to unchecked -->
+    <BugPattern name="EXS_EXCEPTION_SOFTENING_NO_CHECKED" />
+  </Match>
+  <Match>
+    <!-- Unconstrained method converts checked exception to unchecked -->
+    <BugPattern name="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS" />
+  </Match>
+  <Match>
+    <!-- Blob field in JPA entity classes are OK. -->
+    <Bug pattern="SE_BAD_FIELD" />
+    <Field type="java.sql.Blob" />
+  </Match>
+  <Match>
+    <!-- On enums equals is as good as == -->
+    <BugPattern name="SPP_EQUALS_ON_ENUM" />
+  </Match>
+  <Match>
+    <!-- It can be easier to debug code with an extra local variable -->
+    <BugPattern name="USBR_UNNECESSARY_STORE_BEFORE_RETURN" />
+  </Match>
+
+  <Match>
+    <!-- The clas sis a Groovy class and Spotbugs reports issues that can't be found in the source code -->
+    <Class name="se.solrike.sonarlint.impl.NodePluginUtil"/>
+  </Match>
+
+  <Match>
+    <!-- False positive since the file is a directory that the plugin writes files to. -->
+    <Class name="se.solrike.sonarlint.impl.ReportAction"/>
+    <Method name="lambda$getDefaultReportOutputLocation$1"/>
+    <BugPattern name="PATH_TRAVERSAL_IN" />
+  </Match>
+
+
+</FindBugsFilter>

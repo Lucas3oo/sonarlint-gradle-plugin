@@ -60,7 +60,7 @@ public class SonarlintAction {
       classFiles = task.getClassFiles().getFiles();
     }
     Set<File> sourceFiles = task.getSource().getFiles();
-    boolean isTestSource = task.getIsTestSource().getOrElse(false);
+    boolean isTestSource = task.getIsTestSource().getOrElse(Boolean.FALSE);
     Set<String> excludeRules = task.getExcludeRules().get();
     Set<String> includeRules = task.getIncludeRules().get();
     Map<String, Map<String, String>> ruleParameters = task.getRuleParameters().get();
