@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetails;
 
 import se.solrike.sonarlint.impl.IssueEx;
-import se.solrike.sonarlint.impl.SportbugsXmlBuilder;
+import se.solrike.sonarlint.impl.SpotbugsXmlBuilder;
 
 public class SpotbugsXmlTest {
 
@@ -27,7 +27,7 @@ public class SpotbugsXmlTest {
 
   @Test
   public void generateCorrectSpotbugsXml() {
-    SportbugsXmlBuilder builder = new SportbugsXmlBuilder();
+    SpotbugsXmlBuilder builder = new SpotbugsXmlBuilder();
 
     List<IssueEx> issues = new ArrayList<>();
     IssueEx issue = mock(IssueEx.class);

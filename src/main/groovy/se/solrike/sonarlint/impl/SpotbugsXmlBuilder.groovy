@@ -4,34 +4,10 @@ import org.apache.commons.text.StringEscapeUtils
 
 import groovy.xml.MarkupBuilder
 
-class SportbugsXmlBuilder {
+class SpotbugsXmlBuilder {
 
-  public SportbugsXmlBuilder() {
+  public SpotbugsXmlBuilder() {
     super()
-  }
-
-
-  public String generateXml() {
-    def writer = new StringWriter()
-    new MarkupBuilder(writer).articles {
-      article {
-        title('First steps in Java')
-        author(id: '1') {
-          firstname('Siena')
-          lastname('Kerr')
-        }
-        'release-date'('2018-12-01')
-      }
-      article {
-        title('Dockerize your SpringBoot application')
-        author(id: '2') {
-          firstname('Jonas')
-          lastname('Lugo')
-        }
-        'release-date'('2018-12-01')
-      }
-    }
-    return writer.toString()
   }
 
   public Writer generateIssues(Writer writer, Collection<IssueEx> issues) {
@@ -44,7 +20,9 @@ class SportbugsXmlBuilder {
           if (issue.rulesDetails.isPresent()) {
             LongMessage ('<![CDATA[' + issue.rulesDetails.get().getHtmlDescription() + ']]>')
           }
-          SourceLine (classname: '', start: issue.getStartLine(), end: issue.getEndLine(), sourcefile: issue.getFileName(), sourcepath: issue.getInputFileRelativePath(), relSourcepath: '')
+          SourceLine (classname: '', start: issue.getStartLine(), end: issue.getEndLine(),
+          sourcefile: issue.getFileName(), sourcepath: issue.getInputFileRelativePath(),
+          relSourcepath: issue.getInputFileRelativePath(), synthetic: 'true')
         }
       }
     }

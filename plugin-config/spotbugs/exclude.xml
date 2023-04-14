@@ -32,14 +32,10 @@
     <!-- It can be easier to debug code with an extra local variable -->
     <BugPattern name="USBR_UNNECESSARY_STORE_BEFORE_RETURN" />
   </Match>
+  <Match>
+    <!-- Theese classes are Groovy classed and Spotbugs reports issues that can't be found in the source code -->
+    <Package name="se.solrike.sonarlint.impl"/>
 
-  <Match>
-    <!-- The class is a Groovy class and Spotbugs reports issues that can't be found in the source code -->
-    <Class name="se.solrike.sonarlint.impl.NodePluginUtil"/>
-  </Match>
-  <Match>
-    <!-- The class is a Groovy class and Spotbugs reports issues that can't be found in the source code -->
-    <Class name="se.solrike.sonarlint.impl.SportbugsXmlBuilder"/>
   </Match>
 
   <Match>
