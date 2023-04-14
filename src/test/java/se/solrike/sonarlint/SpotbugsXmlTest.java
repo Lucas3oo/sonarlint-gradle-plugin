@@ -14,7 +14,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.sonarsource.sonarlint.core.client.api.common.analysis.Issue;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetails;
 
 import se.solrike.sonarlint.impl.IssueEx;
@@ -31,16 +30,20 @@ public class SpotbugsXmlTest {
     SportbugsXmlBuilder builder = new SportbugsXmlBuilder();
 
     List<IssueEx> issues = new ArrayList<>();
-    Issue issue = mock(Issue.class);
+    IssueEx issue = mock(IssueEx.class);
     when(issue.getRuleKey()).thenReturn("java:S1220");
     when(issue.getSeverity()).thenReturn("CRITICAL");
     when(issue.getType()).thenReturn("VULNERABILITY");
     when(issue.getMessage()).thenReturn("Move this file to a named package.");
-    IssueEx issueEx = new IssueEx(0, issue);
+    when(issue.getStartLine()).thenReturn(31);
+    when(issue.getEndLine()).thenReturn(83);
+    when(issue.getFileName()).thenReturn("Hello.java");
+    when(issue.getInputFileRelativePath()).thenReturn("src/main/java/Hello.java");
     StandaloneRuleDetails s = mock(StandaloneRuleDetails.class);
     when(s.getHtmlDescription()).thenReturn("Some long <b>html-ish</b> text");
-    issueEx.setRulesDetails(Optional.of(s));
-    issues.add(issueEx);
+    issue.setRulesDetails(Optional.of(s));
+
+    issues.add(issue);
 
     File buildDir = new File("build");
     buildDir.mkdir();

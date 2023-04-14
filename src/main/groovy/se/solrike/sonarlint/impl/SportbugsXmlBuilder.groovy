@@ -42,8 +42,9 @@ class SportbugsXmlBuilder {
         bugCollection.BugInstance (type: issue.ruleKey, priority: 1, rank: getIssueSeverity(issue.severity), category: issue.type) {
           ShortMessage (StringEscapeUtils.escapeHtml4(issue.getMessage()))
           if (issue.rulesDetails.isPresent()) {
-            LongMessage (StringEscapeUtils.escapeHtml4(issue.rulesDetails.get().getHtmlDescription()))
+            LongMessage ('<![CDATA[' + issue.rulesDetails.get().getHtmlDescription() + ']]>')
           }
+          SourceLine (classname: '', start: issue.getStartLine(), end: issue.getEndLine(), sourcefile: issue.getFileName(), sourcepath: issue.getInputFileRelativePath(), relSourcepath: '')
         }
       }
     }
@@ -69,4 +70,7 @@ class SportbugsXmlBuilder {
  <BugInstance type="FCCD_FIND_CLASS_CIRCULAR_DEPENDENCY" priority="2" rank="9" abbrev="FCCD" category="CORRECTNESS" instanceHash="eb77c6533bddc4608aee82dd6d0b920d" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
  <ShortMessage>Class has a circular dependency with other classes</ShortMessage>
  <LongMessage>Class se.solrike.sonarlint.Sonarlint has a circular dependency with other classes</LongMessage>
+ <SourceLine classname="se.solrike.sonarlint.Sonarlint" start="36" end="194" sourcefile="Sonarlint.java" sourcepath="se/solrike/sonarlint/Sonarlint.java" relSourcepath="java/se/solrike/sonarlint/Sonarlint.java" synthetic="true">
+ <Message>At Sonarlint.java:[lines 36-194]</Message>
+ </SourceLine>
  */

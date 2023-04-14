@@ -23,7 +23,7 @@ dependencies {
 }
 
 group = 'se.solrike.sonarlint'
-version = '1.0.0'
+version = '1.0.0-beta.9'
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
