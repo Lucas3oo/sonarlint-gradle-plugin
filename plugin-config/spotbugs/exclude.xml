@@ -34,8 +34,12 @@
   </Match>
 
   <Match>
-    <!-- The clas sis a Groovy class and Spotbugs reports issues that can't be found in the source code -->
+    <!-- The class is a Groovy class and Spotbugs reports issues that can't be found in the source code -->
     <Class name="se.solrike.sonarlint.impl.NodePluginUtil"/>
+  </Match>
+  <Match>
+    <!-- The class is a Groovy class and Spotbugs reports issues that can't be found in the source code -->
+    <Class name="se.solrike.sonarlint.impl.SportbugsXmlBuilder"/>
   </Match>
 
   <Match>

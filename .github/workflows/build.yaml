@@ -27,6 +27,7 @@ jobs:
         uses: jwgmeligmeyling/spotbugs-github-action@v1.2
         with:
           name: Sonarlint
+          title: Sonarlint report
           path: 'build/sonarlint.xml'
       - uses: actions/upload-artifact@v3
         with:
