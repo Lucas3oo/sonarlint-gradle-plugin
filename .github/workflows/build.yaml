@@ -1,5 +1,5 @@
 name: build
-run-name: ${{ github.actor }} is building the sonarlint gradle plugin
+run-name: ${{ github.actor }} is building the gradle project
 on: [push]
 jobs:
   build-gradle-plugin:
@@ -12,8 +12,7 @@ jobs:
           distribution: temurin
           cache: gradle
       - run: ./gradlew build --no-daemon
-      - run: mkdir staging && cp build/libs/*.jar staging
       - uses: actions/upload-artifact@v3
         with:
           name: Package
-          path: staging
+          path: build/libs
