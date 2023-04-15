@@ -28,7 +28,7 @@ jobs:
         with:
           name: Sonarlint
           title: Sonarlint report
-          path: build/sonarlint.xml
+          path: build/reports/sonarlint/*.xml
       - uses: actions/upload-artifact@v3
         with:
           name: Package

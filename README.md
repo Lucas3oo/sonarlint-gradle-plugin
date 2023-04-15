@@ -428,7 +428,7 @@ Enable it as follows:
 ```groovy
 sonarlintMain {
   reports {
-    xml.enabled = false // default false
+    xml.enabled = true // default false
   }
 }
 ```
