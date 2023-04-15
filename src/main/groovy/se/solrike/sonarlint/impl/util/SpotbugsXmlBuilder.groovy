@@ -24,8 +24,12 @@ class SpotbugsXmlBuilder {
       }
       issues.each { issue ->
         builder.BugInstance (type: issue.ruleKey, priority: 1, rank: getIssueSeverityToRank(issue.severity), category: issue.type, instanceHash: issue.id) {
-          ShortMessage (issue.message)
-          LongMessage (issue.message)
+          ShortMessage {
+            mkp.yieldUnescaped('<![CDATA[' + issue.message + ']]>')
+          }
+          LongMessage {
+            mkp.yieldUnescaped('<![CDATA[' + issue.message + ']]>')
+          }
           Class (classname: getClassname(issue.inputFileRelativePath), primary: 'true') {
             SourceLine (classname: getClassname(issue.inputFileRelativePath), start: issue.startLine, end: issue.endLine, sourcefile: issue.fileName, sourcepath: issue.inputFileRelativePath)
             Message ('In class ' + getClassname(issue.inputFileRelativePath))
