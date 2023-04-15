@@ -434,12 +434,46 @@ sonarlintMain {
 ```
 
 ### Github actions
-If you are using Github actions you can use the same action for sonarlint as you are using for Spotbugs. E.g:
-
+If you are using Github actions you can use the same action for sonarlint as you are using for Spotbugs.
+(Remember to customize name and title for the second definition of the spotbugs action.)
 
 ```yaml
+name: build
+run-name: ${{ github.actor }} is building the gradle project
+on: [push]
+jobs:
+  build-main-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version-file: ./.java-version
+          distribution: temurin
+          cache: gradle
+      - run: ./gradlew build --no-daemon
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            build/test-results/test/*.xml
+      - name: Publish Spotbugs Results
+        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
+        with:
+          name: Spotbugs
+          path: build/reports/spotbugs/*.xml
+      - name: Publish Sonarlint Results
+        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
+        with:
+          name: Sonarlint
+          title: Sonarlint report
+          path: build/reports/sonarlint/*.xml
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Package
+          path: build/libs
 ```
-
 
 
 

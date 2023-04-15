@@ -11,18 +11,20 @@ class SpotbugsXmlBuilder {
   }
 
   public Writer generateIssues(Writer writer, Collection<IssueEx> issues) {
-    MarkupBuilder bugCollection = new MarkupBuilder(writer)
-    bugCollection.mkp.xmlDeclaration([version:'1.0',encoding:'UTF-8'])
-    bugCollection.BugCollection {
+    MarkupBuilder builder = new MarkupBuilder(writer)
+    builder.mkp.xmlDeclaration([version:'1.0',encoding:'UTF-8'])
+    builder.BugCollection {
+      Project {
+        SrcDir ()
+      }
       issues.each { issue ->
-        bugCollection.BugInstance (type: issue.ruleKey, priority: 1, rank: getIssueSeverity(issue.severity), category: issue.type) {
+        builder.BugInstance (type: issue.ruleKey, priority: 1, rank: getIssueSeverity(issue.severity), category: issue.type) {
           ShortMessage (StringEscapeUtils.escapeHtml4(issue.getMessage()))
           if (issue.rulesDetails.isPresent()) {
             LongMessage ('<![CDATA[' + issue.rulesDetails.get().getHtmlDescription() + ']]>')
           }
           SourceLine (classname: '', start: issue.getStartLine(), end: issue.getEndLine(),
-          sourcefile: issue.getFileName(), sourcepath: issue.getInputFileRelativePath(),
-          relSourcepath: issue.getInputFileRelativePath(), synthetic: 'true')
+          sourcefile: issue.getFileName(), sourcepath: issue.getInputFileRelativePath())
         }
       }
     }

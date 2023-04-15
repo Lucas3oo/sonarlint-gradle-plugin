@@ -2,7 +2,7 @@ name: build
 run-name: ${{ github.actor }} is building the gradle project
 on: [push]
 jobs:
-  build-gradle-plugin:
+  build-main-artifact:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,17 +18,17 @@ jobs:
         with:
           files: |
             build/test-results/test/*.xml
-#      - name: Publish Spotbugs Results
-#        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
-#        with:
-#          name: Spotbugs
-#          path: 'build/reports/spotbugs/*.xml'
+      - name: Publish Spotbugs Results
+        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
+        with:
+          name: Spotbugs
+          path: build/reports/spotbugs/*.xml
       - name: Publish Sonarlint Results
         uses: jwgmeligmeyling/spotbugs-github-action@v1.2
         with:
           name: Sonarlint
           title: Sonarlint report
-          path: 'build/sonarlint.xml'
+          path: build/sonarlint.xml
       - uses: actions/upload-artifact@v3
         with:
           name: Package
