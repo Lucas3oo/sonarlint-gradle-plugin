@@ -32,7 +32,7 @@ class SpotbugsXmlTest {
     when(issue.getStartLine()).thenReturn(31);
     when(issue.getEndLine()).thenReturn(83);
     when(issue.getFileName()).thenReturn("Sonarlint.java");
-    when(issue.getInputFileRelativePath()).thenReturn("se/solrike/sonarlint/Sonarlint.java");
+    when(issue.getInputFileRelativePath()).thenReturn("src/main/java/se/solrike/sonarlint/Sonarlint.java");
     StandaloneRuleDetails s = mock(StandaloneRuleDetails.class);
     when(s.getHtmlDescription()).thenReturn("Some long <b>html-ish</b> text");
     when(issue.getRulesDetails()).thenReturn(Optional.of(s));
@@ -42,7 +42,7 @@ class SpotbugsXmlTest {
     StringWriter writer = new StringWriter();
 
     builder.generateBugCollection(writer, issues,
-        Set.of(new File("/home/runner/work/sonarlint-gradle-plugin/sonarlint-gradle-plugin/src/main/java")));
+        Set.of(new File("/home/runner/work/sonarlint-gradle-plugin/sonarlint-gradle-plugin")));
 
     assertThat(writer.toString()).contains("java:S1220", "SECURITY", "Sonarlint.java");
 

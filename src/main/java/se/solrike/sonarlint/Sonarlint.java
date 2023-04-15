@@ -146,20 +146,6 @@ public abstract class Sonarlint extends SourceTask {
     return super.getSource();
   }
 
-  /**
-   * Map of reports settings.
-   *
-   * @return the reports
-   */
-  @Internal
-  public Set<File> getSrcDirs() {
-    return mSrcDirs;
-  }
-
-  public void setSrcDirs(Set<File> srcDirs) {
-    mSrcDirs = srcDirs;
-  }
-
   @TaskAction
   public void run() {
     Logger logger = getLogger();

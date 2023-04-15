@@ -58,7 +58,7 @@ public class ReportAction {
         mProject.mkdir(parentDir);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAsFile(), Charset.forName("UTF-8")))) {
-          mReportRenders.get(name).render(writer, mIssues, mTask.getSrcDirs());
+          mReportRenders.get(name).render(writer, mIssues);
         }
         catch (IOException e) {
           throw new RuntimeException(e);
@@ -68,7 +68,7 @@ public class ReportAction {
     });
   }
 
-  protected void writeTextReport(Writer writer, Iterable<IssueEx> issues, Set<File> srcDirs) throws IOException {
+  protected void writeTextReport(Writer writer, Iterable<IssueEx> issues) throws IOException {
     for (IssueEx issue : issues) {
       writer.write(String.format("%n%s %s %s %s at: %s:%d:%d%n%n", getIssueTypeIcon(issue.getType()),
           getIssueSeverityIcon(issue.getSeverity()), issue.getRuleKey(), issue.getMessage(),
@@ -76,7 +76,7 @@ public class ReportAction {
     }
   }
 
-  protected void writeHtmlReport(Writer writer, Collection<IssueEx> issues, Set<File> srcDirs) throws IOException {
+  protected void writeHtmlReport(Writer writer, Collection<IssueEx> issues) throws IOException {
     writer.write(getHtmlHeader());
 
     // summary
@@ -134,8 +134,8 @@ public class ReportAction {
     // @formatter:on
   }
 
-  protected void writeXmlReport(Writer writer, Collection<IssueEx> issues, Set<File> srcDirs) {
-    new SpotbugsXmlBuilder().generateBugCollection(writer, issues, srcDirs);
+  protected void writeXmlReport(Writer writer, Collection<IssueEx> issues) {
+    new SpotbugsXmlBuilder().generateBugCollection(writer, issues, Set.of(mProject.getProjectDir()));
   }
 
   /**
@@ -189,6 +189,6 @@ public class ReportAction {
 
   @FunctionalInterface
   public interface Render {
-    void render(Writer writer, List<IssueEx> issues, Set<File> srcDirs) throws IOException;
+    void render(Writer writer, List<IssueEx> issues) throws IOException;
   }
 }

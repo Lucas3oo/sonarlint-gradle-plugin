@@ -64,7 +64,7 @@ class SpotbugsXmlBuilder {
 
   private String getClassname(String filePath) {
     char dot = '.'
-    return filePath.replace(File.separatorChar, dot).replace('.java', '')
+    return filePath.replace('src/main/java/', '').replace('src/test/java/', '').replace('.java', '').replace(File.separatorChar, dot)
   }
 }
 

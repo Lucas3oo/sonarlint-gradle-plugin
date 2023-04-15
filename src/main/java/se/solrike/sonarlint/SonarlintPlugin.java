@@ -78,7 +78,6 @@ public class SonarlintPlugin implements Plugin<Project> {
   protected void configureTaskForJavaSourceSet(final SourceSet sourceSet, Sonarlint task) {
     // get all sources for the source set including any language and resources
     task.setSource(sourceSet.getAllSource());
-    task.setSrcDirs(sourceSet.getAllSource().getSrcDirs());
     task.setCompileClasspath(sourceSet.getCompileClasspath());
     // list of directories, all output directories (compiled classes, processed resources, etc.)
     task.setClassFiles(sourceSet.getOutput());
