@@ -28,7 +28,6 @@ public class GradleClientLogOutput implements ClientLogOutput {
   public void log(String formattedMessage, Level level) {
     if (!supress(formattedMessage)) {
       mLogger.log(sLevelMap.get(level), formattedMessage);
-      // mLogger.log(LogLevel.ERROR, formattedMessage);
     }
   }
 

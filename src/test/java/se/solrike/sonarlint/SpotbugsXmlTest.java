@@ -17,7 +17,7 @@ import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetail
 import se.solrike.sonarlint.impl.IssueEx;
 import se.solrike.sonarlint.impl.util.SpotbugsXmlBuilder;
 
-public class SpotbugsXmlTest {
+class SpotbugsXmlTest {
 
   @Test
   void generateCorrectSpotbugsXml() {

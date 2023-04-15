@@ -72,9 +72,4 @@ public interface SonarlintExtension {
   @Nested
   NamedDomainObjectContainer<SonarlintReport> getReports();
 
-  // not needed in Gradle 7.4 at least
-//  default void reports(Action<? super NamedDomainObjectContainer<SonarlintReport>> action) {
-//    action.execute(getReports());
-//  }
-
 }

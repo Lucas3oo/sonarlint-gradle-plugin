@@ -29,11 +29,13 @@ jobs:
           name: Sonarlint
           title: Sonarlint report
           path: build/reports/sonarlint/*.xml
-      - uses: actions/upload-artifact@v3
+      - name: Archive main artifacts
+        uses: actions/upload-artifact@v3
         with:
-          name: Package
+          name: Artifacts
           path: build/libs
-      - uses: actions/upload-artifact@v3
+      - name: Archive code quality reports
+        uses: actions/upload-artifact@v3
         with:
           name: Reports
           path: build/reports/*/*.xml

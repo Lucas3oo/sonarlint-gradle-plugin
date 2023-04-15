@@ -1,9 +1,7 @@
 package se.solrike.sonarlint;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.gradle.api.GradleException;
 import org.gradle.api.NamedDomainObjectContainer;
@@ -39,7 +37,6 @@ public abstract class Sonarlint extends SourceTask {
 
   private FileCollection mCompileClasspath;
   private FileCollection mClassFiles;
-  private Set<File> mSrcDirs;
 
   /**
    * List of rules to exclude from the analysis. E.g 'java:S1186'.
