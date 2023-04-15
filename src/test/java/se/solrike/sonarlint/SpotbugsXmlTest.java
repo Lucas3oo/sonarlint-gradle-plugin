@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetails;
 
 import se.solrike.sonarlint.impl.IssueEx;
-import se.solrike.sonarlint.impl.SpotbugsXmlBuilder;
+import se.solrike.sonarlint.impl.util.SpotbugsXmlBuilder;
 
 public class SpotbugsXmlTest {
 
@@ -47,7 +47,8 @@ public class SpotbugsXmlTest {
     File buildDir = new File("build");
     buildDir.mkdir();
     try (BufferedWriter writer = new BufferedWriter(new FileWriter("build/sonarlint.xml", Charset.forName("UTF-8")))) {
-      builder.generateIssues(writer, issues, "/tmp/");
+      builder.generateIssues(writer, issues,
+          "/home/runner/work/sonarlint-gradle-plugin/sonarlint-gradle-plugin/src/main/java");
     }
     catch (IOException e) {
       throw new RuntimeException(e);

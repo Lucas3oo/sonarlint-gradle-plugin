@@ -22,7 +22,7 @@ import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.commons.Version;
 
 import se.solrike.sonarlint.impl.GradleClientLogOutput;
-import se.solrike.sonarlint.impl.NodePluginUtil;
+import se.solrike.sonarlint.impl.util.NodePluginUtil;
 
 /**
  * Gradle task to list all configured Sonarlint rules.

@@ -34,7 +34,7 @@
   </Match>
   <Match>
     <!-- Theese classes are Groovy classed and Spotbugs reports issues that can't be found in the source code -->
-    <Package name="se.solrike.sonarlint.impl"/>
+    <Package name="se.solrike.sonarlint.impl.util"/>
 
   </Match>
 

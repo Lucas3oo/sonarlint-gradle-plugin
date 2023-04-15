@@ -26,6 +26,7 @@ import org.sonarsource.sonarlint.core.commons.Version;
 
 import se.solrike.sonarlint.Sonarlint;
 import se.solrike.sonarlint.SonarlintPlugin;
+import se.solrike.sonarlint.impl.util.NodePluginUtil;
 
 /**
  * @author Lucas Persson

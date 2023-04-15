@@ -1,6 +1,7 @@
-package se.solrike.sonarlint.impl
+package se.solrike.sonarlint.impl.util
 
 import groovy.xml.MarkupBuilder
+import se.solrike.sonarlint.impl.IssueEx
 
 class SpotbugsXmlBuilder {
 
@@ -36,7 +37,7 @@ class SpotbugsXmlBuilder {
           }
         }
         else {
-          Details ('')
+          Details (issues[0].getMessage())
         }
       }
     }

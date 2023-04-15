@@ -1,4 +1,4 @@
-package se.solrike.sonarlint.impl
+package se.solrike.sonarlint.impl.util
 
 import java.nio.file.Path
 import java.nio.file.Paths
