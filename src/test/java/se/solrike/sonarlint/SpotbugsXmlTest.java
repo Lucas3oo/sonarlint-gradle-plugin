@@ -1,32 +1,26 @@
 package se.solrike.sonarlint;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetails;
 
 import se.solrike.sonarlint.impl.IssueEx;
 import se.solrike.sonarlint.impl.util.SpotbugsXmlBuilder;
 
-public class SpotbugsXmlTest {
-
-  @BeforeEach
-  public void setup() {
-  }
+class SpotbugsXmlTest {
 
   @Test
-  public void generateCorrectSpotbugsXml() {
+  void generateCorrectSpotbugsXml() {
     SpotbugsXmlBuilder builder = new SpotbugsXmlBuilder();
 
     List<IssueEx> issues = new ArrayList<>();
@@ -45,26 +39,13 @@ public class SpotbugsXmlTest {
     issues.add(issue);
     issues.add(issue);
 
-    File buildDir = new File("build");
-    buildDir.mkdir();
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter("build/sonarlint.xml", Charset.forName("UTF-8")))) {
-      builder.generateIssues(writer, issues,
-          List.of("/home/runner/work/sonarlint-gradle-plugin/sonarlint-gradle-plugin/src/main/java"));
-    }
-    catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    StringWriter writer = new StringWriter();
 
-    System.out.println(buildDir.getAbsolutePath());
+    builder.generateBugCollection(writer, issues,
+        Set.of(new File("/home/runner/work/sonarlint-gradle-plugin/sonarlint-gradle-plugin/src/main/java")));
+
+    assertThat(writer.toString()).contains("java:S1220", "SECURITY", "Sonarlint.java");
 
   }
-
-//  @Test
-//  public void generateXml() {
-//    SportbugsXmlBuilder builder = new SportbugsXmlBuilder();
-//
-//    System.out.println(builder.generateXml());
-//
-//  }
 
 }

@@ -1,7 +1,9 @@
 package se.solrike.sonarlint;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.gradle.api.GradleException;
 import org.gradle.api.NamedDomainObjectContainer;
@@ -37,6 +39,7 @@ public abstract class Sonarlint extends SourceTask {
 
   private FileCollection mCompileClasspath;
   private FileCollection mClassFiles;
+  private Set<File> mSrcDirs;
 
   /**
    * List of rules to exclude from the analysis. E.g 'java:S1186'.
@@ -143,6 +146,20 @@ public abstract class Sonarlint extends SourceTask {
     return super.getSource();
   }
 
+  /**
+   * Map of reports settings.
+   *
+   * @return the reports
+   */
+  @Internal
+  public Set<File> getSrcDirs() {
+    return mSrcDirs;
+  }
+
+  public void setSrcDirs(Set<File> srcDirs) {
+    mSrcDirs = srcDirs;
+  }
+
   @TaskAction
   public void run() {
     Logger logger = getLogger();
@@ -184,7 +201,8 @@ public abstract class Sonarlint extends SourceTask {
       getLogger().debug("Exclude rules: " + getExcludeRules().getOrNull());
       getLogger().debug("Include rules: " + getIncludeRules().getOrNull());
       getLogger().debug("RuleParams: " + getRuleParameters().getOrNull());
-      getLogger().debug("Source: {}", getSource().getAsFileTree().getFiles());
+      getLogger().debug("Source: {}", getSource().getAsPath());
+      getLogger().debug("Source files: {}", getSource().getAsFileTree().getFiles());
       getLogger().debug("IsTestSurce: {}", getIsTestSource().getOrElse(Boolean.FALSE));
       Configuration pluginConfiguration = getProject().getConfigurations()
           .getByName(SonarlintPlugin.PLUGINS_CONFIG_NAME);

@@ -66,13 +66,17 @@ class IntegrationTest {
     createJavaFile(Files.createFile(mProjectDir.resolve("src/main/java/Hello.java")));
 
     // when sonarlintMain is run
-    BuildResult buildResult = runGradle(false, List.of("sonarlintMain"));
+    BuildResult buildResult = runGradle(false, List.of("--debug", "sonarlintMain"));
 
     // then the gradle build shall fail
     assertThat(buildResult.task(":sonarlintMain").getOutcome()).isEqualTo(TaskOutcome.FAILED);
     // and the 3 sonarlint rules violated are
     assertThat(buildResult.getOutput()).contains("3 SonarLint issue(s) were found.");
     assertThat(buildResult.getOutput()).contains("java:S1186", "java:S1118", "java:S1220");
+    // since xml report is enabled the plugin shall print the location of the report
+    assertThat(buildResult.getOutput()).contains("Report generated at:");
+
+    assertThat(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.xml").toFile()).exists();
 
     System.err.println(buildResult.getOutput());
 

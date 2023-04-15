@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.text.StringEscapeUtils;
@@ -25,6 +26,7 @@ import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetail
 
 import se.solrike.sonarlint.Sonarlint;
 import se.solrike.sonarlint.SonarlintReport;
+import se.solrike.sonarlint.impl.util.SpotbugsXmlBuilder;
 
 /**
  * @author Lucas Persson
@@ -56,7 +58,7 @@ public class ReportAction {
         mProject.mkdir(parentDir);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAsFile(), Charset.forName("UTF-8")))) {
-          mReportRenders.get(name).render(writer, mIssues);
+          mReportRenders.get(name).render(writer, mIssues, mTask.getSrcDirs());
         }
         catch (IOException e) {
           throw new RuntimeException(e);
@@ -66,7 +68,7 @@ public class ReportAction {
     });
   }
 
-  protected void writeTextReport(Writer writer, Iterable<IssueEx> issues) throws IOException {
+  protected void writeTextReport(Writer writer, Iterable<IssueEx> issues, Set<File> srcDirs) throws IOException {
     for (IssueEx issue : issues) {
       writer.write(String.format("%n%s %s %s %s at: %s:%d:%d%n%n", getIssueTypeIcon(issue.getType()),
           getIssueSeverityIcon(issue.getSeverity()), issue.getRuleKey(), issue.getMessage(),
@@ -74,7 +76,7 @@ public class ReportAction {
     }
   }
 
-  protected void writeHtmlReport(Writer writer, Collection<IssueEx> issues) throws IOException {
+  protected void writeHtmlReport(Writer writer, Collection<IssueEx> issues, Set<File> srcDirs) throws IOException {
     writer.write(getHtmlHeader());
 
     // summary
@@ -132,8 +134,8 @@ public class ReportAction {
     // @formatter:on
   }
 
-  protected void writeXmlReport(Writer writer, Collection<IssueEx> issues) throws IOException {
-
+  protected void writeXmlReport(Writer writer, Collection<IssueEx> issues, Set<File> srcDirs) {
+    new SpotbugsXmlBuilder().generateBugCollection(writer, issues, srcDirs);
   }
 
   /**
@@ -187,6 +189,6 @@ public class ReportAction {
 
   @FunctionalInterface
   public interface Render {
-    void render(Writer t, List<IssueEx> u) throws IOException;
+    void render(Writer writer, List<IssueEx> issues, Set<File> srcDirs) throws IOException;
   }
 }
