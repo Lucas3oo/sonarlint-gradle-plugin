@@ -10,12 +10,12 @@ class SpotbugsXmlBuilder {
     super()
   }
 
-  public Writer generateIssues(Writer writer, Collection<IssueEx> issues) {
+  public Writer generateIssues(Writer writer, Collection<IssueEx> issues, String srcDir) {
     MarkupBuilder builder = new MarkupBuilder(writer)
     builder.mkp.xmlDeclaration([version:'1.0',encoding:'UTF-8'])
     builder.BugCollection {
       Project {
-        SrcDir ()
+        SrcDir (srcDir)
       }
       issues.each { issue ->
         builder.BugInstance (type: issue.ruleKey, priority: 1, rank: getIssueSeverity(issue.severity), category: issue.type) {

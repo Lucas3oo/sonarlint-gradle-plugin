@@ -48,7 +48,7 @@ public class SpotbugsXmlTest {
     File buildDir = new File("build");
     buildDir.mkdir();
     try (BufferedWriter writer = new BufferedWriter(new FileWriter("build/sonarlint.xml", Charset.forName("UTF-8")))) {
-      builder.generateIssues(writer, issues);
+      builder.generateIssues(writer, issues, "/tmp/");
     }
     catch (IOException e) {
       throw new RuntimeException(e);
