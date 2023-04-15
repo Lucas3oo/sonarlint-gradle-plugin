@@ -43,12 +43,13 @@ public class SpotbugsXmlTest {
     when(s.getHtmlDescription()).thenReturn("Some long <b>html-ish</b> text");
     when(issue.getRulesDetails()).thenReturn(Optional.of(s));
     issues.add(issue);
+    issues.add(issue);
 
     File buildDir = new File("build");
     buildDir.mkdir();
     try (BufferedWriter writer = new BufferedWriter(new FileWriter("build/sonarlint.xml", Charset.forName("UTF-8")))) {
       builder.generateIssues(writer, issues,
-          "/home/runner/work/sonarlint-gradle-plugin/sonarlint-gradle-plugin/src/main/java");
+          List.of("/home/runner/work/sonarlint-gradle-plugin/sonarlint-gradle-plugin/src/main/java"));
     }
     catch (IOException e) {
       throw new RuntimeException(e);

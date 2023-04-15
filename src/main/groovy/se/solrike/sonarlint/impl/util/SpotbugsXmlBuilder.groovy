@@ -1,6 +1,9 @@
 package se.solrike.sonarlint.impl.util
 
+import java.util.stream.Collectors
+
 import groovy.xml.MarkupBuilder
+import se.solrike.sonarlint.impl.BugPattern
 import se.solrike.sonarlint.impl.IssueEx
 
 class SpotbugsXmlBuilder {
@@ -9,35 +12,31 @@ class SpotbugsXmlBuilder {
     super()
   }
 
-  public Writer generateIssues(Writer writer, Collection<IssueEx> issues, String srcDir) {
+  public Writer generateIssues(Writer writer, Collection<IssueEx> issues, Collection<String> srcDirs) {
+    Collection<BugPattern> bugPatters = getBugPatters(issues);
     MarkupBuilder builder = new MarkupBuilder(writer)
     builder.mkp.xmlDeclaration([version:'1.0',encoding:'UTF-8'])
     builder.BugCollection {
       Project {
-        SrcDir (srcDir)
+        srcDirs.each { srcDir ->
+          SrcDir (srcDir)
+        }
       }
       issues.each { issue ->
-        builder.BugInstance (type: issue.ruleKey, priority: 1, rank: getIssueSeverity(issue.severity), category: issue.type) {
-          ShortMessage (issue.getMessage())
-          if (issue.rulesDetails.isPresent()) {
-            LongMessage {
-              mkp.yieldUnescaped('<![CDATA[' + issue.rulesDetails.get().getHtmlDescription() + ']]>')
-            }
-          }
-          SourceLine (classname: '', start: issue.getStartLine(), end: issue.getEndLine(),
-          sourcefile: issue.getFileName(), sourcepath: issue.getInputFileRelativePath())
+        builder.BugInstance (type: issue.ruleKey, priority: 1, rank: getIssueSeverityToRank(issue.severity), category: issue.type, instanceHash: issue.id) {
+          ShortMessage (issue.message)
+          LongMessage (issue.message)
+          SourceLine (classname: '', start: issue.startLine, end: issue.endLine,
+          sourcefile: issue.fileName, sourcepath: issue.inputFileRelativePath)
         }
       }
 
-      BugPattern (type: issues[0].ruleKey, category: issues[0].type) {
-        ShortMessage (issues[0].getMessage())
-        if (issues[0].rulesDetails.isPresent()) {
+      bugPatters.each { bugPattern ->
+        BugPattern (type: bugPattern.type, category: bugPattern.category) {
+          ShortMessage (bugPattern.shortDescription)
           Details {
-            mkp.yieldUnescaped('<![CDATA[' + issues[0].rulesDetails.get().getHtmlDescription() + ']]>')
+            mkp.yieldUnescaped('<![CDATA[' + bugPattern.details + ']]>')
           }
-        }
-        else {
-          Details (issues[0].getMessage())
         }
       }
     }
@@ -45,35 +44,23 @@ class SpotbugsXmlBuilder {
     return writer
   }
 
-  private static final Map<String, Integer> sIssueSeverity = ['BLOCKER':1, 'CRITICAL':3, 'MAJOR':5, 'MINOR':7, 'INFO':20]
+  private static final Map<String, Integer> sIssueSeverityToRank = ['BLOCKER':1, 'CRITICAL':3, 'MAJOR':5, 'MINOR':7, 'INFO':20]
 
-  public Integer getIssueSeverity(String issueSeverity) {
-    return sIssueSeverity.get(issueSeverity);
+  private Integer getIssueSeverityToRank(String issueSeverity) {
+    return sIssueSeverityToRank.get(issueSeverity);
+  }
+
+  private Collection<BugPattern> getBugPatters(Collection<IssueEx> issues) {
+    return issues.stream().map({ issue ->
+      new BugPattern(issue.ruleKey, issue.type, issue.message,
+          issue.rulesDetails.map({rd -> rd.htmlDescription}).orElse(issue.message))
+    }).collect(Collectors.toSet())
   }
 }
 
 
-
+// Spotbugs:
 // Type - This is just the name of the BugPattern which was found.
 // Rank - indicates the severity 20-1 (1 of highest severity)
 // Priority - It indicates the confidence that the found bug is actually a bug.  It varies from 1 (highest confidence) to 5 (lowest confidence, to be disregarded)
 // Category - The category is for grouping BugPatterns, e.g.  CORRECTNESS
-
-/*
- <BugInstance type="FCCD_FIND_CLASS_CIRCULAR_DEPENDENCY" priority="2" rank="9" abbrev="FCCD" category="CORRECTNESS" instanceHash="eb77c6533bddc4608aee82dd6d0b920d" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
- <ShortMessage>Class has a circular dependency with other classes</ShortMessage>
- <LongMessage>Class se.solrike.sonarlint.Sonarlint has a circular dependency with other classes</LongMessage>
- <SourceLine classname="se.solrike.sonarlint.Sonarlint" start="36" end="194" sourcefile="Sonarlint.java" sourcepath="se/solrike/sonarlint/Sonarlint.java" relSourcepath="java/se/solrike/sonarlint/Sonarlint.java" synthetic="true">
- <Message>At Sonarlint.java:[lines 36-194]</Message>
- </SourceLine>
- <BugPattern type="FCCD_FIND_CLASS_CIRCULAR_DEPENDENCY" abbrev="FCCD" category="CORRECTNESS">
- <ShortDescription>Class has a circular dependency with other classes</ShortDescription>
- <Details><![CDATA[
- <p>
- This class has a circular dependency with other classes. This makes building these classes
- difficult, as each is dependent on the other to build correctly. Consider using interfaces
- to break the hard dependency. The dependency chain can be seen in the GUI version of FindBugs.
- </p>
- ]]></Details>
- </BugPattern>
- */
