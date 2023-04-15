@@ -5,6 +5,7 @@ plugins {
   id 'com.gradle.plugin-publish' version '1.0.0'
   id 'com.github.spotbugs' version '5.0.13'
   id 'se.solrike.sonarlint' version '1.0.0-beta.9'
+  //id 'codenarc'
 }
 
 repositories {
