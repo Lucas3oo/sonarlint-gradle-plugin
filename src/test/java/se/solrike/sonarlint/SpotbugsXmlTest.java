@@ -34,15 +34,14 @@ public class SpotbugsXmlTest {
     when(issue.getRuleKey()).thenReturn("java:S1220");
     when(issue.getSeverity()).thenReturn("CRITICAL");
     when(issue.getType()).thenReturn("VULNERABILITY");
-    when(issue.getMessage()).thenReturn("Move this file to a named package.");
+    when(issue.getMessage()).thenReturn("Move this file to a named <i>package</i>.");
     when(issue.getStartLine()).thenReturn(31);
     when(issue.getEndLine()).thenReturn(83);
     when(issue.getFileName()).thenReturn("Sonarlint.java");
     when(issue.getInputFileRelativePath()).thenReturn("se/solrike/sonarlint/Sonarlint.java");
     StandaloneRuleDetails s = mock(StandaloneRuleDetails.class);
     when(s.getHtmlDescription()).thenReturn("Some long <b>html-ish</b> text");
-    issue.setRulesDetails(Optional.of(s));
-
+    when(issue.getRulesDetails()).thenReturn(Optional.of(s));
     issues.add(issue);
 
     File buildDir = new File("build");

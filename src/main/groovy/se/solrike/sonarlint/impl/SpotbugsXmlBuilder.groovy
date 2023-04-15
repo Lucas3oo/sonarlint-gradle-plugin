@@ -1,7 +1,5 @@
 package se.solrike.sonarlint.impl
 
-import org.apache.commons.text.StringEscapeUtils
-
 import groovy.xml.MarkupBuilder
 
 class SpotbugsXmlBuilder {
@@ -19,12 +17,26 @@ class SpotbugsXmlBuilder {
       }
       issues.each { issue ->
         builder.BugInstance (type: issue.ruleKey, priority: 1, rank: getIssueSeverity(issue.severity), category: issue.type) {
-          ShortMessage (StringEscapeUtils.escapeHtml4(issue.getMessage()))
+          ShortMessage (issue.getMessage())
           if (issue.rulesDetails.isPresent()) {
-            LongMessage ('<![CDATA[' + issue.rulesDetails.get().getHtmlDescription() + ']]>')
+            LongMessage {
+              mkp.yieldUnescaped('<![CDATA[' + issue.rulesDetails.get().getHtmlDescription() + ']]>')
+            }
           }
           SourceLine (classname: '', start: issue.getStartLine(), end: issue.getEndLine(),
           sourcefile: issue.getFileName(), sourcepath: issue.getInputFileRelativePath())
+        }
+      }
+
+      BugPattern (type: issues[0].ruleKey, category: issues[0].type) {
+        ShortMessage (issues[0].getMessage())
+        if (issues[0].rulesDetails.isPresent()) {
+          Details {
+            mkp.yieldUnescaped('<![CDATA[' + issues[0].rulesDetails.get().getHtmlDescription() + ']]>')
+          }
+        }
+        else {
+          Details ('')
         }
       }
     }
@@ -53,4 +65,14 @@ class SpotbugsXmlBuilder {
  <SourceLine classname="se.solrike.sonarlint.Sonarlint" start="36" end="194" sourcefile="Sonarlint.java" sourcepath="se/solrike/sonarlint/Sonarlint.java" relSourcepath="java/se/solrike/sonarlint/Sonarlint.java" synthetic="true">
  <Message>At Sonarlint.java:[lines 36-194]</Message>
  </SourceLine>
+ <BugPattern type="FCCD_FIND_CLASS_CIRCULAR_DEPENDENCY" abbrev="FCCD" category="CORRECTNESS">
+ <ShortDescription>Class has a circular dependency with other classes</ShortDescription>
+ <Details><![CDATA[
+ <p>
+ This class has a circular dependency with other classes. This makes building these classes
+ difficult, as each is dependent on the other to build correctly. Consider using interfaces
+ to break the hard dependency. The dependency chain can be seen in the GUI version of FindBugs.
+ </p>
+ ]]></Details>
+ </BugPattern>
  */
