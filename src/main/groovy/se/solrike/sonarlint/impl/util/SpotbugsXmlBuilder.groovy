@@ -26,8 +26,11 @@ class SpotbugsXmlBuilder {
         builder.BugInstance (type: issue.ruleKey, priority: 1, rank: getIssueSeverityToRank(issue.severity), category: issue.type, instanceHash: issue.id) {
           ShortMessage (issue.message)
           LongMessage (issue.message)
-          SourceLine (classname: '', start: issue.startLine, end: issue.endLine,
-          sourcefile: issue.fileName, sourcepath: issue.inputFileRelativePath)
+          Class (classname: getClassname(issue.inputFileRelativePath), primary: 'true') {
+            SourceLine (classname: getClassname(issue.inputFileRelativePath), start: issue.startLine, end: issue.endLine, sourcefile: issue.fileName, sourcepath: issue.inputFileRelativePath)
+            Message ('In class ' + getClassname(issue.inputFileRelativePath))
+          }
+          SourceLine (classname: getClassname(issue.inputFileRelativePath), start: issue.startLine, end: issue.endLine, sourcefile: issue.fileName, sourcepath: issue.inputFileRelativePath)
         }
       }
 
@@ -55,6 +58,11 @@ class SpotbugsXmlBuilder {
       new BugPattern(issue.ruleKey, issue.type, issue.message,
           issue.rulesDetails.map({rd -> rd.htmlDescription}).orElse(issue.message))
     }).collect(Collectors.toSet())
+  }
+
+  private String getClassname(String filePath) {
+    char dot = '.'
+    return filePath.replace(File.separatorChar, dot).replace('.java', '')
   }
 }
 
