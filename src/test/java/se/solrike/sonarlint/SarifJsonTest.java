@@ -44,7 +44,7 @@ class SarifJsonTest {
         new File("/home/runner/work/sonarlint-gradle-plugin/sonarlint-gradle-plugin"));
 
 
-    assertThat(writer.toString()).contains("java:S1220", "error", "Sonarlint.java");
+    assertThat(writer.toString()).contains("java:S1220", "error", "Sonarlint.java", "Some long **html-ish** text");
 
   }
 

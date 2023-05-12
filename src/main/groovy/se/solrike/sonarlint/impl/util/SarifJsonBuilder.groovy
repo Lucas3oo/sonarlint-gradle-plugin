@@ -1,9 +1,7 @@
 package se.solrike.sonarlint.impl.util
 
-import java.util.stream.Collectors
-
 import groovy.json.JsonBuilder
-import se.solrike.sonarlint.impl.BugPattern
+import io.github.furstenheim.CopyDown
 import se.solrike.sonarlint.impl.IssueEx
 
 /**
@@ -23,8 +21,10 @@ class SarifJsonBuilder {
 
   public Writer generateBugCollection(Writer writer, Collection<IssueEx> issues, File projectDir) {
 
-    // extract all rules from the issues
-    Collection<IssueEx> ruleDescs = issues.toUnique {it.ruleKey}
+    CopyDown markDownConverter = new CopyDown();
+
+    // extract all unique rules from the issues
+    Collection<IssueEx> ruleDescs = issues.toUnique { it.ruleKey }
 
     JsonBuilder builder = new groovy.json.JsonBuilder()
 
@@ -35,7 +35,7 @@ class SarifJsonBuilder {
         {
           tool {
             driver {
-              name 'sonarlint'
+              name 'Sonarlint'
               informationUri 'https://github.com/Lucas3oo/sonarlint-gradle-plugin'
               version '1.0.0'
               rules ruleDescs.collect { rule ->
@@ -44,7 +44,15 @@ class SarifJsonBuilder {
                   helpUri 'https://rules.sonarsource.com'
                   defaultConfiguration (level:  sIssueSeverityToLevel[rule.severity])
                   shortDescription ( text: rule.message )
-                  fullDescription ( text: rule.rulesDetails.map({rd -> rd.htmlDescription}).orElse(rule.message) )
+                  fullDescription {
+                    text rule.message
+                    markdown markDownConverter.convert(rule.rulesDetails.map({rd -> rd.htmlDescription}).orElse(rule.message))
+                  }
+                  properties  {
+                    tags ([
+                      rule.type
+                    ])
+                  }
                 })
               }
             }
@@ -85,10 +93,11 @@ class SarifJsonBuilder {
       ])
     }
 
+    //println(builder.toPrettyString())
+
     builder.writeTo(writer)
     return writer
   }
-
 }
 
 // SARIF

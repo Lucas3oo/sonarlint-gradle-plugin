@@ -164,3 +164,9 @@ pluginBundle {
 wrapper {
   gradleVersion = '7.5.1'
 }
+
+
+task sonarlintListRules(type: se.solrike.sonarlint.SonarlintListRules) {
+  description = 'List sonarlint rules'
+  group = 'verification'
+}

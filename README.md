@@ -36,7 +36,7 @@ Apply the plugin to your project.
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.10'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.11'
 }
 ```
 
@@ -479,7 +479,51 @@ jobs:
 ```
 
 ### Github actions using SARIF format
+If you are using Github actions you can use the generic SARIF plugin to let Github display the issues in the "Security" tab.
 
+```yaml
+name: build
+run-name: ${{ github.actor }} is building the gradle project
+on: [push]
+jobs:
+  build-main-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version-file: ./.java-version
+          distribution: temurin
+          cache: gradle
+      - run: ./gradlew build --no-daemon
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            build/test-results/test/*.xml
+      - name: Sonarlint
+        uses: github/codeql-action/upload-sarif@v2
+        # The issues will be visible in the security tab in github
+        with:
+          # Path to SARIF file relative to the root of the repository or path to a folder with sarif files
+          # wildcard doesnt work!
+          sarif_file: build/reports/sonarlint/sonarlintMain.sarif
+          # Optional category for the results
+          # Used to differentiate multiple results for one commit
+          category: Sonarlint
+      - name: Spotbugs
+        uses: github/codeql-action/upload-sarif@v2
+        # The issues will be visible in the security tab in github
+        with:
+          sarif_file: build/reports/spotbugs/main.sarif
+          category: Spotbugs
+      - name: Archive main artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Artifacts
+          path: build/libs
+```
 
 
 
@@ -490,6 +534,9 @@ jobs:
 
 
 ## Release notes
+### 1.0.0-beta.11
+Fix formating of the description. Sonarlint only offers HTML based description and it renders nice the Github action but not so nice in the Security tab.
+
 ### 1.0.0-beta.10
 Adding support for reports in Static Analysis Results Interchange Format (SARIF) format by OASIS. See https://sarifweb.azurewebsites.net.
 This means that a standard format is used for reporting static code analysis findings. Github actions, Azure DevOps and AWS CodeCatalyst are supporting this format.
@@ -578,4 +625,3 @@ SARIF
                   "uriBaseId": "%SRCROOT%"
                 },
 
-The detailed rule info needs to be in markdown instead of html
