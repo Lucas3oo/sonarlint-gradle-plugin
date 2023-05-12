@@ -44,7 +44,8 @@ class SarifJsonBuilder {
                   helpUri 'https://rules.sonarsource.com'
                   defaultConfiguration (level:  sIssueSeverityToLevel[rule.severity])
                   shortDescription ( text: rule.message )
-                  fullDescription {
+                  fullDescription ( text: rule.message )
+                  help {
                     text markDownConverter.convert(rule.rulesDetails.map({rd -> rd.htmlDescription}).orElse(rule.message))
                     markdown markDownConverter.convert(rule.rulesDetails.map({rd -> rd.htmlDescription}).orElse(rule.message))
                   }
