@@ -20,7 +20,8 @@ Actions:
           IncludePaths:
             - build/reports/sonarlint
       AutoDiscoverReports:
-        Enabled: false
+        Enabled: true
+        ReportNamePrefix: rpt
     Compute:
       Type: EC2
       Fleet: Linux.x86-64.Large
