@@ -492,7 +492,7 @@ jobs:
 ## Release notes
 ### 1.0.0-beta.10
 Adding support for reports in Static Analysis Results Interchange Format (SARIF) format by OASIS. See https://sarifweb.azurewebsites.net.
-This means that a standard for mat is used for reporting static code analysis findings. Github actions, Azure DevOps and AWS CodeCatalyst are supporting this format.
+This means that a standard format is used for reporting static code analysis findings. Github actions, Azure DevOps and AWS CodeCatalyst are supporting this format.
 
 ### 1.0.0-beta.9
 Adding option to generate Spotbugs/Findbugs XML for the issues so for instance Jenkins' code quality reports can be used.

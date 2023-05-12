@@ -8,8 +8,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
-          #java-version-file: ./.java-version
-          java-version: 17
+          java-version-file: ./.java-version
           distribution: temurin
           cache: gradle
       - run: ./gradlew build --no-daemon
@@ -30,6 +29,14 @@ jobs:
           name: Sonarlint
           title: Sonarlint report
           path: build/reports/sonarlint/*.xml
+      - name: Upload Sonarlint SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: build/reports/sonarlint/*.sarif
+          # Optional category for the results
+          # Used to differentiate multiple results for one commit
+          category: Sonarlint
       - name: Archive main artifacts
         uses: actions/upload-artifact@v3
         with:
