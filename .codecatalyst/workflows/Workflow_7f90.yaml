@@ -10,15 +10,6 @@ Actions:
   Build_50:
     Identifier: aws/build@v1.0.0
     Outputs:
-      Reports:
-        TestReports:
-          Format: JUNITXML
-          IncludePaths:
-            - build/test-results/test
-        Sonarlint:
-          Format: SARIFSCA
-          IncludePaths:
-            - build/reports/sonarlint
       AutoDiscoverReports:
         Enabled: true
         ReportNamePrefix: rpt
