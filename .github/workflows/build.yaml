@@ -24,7 +24,7 @@ jobs:
         with:
           # Path to SARIF file relative to the root of the repository or path to a folder with sarif files
           # wildcard doesnt work!
-          sarif_file: build/reports/spotbugs/main.sarif
+          sarif_file: build/reports/spotbugs
           # Optional category for the results
           # Used to differentiate multiple results for one commit
           category: Spotbugs
@@ -34,7 +34,7 @@ jobs:
         with:
           # Path to SARIF file relative to the root of the repository or path to a folder with sarif files
           # wildcard doesnt work!
-          sarif_file: build/reports/sonarlint/sonarlintMain.sarif
+          sarif_file: build/reports/sonarlint
           # Optional category for the results
           # Used to differentiate multiple results for one commit
           category: Sonarlint
@@ -48,5 +48,4 @@ jobs:
         with:
           name: Reports
           path: |
-            build/reports/*/*.xml
             build/reports/*/*.sarif

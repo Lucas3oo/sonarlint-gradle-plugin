@@ -45,7 +45,7 @@ class SarifJsonBuilder {
                   defaultConfiguration (level:  sIssueSeverityToLevel[rule.severity])
                   shortDescription ( text: rule.message )
                   fullDescription {
-                    text rule.message
+                    text markDownConverter.convert(rule.rulesDetails.map({rd -> rd.htmlDescription}).orElse(rule.message))
                     markdown markDownConverter.convert(rule.rulesDetails.map({rd -> rd.htmlDescription}).orElse(rule.message))
                   }
                   properties  {

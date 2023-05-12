@@ -106,14 +106,13 @@ spotbugsTest {
 
 sonarlintMain {
   reports {
-    xml.enabled = true
     sarif.enabled = true
   }
   ignoreFailures = true
 }
 sonarlintTest {
   reports {
-    xml.enabled = true
+    sarif.enabled = true
   }
   ignoreFailures = true
 }

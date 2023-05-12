@@ -36,7 +36,7 @@ Apply the plugin to your project.
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.11'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.12'
 }
 ```
 
@@ -534,6 +534,9 @@ jobs:
 
 
 ## Release notes
+### 1.0.0-beta.12
+Fix formating of the description. Sonarlint only offers HTML based description and it renders nice the Github action but not so nice in the Security tab.
+
 ### 1.0.0-beta.11
 Fix formating of the description. Sonarlint only offers HTML based description and it renders nice the Github action but not so nice in the Security tab.
 
