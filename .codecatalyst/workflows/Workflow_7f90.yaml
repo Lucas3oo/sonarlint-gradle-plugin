@@ -29,3 +29,11 @@ Actions:
       # Required - Steps are sequential instructions that run shell commands
       Steps:
         - Run: ./gradlew build
+
+Reports:
+  TestReports:
+    Format: JUNITXML
+    IncludePaths:
+      - "**/*Test.xml"
+
+# No support for spotbugs! or OWASP dependecy check?      
