@@ -15,10 +15,15 @@ Actions:
           Format: JUNITXML
           IncludePaths:
             - build/test-reports/test
+        Sonarlint:
+          Format: SARIFSCA
+          IncludePaths:
+            - build/reports/sonarlint
       AutoDiscoverReports:
         Enabled: false
     Compute:
       Type: EC2
+      Fleet: Linux.x86-64.Large
     Inputs:
       Sources:
         - WorkflowSource
