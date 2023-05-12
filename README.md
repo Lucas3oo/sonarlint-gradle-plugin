@@ -548,15 +548,15 @@ SARIF
  - partialFingerprints on the result
  A set of strings used to track the unique identity of the result. Code scanning uses partialFingerprints to accurately identify which results are the same across commits and branches.
  Note: Code scanning only uses the primaryLocationLineHash.
- 
+
            "partialFingerprints": {
             "primaryLocationLineHash": "39fa2ee980eb94b0:1"
           }
- 
+
  - help text.text on the rule  Documentation for the rule using text format. Code scanning displays this help documentation next to the associated results.
- 
+
  add properties to rule
- 
+
                "properties" : {
                  "id" : "java/unsafe-deserialization",
                  "kind" : "path-problem",
@@ -564,16 +564,18 @@ SARIF
                  "problem.severity" : "error",
                  "security-severity" : "9.8",
                }
- 
+
               "properties": {
                 "tags": [
                   "reliability",
                   "correctness",
                   "language-features"
                 ],
-                
-                
+
+
                 "artifactLocation": {
                   "uri": "src/LiveQueryClient.js",
                   "uriBaseId": "%SRCROOT%"
-                },                
+                },
+
+The detailed rule info needs to be in markdown instead of html

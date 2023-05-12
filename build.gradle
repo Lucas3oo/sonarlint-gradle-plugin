@@ -13,6 +13,7 @@ repositories {
 }
 // latest core ? 8.11.0.56591
 dependencies {
+  implementation('io.github.furstenheim:copy_down:1.1')
   implementation('org.apache.commons:commons-text:1.9')
   implementation('org.sonarsource.sonarlint.core:sonarlint-core:8.0.2.42487')
 
@@ -95,8 +96,8 @@ spotbugsMain {
     spotbugs 'com.github.spotbugs:spotbugs:4.7.1'
   }
   reports {
-    xml.enabled = true
     html.enabled = true
+    sarif.enabled = true
   }
 }
 spotbugsTest {

@@ -18,21 +18,22 @@ jobs:
         with:
           files: |
             build/test-results/test/*.xml
-      - name: Publish Spotbugs Results
-        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
-        with:
-          name: Spotbugs
-          path: build/reports/spotbugs/*.xml
-      - name: Publish Sonarlint Results
-        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
-        with:
-          name: Sonarlint
-          title: Sonarlint report
-          path: build/reports/sonarlint/*.xml
-      - name: Upload Sonarlint SARIF file
+      - name: Spotbugs
         uses: github/codeql-action/upload-sarif@v2
+        # The issues will be visible in the security tab in github
         with:
-          # Path to SARIF file relative to the root of the repository
+          # Path to SARIF file relative to the root of the repository or path to a folder with sarif files
+          # wildcard doesnt work!
+          sarif_file: build/reports/spotbugs/main.sarif
+          # Optional category for the results
+          # Used to differentiate multiple results for one commit
+          category: Spotbugs
+      - name: Sonarlint
+        uses: github/codeql-action/upload-sarif@v2
+        # The issues will be visible in the security tab in github
+        with:
+          # Path to SARIF file relative to the root of the repository or path to a folder with sarif files
+          # wildcard doesnt work!
           sarif_file: build/reports/sonarlint/sonarlintMain.sarif
           # Optional category for the results
           # Used to differentiate multiple results for one commit
@@ -46,4 +47,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Reports
-          path: build/reports/*/*.xml
+          path: |
+            build/reports/*/*.xml
+            build/reports/*/*.sarif
