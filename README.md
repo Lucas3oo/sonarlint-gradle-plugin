@@ -20,7 +20,8 @@ But possible to configure it for other languages that sonarlint has plugins for 
 1. [sonarlint rules](#sonarlint-rules)
     1. [Suppress rules in Java](#suppress-rules-in-java)
 1. [sonarlint CI reports](#sonarlint-ci-reports)
-    1. [Github actions](#github-actions)
+    1. [Github actions using Spotbugs format](#github-actions-using-spotbugs-format)
+    1. [Github actions using SARIF format](#github-actions-using-sarif-format)
 1. [sonarlint plugins](#sonarlint-plugins)
 1. [Release notes](#release-notes)
 
@@ -35,7 +36,7 @@ Apply the plugin to your project.
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.9'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.10'
 }
 ```
 
@@ -421,19 +422,21 @@ If you need to just suppress an issue in a file you can use `@SuppressWarnings("
 
 
 ## sonarlint CI reports
-The sonarlint gradle plugin can generate Spotbugs/Findbugs compatible XML reports
+The sonarlint gradle plugin can generate Spotbugs/Findbugs compatible XML files and also SARIF compatible JSON files.
 
-Enable it as follows:
+Enable as follows:
 
 ```groovy
 sonarlintMain {
   reports {
     xml.enabled = true // default false
+    sarif.enabled = true // default false
   }
 }
 ```
 
-### Github actions
+
+### Github actions using Spotbugs format
 If you are using Github actions you can use the same action for sonarlint as you are using for Spotbugs.
 (Remember to customize name and title for the second definition of the spotbugs action.)
 
@@ -475,6 +478,9 @@ jobs:
           path: build/libs
 ```
 
+### Github actions using SARIF format
+
+
 
 
 ## sonarlint plugins
@@ -484,6 +490,10 @@ jobs:
 
 
 ## Release notes
+### 1.0.0-beta.10
+Adding support for reports in Static Analysis Results Interchange Format (SARIF) format by OASIS. See https://sarifweb.azurewebsites.net.
+This means that a standard for mat is used for reporting static code analysis findings. Github actions, Azure DevOps and AWS CodeCatalyst are supporting this format.
+
 ### 1.0.0-beta.9
 Adding option to generate Spotbugs/Findbugs XML for the issues so for instance Jenkins' code quality reports can be used.
 Also Github action from https://github.com/jwgmeligmeyling/spotbugs-github-action can be used.

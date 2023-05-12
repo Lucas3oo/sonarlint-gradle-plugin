@@ -27,6 +27,7 @@ import org.gradle.api.provider.Property;
  *             outputLocation = layout.buildDirectory.file('my_sonarlint.txt')
  *         }
  *         xml.enabled = true // default false
+ *         sarif.enabled = true // default false
  *     }
  * }
  * </pre>

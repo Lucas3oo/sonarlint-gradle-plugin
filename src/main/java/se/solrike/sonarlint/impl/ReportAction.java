@@ -26,6 +26,7 @@ import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetail
 
 import se.solrike.sonarlint.Sonarlint;
 import se.solrike.sonarlint.SonarlintReport;
+import se.solrike.sonarlint.impl.util.SarifJsonBuilder;
 import se.solrike.sonarlint.impl.util.SpotbugsXmlBuilder;
 
 /**
@@ -42,8 +43,8 @@ public class ReportAction {
     mProject = project;
     mTask = task;
     mIssues = issues;
-    mReportRenders = ofEntries(entry("text", this::writeTextReport), entry("html", this::writeHtmlReport),
-        entry("xml", this::writeXmlReport));
+    mReportRenders = ofEntries(entry("text", this::renderTextReport), entry("html", this::renderHtmlReport),
+        entry("xml", this::renderXmlReport),  entry("sarif", this::renderSarifReport));
   }
 
   @SuppressWarnings("all")
@@ -68,7 +69,7 @@ public class ReportAction {
     });
   }
 
-  protected void writeTextReport(Writer writer, Iterable<IssueEx> issues) throws IOException {
+  protected void renderTextReport(Writer writer, Iterable<IssueEx> issues) throws IOException {
     for (IssueEx issue : issues) {
       writer.write(String.format("%n%s %s %s %s at: %s:%d:%d%n%n", getIssueTypeIcon(issue.getType()),
           getIssueSeverityIcon(issue.getSeverity()), issue.getRuleKey(), issue.getMessage(),
@@ -76,7 +77,7 @@ public class ReportAction {
     }
   }
 
-  protected void writeHtmlReport(Writer writer, Collection<IssueEx> issues) throws IOException {
+  protected void renderHtmlReport(Writer writer, Collection<IssueEx> issues) throws IOException {
     writer.write(getHtmlHeader());
 
     // summary
@@ -134,21 +135,12 @@ public class ReportAction {
     // @formatter:on
   }
 
-  protected void writeXmlReport(Writer writer, Collection<IssueEx> issues) {
+  protected void renderXmlReport(Writer writer, Collection<IssueEx> issues) {
     new SpotbugsXmlBuilder().generateBugCollection(writer, issues, Set.of(mProject.getProjectDir()));
   }
 
-  /**
-   *
-   * @return spotbugs xml header
-   */
-  protected String getXmlHeader() {
-    // @formatter:off
-    return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        + "\n"
-        + "<BugCollection version=\"4.7.1\" sequence=\"0\" timestamp=\"\" analysisTimestamp=\"\" release=\"\">\n"
-        + "";
-    // @formatter:on
+  protected void renderSarifReport(Writer writer, Collection<IssueEx> issues) {
+    new SarifJsonBuilder().generateBugCollection(writer, issues, mProject.getProjectDir());
   }
 
   // https://www.utf8-chartable.de/unicode-utf8-table.pl

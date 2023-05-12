@@ -46,6 +46,7 @@ class IntegrationTest {
           + "sonarlintMain {\n"
           + "  reports {"
           + "    xml.enabled = true\n"
+          + "    sarif.enabled = true\n"
           + "  }\n"
           + "}\n"
           );
@@ -77,6 +78,7 @@ class IntegrationTest {
     assertThat(buildResult.getOutput()).contains("Report generated at:");
 
     assertThat(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.xml").toFile()).exists();
+    assertThat(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.sarif").toFile()).exists();
 
     System.err.println(buildResult.getOutput());
 
