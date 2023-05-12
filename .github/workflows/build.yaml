@@ -33,7 +33,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           # Path to SARIF file relative to the root of the repository
-          sarif_file: build/reports/sonarlint/*.sarif
+          sarif_file: build/reports/sonarlint/sonarlintMain.sarif
           # Optional category for the results
           # Used to differentiate multiple results for one commit
           category: Sonarlint
