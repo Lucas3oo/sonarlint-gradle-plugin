@@ -14,7 +14,7 @@ Actions:
         TestReports:
           Format: JUNITXML
           IncludePaths:
-            - build/test-reports/test
+            - build/test-results/test
         Sonarlint:
           Format: SARIFSCA
           IncludePaths:
