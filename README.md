@@ -155,7 +155,7 @@ This example has TypeScript code under `projects/` and `src/`
 plugins {
   id 'base'
   id 'com.github.node-gradle.node' version '3.2.1'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.9'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.14'
 }
 repositories {
   mavenCentral()
@@ -208,7 +208,7 @@ Typical `gradle.build.kts`:
 plugins {
   // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
   id("org.jetbrains.kotlin.jvm") version "1.7.21"
-  id("se.solrike.sonarlint") version "1.0.0-beta.9"
+  id("se.solrike.sonarlint") version "1.0.0-beta.14"
 }
 
 repositories {
@@ -250,7 +250,7 @@ and `org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905` and any additionally 
 ```groovy
 plugins {
   id 'scala'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.9'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.14'
 }
 
 repositories {
@@ -288,7 +288,7 @@ Instead it has to be defined explicitly in the `build.gradle`.
 ```groovy
 plugins {
   id 'base'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.9'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.14'
 }
 repositories {
   mavenCentral()
@@ -330,7 +330,7 @@ To list all the rules in your configured plugins you will have to create the tas
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.9'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.14'
   id 'com.github.node-gradle.node' version '3.2.1'
 }
 repositories {
