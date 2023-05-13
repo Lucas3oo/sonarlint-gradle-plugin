@@ -130,7 +130,7 @@ gradlePlugin {
           'Java, Kotlin, Scala and Node.js projects. But other languages are also possible to lint like Ruby and Golang. ' +
           '\nIt is possible to include and exclude rules and also list the rules in the Sonarlist plugins you depend on. ' +
           '\nThe plugin can produce Spotbugs compatible XML reports and also SARIF which can be used by Github actions, Jenkins, ' +
-          '\nAWS CodeCatalyst and Azure DevOps.' +
+          'AWS CodeCatalyst and Azure DevOps.' +
           '\nMin Gradle version 7.0.'
     }
   }
