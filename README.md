@@ -36,7 +36,7 @@ Apply the plugin to your project.
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.12'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.14'
 }
 ```
 
@@ -534,15 +534,10 @@ jobs:
 
 
 ## Release notes
-### 1.0.0-beta.12
-Fix formating of the description. Sonarlint only offers HTML based description and it renders nice the Github action but not so nice in the Security tab.
-
-### 1.0.0-beta.11
-Fix formating of the description. Sonarlint only offers HTML based description and it renders nice the Github action but not so nice in the Security tab.
-
-### 1.0.0-beta.10
+### 1.0.0-beta.14
 Adding support for reports in Static Analysis Results Interchange Format (SARIF) format by OASIS. See https://sarifweb.azurewebsites.net.
 This means that a standard format is used for reporting static code analysis findings. Github actions, Azure DevOps and AWS CodeCatalyst are supporting this format.
+Fix formating of the description. Sonarlint only offers HTML based description and it renders nice the Github action but not so nice in the Security tab.
 
 ### 1.0.0-beta.9
 Adding option to generate Spotbugs/Findbugs XML for the issues so for instance Jenkins' code quality reports can be used.

@@ -1,5 +1,7 @@
 package se.solrike.sonarlint.impl.util
 
+import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetails
+
 import groovy.json.JsonBuilder
 import io.github.furstenheim.CodeBlockStyle
 import io.github.furstenheim.CopyDown
@@ -30,8 +32,8 @@ class SarifJsonBuilder {
     JsonBuilder builder = new groovy.json.JsonBuilder()
 
     builder {
-      version '2.1.0'
       '$schema' 'https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0.json'
+      version '2.1.0'
       runs ([
         {
           tool {
@@ -42,18 +44,18 @@ class SarifJsonBuilder {
               rules ruleDescs.collect { rule ->
                 ({
                   id rule.ruleKey
-                  helpUri 'https://rules.sonarsource.com'
+                  helpUri this.buildHelpUri(rule.ruleKey, rule.rulesDetails)
                   defaultConfiguration (level:  sIssueSeverityToLevel[rule.severity])
                   shortDescription ( text: rule.message )
                   fullDescription ( text: rule.message )
                   help {
-                    text rule.message
+                    text ''
                     markdown markDownConverter.convert(rule.rulesDetails.map({rd -> fixPreCode(rd.htmlDescription)}).orElse(rule.message))
                   }
+                  List theTags = [rule.type]
+                  theTags.addAll(rule.rulesDetails.map({rd -> rd.tags}).orElse([]))
                   properties  {
-                    tags ([
-                      rule.type
-                    ])
+                    tags ( theTags )
                   }
                 })
               }
@@ -106,6 +108,29 @@ class SarifJsonBuilder {
     return html.replace("<pre>", "<pre><code>").replace("</pre>", "</pre></code>")
   }
 
+  String buildHelpUri(String ruleKey, Optional<StandaloneRuleDetails> ruleDetails ) {
+    if (keyHasId(ruleKey)) {
+      String id = getKeyId(ruleKey);
+      return 'https://rules.sonarsource.com' + ruleDetails.map({ rd ->
+        '/' + rd.language + '/' + 'RSPEC-' + id
+      }
+      ).orElse('')
+    }
+    else {
+      return 'https://rules.sonarsource.com'
+    }
+  }
+
+  // if the key is like java:S1176 then it has a numeric "id" in it that we can sort on.
+  boolean keyHasId(String key) {
+    return key.matches(".*:S[0-9]+");
+  }
+
+  // must be on form similar to java:S1176
+  int getKeyId(String key) {
+    String id = key.substring(key.indexOf(":S") + 2);
+    return Integer.parseInt(id);
+  }
 }
 
 

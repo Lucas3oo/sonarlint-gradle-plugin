@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetails;
+import org.sonarsource.sonarlint.core.commons.Language;
 
 import se.solrike.sonarlint.impl.IssueEx;
 import se.solrike.sonarlint.impl.util.SarifJsonBuilder;
@@ -27,13 +28,15 @@ class SarifJsonTest {
     when(issue.getRuleKey()).thenReturn("java:S1220");
     when(issue.getSeverity()).thenReturn("CRITICAL");
     when(issue.getType()).thenReturn("VULNERABILITY");
-    when(issue.getMessage()).thenReturn("Move this file to a named <i>package</i>.");
+    when(issue.getMessage()).thenReturn("The default unnamed package should not be used");
     when(issue.getStartLine()).thenReturn(31);
     when(issue.getEndLine()).thenReturn(83);
     when(issue.getFileName()).thenReturn("Sonarlint.java");
     when(issue.getInputFileRelativePath()).thenReturn("src/main/java/se/solrike/sonarlint/Sonarlint.java");
     StandaloneRuleDetails s = mock(StandaloneRuleDetails.class);
-    when(s.getHtmlDescription()).thenReturn("Some long <b>html-ish</b> text");
+    when(s.getHtmlDescription()).thenReturn("Some long <b>html-ish</b> text <pre>Do this and this</pre>");
+    when(s.getLanguage()).thenReturn(Language.JAVA);
+    when(s.getTags()).thenReturn(new String[] { "convention", "clumsy" });
     when(issue.getRulesDetails()).thenReturn(Optional.of(s));
     issues.add(issue);
     issues.add(issue);
@@ -43,8 +46,8 @@ class SarifJsonTest {
     builder.generateBugCollection(writer, issues,
         new File("/home/runner/work/sonarlint-gradle-plugin/sonarlint-gradle-plugin"));
 
-
-    assertThat(writer.toString()).contains("java:S1220", "error", "Sonarlint.java", "Some long **html-ish** text");
+    assertThat(writer.toString()).contains("java:S1220", "error", "Sonarlint.java",
+        "Some long **html-ish** text\\n\\n```\\nDo this and this\\n```", "clumsy");
 
   }
 
