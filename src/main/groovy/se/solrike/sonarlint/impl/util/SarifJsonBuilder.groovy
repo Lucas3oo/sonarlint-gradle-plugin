@@ -1,7 +1,9 @@
 package se.solrike.sonarlint.impl.util
 
 import groovy.json.JsonBuilder
+import io.github.furstenheim.CodeBlockStyle
 import io.github.furstenheim.CopyDown
+import io.github.furstenheim.OptionsBuilder
 import se.solrike.sonarlint.impl.IssueEx
 
 /**
@@ -20,8 +22,7 @@ class SarifJsonBuilder {
   }
 
   public Writer generateBugCollection(Writer writer, Collection<IssueEx> issues, File projectDir) {
-
-    CopyDown markDownConverter = new CopyDown();
+    CopyDown markDownConverter = new CopyDown(OptionsBuilder.anOptions().withCodeBlockStyle(CodeBlockStyle.FENCED).build());
 
     // extract all unique rules from the issues
     Collection<IssueEx> ruleDescs = issues.toUnique { it.ruleKey }
@@ -46,8 +47,8 @@ class SarifJsonBuilder {
                   shortDescription ( text: rule.message )
                   fullDescription ( text: rule.message )
                   help {
-                    text markDownConverter.convert(rule.rulesDetails.map({rd -> rd.htmlDescription}).orElse(rule.message))
-                    markdown markDownConverter.convert(rule.rulesDetails.map({rd -> rd.htmlDescription}).orElse(rule.message))
+                    text rule.message
+                    markdown markDownConverter.convert(rule.rulesDetails.map({rd -> fixPreCode(rd.htmlDescription)}).orElse(rule.message))
                   }
                   properties  {
                     tags ([
@@ -99,7 +100,16 @@ class SarifJsonBuilder {
     builder.writeTo(writer)
     return writer
   }
+
+
+  String fixPreCode(String html) {
+    return html.replace("<pre>", "<pre><code>").replace("</pre>", "</pre></code>")
+  }
+
 }
+
+
+
 
 // SARIF
 /*

@@ -106,6 +106,7 @@ spotbugsTest {
 
 sonarlintMain {
   reports {
+    html.enabled = true
     sarif.enabled = true
   }
   ignoreFailures = true

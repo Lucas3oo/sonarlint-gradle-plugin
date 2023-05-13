@@ -80,6 +80,9 @@ class IntegrationTest {
     assertThat(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.xml").toFile()).exists();
     assertThat(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.sarif").toFile()).exists();
 
+
+    System.err.println(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.sarif").toFile().getAbsolutePath());
+
     System.err.println(buildResult.getOutput());
 
   }
