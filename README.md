@@ -1,5 +1,6 @@
 # sonarlint-gradle-plugin
 ![build workflow](https://github.com/Lucas3oo/sonarlint-gradle-plugin/actions/workflows/build.yaml/badge.svg)
+[![Gradle plugin](https://img.shields.io/badge/plugins.gradle.org-se.solrike.sonarlint-blue.svg)](https://plugins.gradle.org/plugin/se.solrike.sonarlint)
 
 
 Gradle plugin for sonarlint code analysis.
