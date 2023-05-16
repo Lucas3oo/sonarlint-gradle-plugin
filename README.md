@@ -76,6 +76,7 @@ sonarlint {
       'exclusion': '**.private.**'] // do not need javadoc for classes under 'private'. Default is **.internal.**
   ]
   showIssues = true // default true
+  excludePackages = ['com.company.some.generated.package']
 }
 ```
 
