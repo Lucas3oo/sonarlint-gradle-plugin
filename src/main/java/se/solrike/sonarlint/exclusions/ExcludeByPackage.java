@@ -23,12 +23,12 @@ public class ExcludeByPackage implements Predicate<File> {
 
     @Override
     public boolean test(File file) {
-        return packages.stream().noneMatch(p -> packageOfFileStartsWith(p, file));
+        return packages.stream().noneMatch(p -> packageOfFileEquals(p, file));
     }
 
-    private boolean packageOfFileStartsWith(String excludePackage, File file) {
+    private boolean packageOfFileEquals(String excludePackage, File file) {
         return getPackage.apply(file)
-                .map(s -> s.startsWith(excludePackage))
+                .map(excludePackage::equals)
                 .orElse(false);
     }
 

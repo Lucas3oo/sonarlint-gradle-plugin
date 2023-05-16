@@ -28,7 +28,7 @@ class ExcludeByPackageTest {
         ExcludeByPackage excludeGenerated = new ExcludeByPackage(setOf("com.company.generated"), getPackageMock);
         assertThat(excludeGenerated.test(NORMALFILE)).isTrue();
         assertThat(excludeGenerated.test(GENERATED_FILE)).isFalse();
-        assertThat(excludeGenerated.test(GENERATED_FILE_SUB_PACKAGE)).isFalse();
+        assertThat(excludeGenerated.test(GENERATED_FILE_SUB_PACKAGE)).isTrue();
     }
 
     @Test

@@ -11,6 +11,11 @@ import java.util.stream.Stream;
 public class PackageOfJavaFile {
 
     private static final Pattern PACKAGE_REGEX = Pattern.compile("^package (.+?);$");
+
+    private PackageOfJavaFile(){
+        // static use only
+    }
+
     public static Optional<String> get(File file) {
         if(!file.getName().endsWith(".java")){
             return Optional.empty();
