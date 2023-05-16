@@ -7,7 +7,9 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.SetProperty;
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Nested;
+import org.gradle.api.tasks.Optional;
 
 /**
  * @author Lucas Persson
@@ -34,6 +36,15 @@ public interface SonarlintExtension {
    * @return true if failures should be ignored
    */
   Property<Boolean> getIgnoreFailures();
+
+  /**
+   * List of java packages to be excluded from the analysis. E.g '["com.company.generated"]'.
+   *
+   * @return list if excluded packages
+   */
+  @Input
+  @Optional
+  SetProperty<String> getExcludePackages();
 
   /**
    * The maximum number of issues that are tolerated before breaking the build. Defaults to <code>0</code>.

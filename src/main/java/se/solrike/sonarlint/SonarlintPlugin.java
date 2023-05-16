@@ -124,6 +124,7 @@ public class SonarlintPlugin implements Plugin<Project> {
       task.getShowIssues().set(extension.getShowIssues());
       task.getReportsDir().set(extension.getReportsDir());
       task.getReports().addAll(extension.getReports().getAsMap().values());
+      task.getExcludePackages().addAll(extension.getExcludePackages());
 
     });
 

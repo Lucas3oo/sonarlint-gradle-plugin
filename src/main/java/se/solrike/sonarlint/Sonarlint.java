@@ -63,6 +63,15 @@ public abstract class Sonarlint extends SourceTask {
   @Optional
   public abstract Property<Boolean> getIgnoreFailures();
 
+  /**
+   * List of java packages to be excluded from the analysis. E.g '["com.company.generated"]'.
+   *
+   * @return list if excluded packages
+   */
+  @Input
+  @Optional
+  public abstract SetProperty<String> getExcludePackages();
+
   @Input
   @Optional
   public abstract Property<Boolean> getIsTestSource();

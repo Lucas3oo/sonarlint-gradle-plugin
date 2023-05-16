@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.gradle.api.Project;
@@ -26,6 +27,7 @@ import org.sonarsource.sonarlint.core.commons.Version;
 
 import se.solrike.sonarlint.Sonarlint;
 import se.solrike.sonarlint.SonarlintPlugin;
+import se.solrike.sonarlint.exclusions.ExcludeByPackage;
 import se.solrike.sonarlint.impl.util.NodePluginUtil;
 
 /**
@@ -45,11 +47,12 @@ public class SonarlintAction {
 
     Logger logger = task.getLogger();
 
-    return analyze(task, logger);
+    Set<String> packagesToBeExcluded = task.getExcludePackages().getOrElse(Collections.emptySet());
+    return analyze(task, logger, new ExcludeByPackage(packagesToBeExcluded));
 
   }
 
-  protected List<IssueEx> analyze(Sonarlint task, Logger logger) {
+  protected List<IssueEx> analyze(Sonarlint task, Logger logger, Predicate<File> inputFileFilter) {
 
     Project project = task.getProject();
     Set<File> compileClasspath = Collections.emptySet();
@@ -108,6 +111,7 @@ public class SonarlintAction {
 
     Path projectDir = project.getProjectDir().toPath();
     List<ClientInputFileImpl> fileList = sourceFiles.stream()
+        .filter(inputFileFilter)
         .map(f -> new ClientInputFileImpl(projectDir, f.toPath(), isTestSource, StandardCharsets.UTF_8))
         .collect(Collectors.toList());
 
