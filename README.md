@@ -651,28 +651,3 @@ SARIF
             "primaryLocationLineHash": "39fa2ee980eb94b0:1"
           }
 
- - help text.text on the rule  Documentation for the rule using text format. Code scanning displays this help documentation next to the associated results.
-
- add properties to rule
-
-               "properties" : {
-                 "id" : "java/unsafe-deserialization",
-                 "kind" : "path-problem",
-                 "name" : "...",
-                 "problem.severity" : "error",
-                 "security-severity" : "9.8",
-               }
-
-              "properties": {
-                "tags": [
-                  "reliability",
-                  "correctness",
-                  "language-features"
-                ],
-
-
-                "artifactLocation": {
-                  "uri": "src/LiveQueryClient.js",
-                  "uriBaseId": "%SRCROOT%"
-                },
-
