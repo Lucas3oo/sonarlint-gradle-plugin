@@ -39,7 +39,7 @@ Apply the plugin to your project.
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.14'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.15'
 }
 ```
 
@@ -164,38 +164,32 @@ This example has TypeScript code under `projects/` and `src/`
 ```groovy
 plugins {
   id 'base'
-  id 'com.github.node-gradle.node' version '3.2.1'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.14'
+  id 'com.github.node-gradle.node' version '5.0.0'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.15'
 }
 repositories {
   mavenCentral()
 }
 node {
   // Version of node to use.
-  version = '14.17.2'
-  // Version of npm to use.
-  npmVersion = '6.14.13'
+  version = '18.9.1'
+  // If empty, the plugin will use the npm command bundled with Node.js
+  npmVersion = ''
   // If true, it will download node using above parameters.
   download = true
 }
 sonarlintNodeMain {
-  maxIssues = 2
   ignoreFailures = false
+  source = fileTree('src')
+  exclude '**/*.spec.ts'
 }
 sonarlintNodeTest {
   ignoreFailures = true
-}
-tasks.named('sonarlintNodeMain') {
-  def projectSrc = fileTree('projects').exclude('**/*.spec.ts')
-  def appSrc = fileTree('src').exclude('**/*.spec.ts')
-  source = projectSrc.plus(appSrc)
-}
-tasks.named('sonarlintNodeTest') {
-  def projectSrc = fileTree('projects').include('**/*.spec.ts')
-  def appSrc = fileTree('src').include('**/*.spec.ts')
-  source = projectSrc.plus(appSrc)
+  source = fileTree('src')
+  include '**/*.spec.ts'
   isTestSource = true
 }
+
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
   sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:10.0.1.20755' // both JS and TS
@@ -218,7 +212,7 @@ Typical `gradle.build.kts`:
 plugins {
   // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
   id("org.jetbrains.kotlin.jvm") version "1.7.21"
-  id("se.solrike.sonarlint") version "1.0.0-beta.14"
+  id("se.solrike.sonarlint") version "1.0.0-beta.15"
 }
 
 repositories {
@@ -260,7 +254,7 @@ and `org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905` and any additionally 
 ```groovy
 plugins {
   id 'scala'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.14'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.15'
 }
 
 repositories {
@@ -298,7 +292,7 @@ Instead it has to be defined explicitly in the `build.gradle`.
 ```groovy
 plugins {
   id 'base'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.14'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.15'
 }
 repositories {
   mavenCentral()
@@ -340,8 +334,8 @@ To list all the rules in your configured plugins you will have to create the tas
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.14'
-  id 'com.github.node-gradle.node' version '3.2.1'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.15'
+  id 'com.github.node-gradle.node' version '5.0.0'
 }
 repositories {
   mavenCentral()
@@ -360,8 +354,9 @@ dependencies {
   sonarlintPlugins files("./sonar-secrets-plugin-1.1.0.36766.jar")
 }
 node {
-  version = '14.17.2'
-  npmVersion = '6.14.13'
+  version = '18.9.1'
+  // If empty, the plugin will use the npm command bundled with Node.js
+  npmVersion = ''
   download = true
 }
 
@@ -410,7 +405,7 @@ When the task `sonarlintListRules` is executed the list on the console will be s
 
 The first column indicates if the rule is enabled/included or not.
 
-Since most of the rules have tags you can easily grep on those. E.g.:
+Since most of the rules have tags like 'aws', 'tests', 'regex' so you can easily grep on those. E.g.:
 
     ./gradlew sonarlintListRules | grep aws
 
@@ -587,9 +582,15 @@ You must install "SARIF SAST Scans Tab" from the marketplace into the Azure DevO
 
 
 ## Release notes
+### 1.0.0-beta.15
+Fix bug in detecting CPU architecture for selecting correct node binaries.
+
+Improve the documentation.
+
 ### 1.0.0-beta.14
 Adding support for reports in Static Analysis Results Interchange Format (SARIF) format by OASIS. See https://sarifweb.azurewebsites.net.
 This means that a standard format is used for reporting static code analysis findings. Github actions, Azure DevOps and AWS CodeCatalyst are supporting this format.
+
 Fix formating of the description. Sonarlint only offers HTML based description and it renders nice the Github action but not so nice in the Security tab.
 
 ### 1.0.0-beta.9
@@ -631,6 +632,7 @@ This plugin picks the node executable from that but since the node path contains
 
 ### future
 Improvements that might be implemented are:
+* Support for windows when using node.
 * Support to specify sonarlint properties. For instance the node exec can be configured that way using 'sonar.nodejs.executable'.
 * Support to find node on the $PATH using org.sonarsource.sonarlint.core.NodeJsHelper
 * Support for a list of suppressed issues like Checkstyle and Spotbug have.

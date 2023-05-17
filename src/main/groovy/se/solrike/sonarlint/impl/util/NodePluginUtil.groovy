@@ -53,11 +53,14 @@ public class NodePluginUtil {
 
   String getArch() {
     String arch = System.getProperty("os.arch").toLowerCase();
-    if (arch.contains("64")) {
-      return "x64";
-    }
     if (arch.contains("arm")) {
       return "arm64";
+    }
+    if (arch.contains("aarch64")) {
+      return "arm64";
+    }
+    if (arch.contains("64")) {
+      return "x64";
     }
     throw new RuntimeException("Unsupported arch: " + arch)
   }
