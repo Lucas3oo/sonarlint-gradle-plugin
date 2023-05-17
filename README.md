@@ -60,7 +60,7 @@ task sonarlintListRules(type: se.solrike.sonarlint.SonarlintListRules) {
 
 ### Configure sonarlint Plugin
 
-Configure `sonarlint` extension to configure the behaviour of tasks:
+Configure `sonarlint` extension to configure the behavior of tasks:
 
 ```groovy
 sonarlint {
@@ -101,7 +101,6 @@ dependencies {
 }
 ```
 
-
 ### Apply to Java project
 
 Apply this plugin with [the `java` plugin](https://docs.gradle.org/current/userguide/java_plugin.html) to your project,
@@ -126,6 +125,7 @@ sonarlintMain {
       outputLocation = layout.buildDirectory.file('my_sonarlint_super_report.html')
     }
     xml.enabled = false // default false
+    sarif.enabled = false // default false
   }
 }
 ```
@@ -135,6 +135,13 @@ sonarlintTest {
   excludeRules = ['java:S1001']
   includeRules = ['java:S1002', 'java:S1003']
   ignoreFailures = true
+}
+```
+```groovy
+// Exclude files from the scan (e.g. generated source code):
+sonarlintMain {
+  exclude '**/org/example/some/package1/*'
+  exclude '**/org/example/some/package2/*'
 }
 ```
 
@@ -524,6 +531,49 @@ jobs:
         with:
           name: Artifacts
           path: build/libs
+```
+
+### AWS CodeCatalyst using SARIF format
+If you are using AWS CodeCatalyst you can turn on "auto discover" for reports and the Sonarlint report will be under the "Reports" tab.
+
+```yaml
+Name: Workflow_7f90
+SchemaVersion: "1.0"
+Triggers:
+  - Type: PUSH
+    Branches:
+      - main
+Actions:
+  Build_50:
+    Identifier: aws/build@v1.0.0
+    Outputs:
+      AutoDiscoverReports:
+        Enabled: true
+        ReportNamePrefix: rpt
+    Compute:
+      Type: EC2
+      Fleet: Linux.x86-64.Large
+    Inputs:
+      Sources:
+        - WorkflowSource
+    Configuration:
+      Steps:
+        - Run: ./gradlew build --no-daemon
+```
+
+### Azure DevOps using SARIF format
+You must install "SARIF SAST Scans Tab" from the marketplace into the Azure DevOps organization. Then there will be a "Scans" tab next to the "Tests" tab.
+
+```yaml
+... snippet
+# The SARIF files need to go to a artifact called "CodeAnalysisLogs"
+- task: PublishBuildArtifacts@1
+  displayName: 'Sonarlint report'
+  inputs:
+    # Wildcards are not supported!!!
+    pathToPublish: build/reports/sonarlint/sonarlintMain.sarif
+    artifactName: CodeAnalysisLogs
+  condition: succeededOrFailed()
 ```
 
 
