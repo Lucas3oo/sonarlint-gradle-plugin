@@ -25,7 +25,6 @@ But possible to configure it for other languages that sonarlint has plugins for 
     1. [Github actions using SARIF format](#github-actions-using-sarif-format)
     1. [AWS CodeCatalyst using SARIF format](#aws-codecatalyst-using-sarif-format)
     1. [Azure DevOps using SARIF format](#azure-devops-using-sarif-format)
-
 1. [sonarlint plugins](#sonarlint-plugins)
 1. [Release notes](#release-notes)
 
