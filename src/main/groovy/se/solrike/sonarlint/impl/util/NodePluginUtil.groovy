@@ -48,18 +48,18 @@ public class NodePluginUtil {
     if (os.contains("linux")) {
       return "linux";
     }
+//    if (os.contains("windows")) {
+//      return "win";
+//    }
     throw new RuntimeException("Unsupported OS: " + os)
   }
 
   String getArch() {
     String arch = System.getProperty("os.arch").toLowerCase();
-    if (arch.contains("arm")) {
+    if (arch.contains("arm") || arch.contains("aarch64")) {
       return "arm64";
     }
-    if (arch.contains("aarch64")) {
-      return "arm64";
-    }
-    if (arch.contains("64")) {
+    if (arch.contains("x86_64") || arch.contains("x64")) {
       return "x64";
     }
     throw new RuntimeException("Unsupported arch: " + arch)
