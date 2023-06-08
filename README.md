@@ -428,10 +428,10 @@ If you need to just suppress an issue in a file you can use `@SuppressWarnings("
 
 
 ### Suppress rules in most languages
-In for instance TypeScript you can disable a rule in a specifc file by add `// NOSONAR` at the end of the line with the issue. E.g.
+In for instance TypeScript you can disable a rule in a specifc file by add `// NOSONAR` or `//NOSONAR` at the end of the line with the issue. E.g.
 
 ```typescript
-const key = 'AKIATCHLSJSHD' // NOSONAR AWS access key here is needed.
+const key = 'AKIATCHLSJSHD' // NOSONAR AWS access key must be used here.
 ```
 
 ## sonarlint CI reports
