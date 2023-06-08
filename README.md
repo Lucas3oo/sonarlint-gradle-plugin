@@ -20,6 +20,7 @@ But possible to configure it for other languages that sonarlint has plugins for 
 1. [sonarlint version mapping](#sonarlint-version-mapping)
 1. [sonarlint rules](#sonarlint-rules)
     1. [Suppress rules in Java](#suppress-rules-in-java)
+    1. [Suppress rules in most languages](#suppress-rules-in-most-languages)
 1. [sonarlint CI reports](#sonarlint-ci-reports)
     1. [Github actions using Spotbugs format](#github-actions-using-spotbugs-format)
     1. [Github actions using SARIF format](#github-actions-using-sarif-format)
@@ -425,6 +426,13 @@ If you need to deactivate a rule for a project then add the rule to the `exclude
 If you need to just suppress an issue in a file you can use `@SuppressWarnings("all")` or `@SuppressWarnings` with rule keys: `@SuppressWarnings("java:S2077")` or `@SuppressWarnings({"java:S1118", "java:S3546"})`.
 (In Eclipse you might need to suppress the warning about unhandled token in the annotation.)
 
+
+### Suppress rules in most languages
+In for instance TypeScript you can disable a rule in a specifc file by add `// NOSONAR` at the end of the line with the issue. E.g.
+
+```typescript
+const key = 'AKIATCHLSJSHD' // NOSONAR AWS access key here is needed.
+```
 
 ## sonarlint CI reports
 The sonarlint gradle plugin can generate Spotbugs/Findbugs compatible XML files and also SARIF compatible JSON files.
