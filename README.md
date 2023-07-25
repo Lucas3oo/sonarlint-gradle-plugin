@@ -87,7 +87,7 @@ Configure `sonarlintPlugins` to apply any sonarlint plugin:
 ```groovy
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
-  sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.17.0.31219'
+  sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.20.0.31692' // versions after this will not work with sonarlint
   sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:10.0.1.20755' // both JS and TS but requires com.github.node-gradle.node
   sonarlintPlugins 'org.sonarsource.kotlin:sonar-kotlin-plugin:2.13.0.2116'
   sonarlintPlugins 'org.sonarsource.php:sonar-php-plugin:3.25.0.9077'
