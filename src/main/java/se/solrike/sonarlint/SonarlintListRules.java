@@ -3,7 +3,6 @@ package se.solrike.sonarlint;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -77,7 +76,7 @@ public class SonarlintListRules extends DefaultTask {
     StandaloneSonarLintEngine engine = new StandaloneSonarLintEngineImpl(globalConfiguration);
     try {
       List<StandaloneRuleDetails> rules = new ArrayList<>(engine.getAllRuleDetails());
-      Collections.sort(rules, this::compare);
+      rules.sort(this::compare);
       rules.forEach(this::printRule);
     }
     finally {

@@ -12,8 +12,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.logging.Logger;
+import org.gradle.api.provider.SetProperty;
 import org.sonarsource.sonarlint.core.StandaloneSonarLintEngineImpl;
 import org.sonarsource.sonarlint.core.analysis.api.AnalysisResults;
 import org.sonarsource.sonarlint.core.client.api.common.RuleKey;
@@ -25,13 +26,35 @@ import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.commons.Version;
 
 import se.solrike.sonarlint.Sonarlint;
-import se.solrike.sonarlint.SonarlintPlugin;
 import se.solrike.sonarlint.impl.util.NodePluginUtil;
 
 /**
  * @author Lucas Persson
  */
 public class SonarlintAction {
+
+  private final Map<String, String> sonarProperties = new HashMap<>();
+
+  private Path nodeExec;
+  private String nodeVersion;
+
+  public SonarlintAction(Sonarlint task) {
+    Project project = task.getProject();
+    // Java sourceCompatibility
+    if (project.getProperties().containsKey("sourceCompatibility")) {
+      String sourceCompatibility = project.getProperties().get("sourceCompatibility").toString();
+      sonarProperties.put("sonar.java.source", sourceCompatibility);
+    }
+
+    if (project.getExtensions().findByName("node") != null){
+      NodePluginUtil nodeUtil = new NodePluginUtil();
+      if (nodeUtil.getDownload(project)) {
+        // this means that the node plugin has been configured with download=true
+        nodeExec = nodeUtil.getNodeExec(project);
+        nodeVersion = nodeUtil.getNodeVersion(project);
+      }
+    }
+  }
 
   /**
    * Execute the task by calling to SonarLint engine. And generate reports.
@@ -41,17 +64,15 @@ public class SonarlintAction {
    *
    * @return list of sonarlint issues
    */
-  public List<IssueEx> run(Sonarlint task) {
+  public List<IssueEx> run(Sonarlint task, SetProperty<File> plugins, ProjectLayout layout) {
 
     Logger logger = task.getLogger();
 
-    return analyze(task, logger);
+    return analyze(task, logger, plugins, layout);
 
   }
 
-  protected List<IssueEx> analyze(Sonarlint task, Logger logger) {
-
-    Project project = task.getProject();
+  protected List<IssueEx> analyze(Sonarlint task, Logger logger, SetProperty<File> plugins, ProjectLayout layout) {
     Set<File> compileClasspath = Collections.emptySet();
     if (task.getCompileClasspath() != null) {
       compileClasspath = task.getCompileClasspath().getFiles();
@@ -60,59 +81,41 @@ public class SonarlintAction {
     if (task.getClassFiles() != null) {
       classFiles = task.getClassFiles().getFiles();
     }
-    Set<File> sourceFiles = task.getSource().getFiles();
-    boolean isTestSource = task.getIsTestSource().getOrElse(Boolean.FALSE);
-    Set<String> excludeRules = task.getExcludeRules().get();
-    Set<String> includeRules = task.getIncludeRules().get();
-    Map<String, Map<String, String>> ruleParameters = task.getRuleParameters().get();
-
-    Map<String, String> sonarProperties = new HashMap<>(1);
     String libs = compileClasspath.stream().filter(File::exists).map(File::getPath).collect(Collectors.joining(","));
     sonarProperties.put("sonar.java.libraries", libs);
     String binaries = classFiles.stream().filter(File::exists).map(File::getPath).collect(Collectors.joining(","));
     sonarProperties.put("sonar.java.binaries", binaries);
-    Configuration pluginConfiguration = project.getConfigurations().getByName(SonarlintPlugin.PLUGINS_CONFIG_NAME);
-    Path[] plugins = pluginConfiguration.getFiles().stream().map(File::toPath).toArray(Path[]::new);
+    boolean isTestSource = task.getIsTestSource().getOrElse(Boolean.FALSE);
 
     if (isTestSource) {
       sonarProperties.put("sonar.java.test.libraries", libs);
       sonarProperties.put("sonar.java.test.binaries", binaries);
     }
 
-    // Java sourceCompatibility
-    if (project.getProperties().containsKey("sourceCompatibility")) {
-      String sourceCompatibility = project.getProperties().get("sourceCompatibility").toString();
-      sonarProperties.put("sonar.java.source", sourceCompatibility);
-    }
+    Set<File> sourceFiles = task.getSource().getFiles();
+    Set<String> excludeRules = task.getExcludeRules().get();
+    Set<String> includeRules = task.getIncludeRules().get();
+    Map<String, Map<String, String>> ruleParameters = task.getRuleParameters().get();
 
+    Path[] pluginPaths = plugins.get().stream().map(File::toPath).toArray(Path[]::new);
+    Path projectDir = layout.getProjectDirectory().getAsFile().toPath();
     Builder builder = StandaloneGlobalConfiguration.builder()
         .addEnabledLanguages(Language.values())
-        .addPlugins(plugins)
+        .addPlugins(pluginPaths)
         .setLogOutput(new GradleClientLogOutput(logger))
-        .setWorkDir(project.getBuildDir().toPath().resolve("sonarlint"))
-        .setSonarLintUserHome(project.getProjectDir().toPath());
+        .setWorkDir(layout.getBuildDirectory().getAsFile().get().toPath().resolve("sonarlint"))
+        .setSonarLintUserHome(projectDir);
 
-    if (project.getExtensions().findByName("node") != null) {
-      NodePluginUtil nodeUtil = new NodePluginUtil();
-      if (nodeUtil.getDownload(project)) {
-        // this means that the node plugin has been configured with download=true
-        Path nodeExec = nodeUtil.getNodeExec(project);
-        logger.debug("node exec: {}", nodeExec);
-        builder.setNodeJs(nodeExec, Version.create(nodeUtil.getNodeVersion(project)));
-      }
-      else {
-        logger.error("Node plugin 'com.github.node-gradle.node' is not configured with download=true."
-            + " Sonarlint analysis will not be performed on JavaScript/TypeScript source code");
-      }
+    if (nodeExec != null && nodeVersion != null){
+      builder.setNodeJs(nodeExec, Version.create(nodeVersion));
     }
 
-    Path projectDir = project.getProjectDir().toPath();
     List<ClientInputFileImpl> fileList = sourceFiles.stream()
         .map(f -> new ClientInputFileImpl(projectDir, f.toPath(), isTestSource, StandardCharsets.UTF_8))
         .collect(Collectors.toList());
 
     StandaloneAnalysisConfiguration analysisConfiguration = StandaloneAnalysisConfiguration.builder()
-        .setBaseDir(project.getProjectDir().toPath())
+        .setBaseDir(projectDir)
         .addInputFiles(fileList)
         .addExcludedRules(getRuleKeys(excludeRules))
         .addIncludedRules(getRuleKeys(includeRules))
@@ -123,8 +126,7 @@ public class SonarlintAction {
     StandaloneGlobalConfiguration globalConfiguration = builder.build();
     StandaloneSonarLintEngine engine = new StandaloneSonarLintEngineImpl(globalConfiguration);
     IssueCollector collector = new IssueCollector();
-    AnalysisResults results = engine.analyze(analysisConfiguration, collector, new GradleClientLogOutput(logger),
-        new GradleProgressMonitor(logger));
+    AnalysisResults results = engine.analyze(analysisConfiguration, collector, new GradleClientLogOutput(logger), new GradleProgressMonitor(logger));
 
     List<IssueEx> issues = collector.getIssues();
     issues.forEach(i -> i.setRulesDetails(engine.getRuleDetails(i.getRuleKey())));
