@@ -3,6 +3,7 @@ package se.solrike.sonarlint.impl;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -11,12 +12,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.provider.SetProperty;
 import org.sonarsource.sonarlint.core.StandaloneSonarLintEngineImpl;
 import org.sonarsource.sonarlint.core.analysis.api.AnalysisResults;
+import org.sonarsource.sonarlint.core.client.api.common.PluginDetails;
 import org.sonarsource.sonarlint.core.client.api.common.RuleKey;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneAnalysisConfiguration;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneGlobalConfiguration;
@@ -24,6 +27,7 @@ import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneGlobalConf
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneSonarLintEngine;
 import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.commons.Version;
+import org.sonarsource.sonarlint.core.plugin.commons.SkipReason;
 
 import se.solrike.sonarlint.Sonarlint;
 import se.solrike.sonarlint.impl.util.NodePluginUtil;
@@ -125,6 +129,22 @@ public class SonarlintAction {
 
     StandaloneGlobalConfiguration globalConfiguration = builder.build();
     StandaloneSonarLintEngine engine = new StandaloneSonarLintEngineImpl(globalConfiguration);
+    // check for skipped plugins
+    Collection<PluginDetails> pluginDetails = engine.getPluginDetails();
+    pluginDetails.forEach(details -> {
+      if (details.skipReason().isPresent()) {
+        String errorMessage = "Failed to load plugin '" + details.name() + "' version " + details.version() + ". ";
+        if (details.skipReason().get().equals(SkipReason.IncompatiblePluginApi.INSTANCE)) {
+          errorMessage += "Plugin version too new for Sonarlint.";
+        }
+        else {
+          errorMessage += details.skipReason().get().toString();
+        }
+        // break the build
+        throw new GradleException(errorMessage);
+      }
+    });
+
     IssueCollector collector = new IssueCollector();
     AnalysisResults results = engine.analyze(analysisConfiguration, collector, new GradleClientLogOutput(logger),
         new GradleProgressMonitor(logger));

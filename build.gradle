@@ -26,7 +26,7 @@ dependencies {
 }
 
 group = 'se.solrike.sonarlint'
-version = '1.0.0-beta.16'
+version = '1.0.0-beta.17'
 
 sourceSets {
   main {
@@ -79,11 +79,13 @@ gradlePlugin {
       implementationClass = 'se.solrike.sonarlint.SonarlintPlugin'
       displayName = 'Sonarlint plugin'
       description = 'Sonarlint static code analysis using stand-alone Sonarlint engine, for ' +
-          'Java, Kotlin, Scala and Node.js projects. But other languages are also possible to lint like Ruby and Golang. ' +
-          '\nIt is possible to include and exclude rules and also list the rules in the Sonarlist plugins you depend on. ' +
-          '\nThe plugin can produce Spotbugs compatible XML reports and also SARIF which can be used by Github actions, Jenkins, ' +
-          'AWS CodeCatalyst and Azure DevOps.' +
-          '\nMin Gradle version 7.0.'
+          'Java, Kotlin, Scala and Node.js projects. But other languages are also possible to lint like Ruby and Golang.\n' +
+          'It is possible to include and exclude rules and also list the rules in the Sonarlist plugins you depend on.\n' +
+          'If the plugin is configured with an incopatible Sonarlint plugin the build will fail.\n' +
+          'The plugin supports Gradle configuration cache.\n' +
+          'The plugin can produce Spotbugs compatible XML reports and also SARIF which can be used by Github actions, Jenkins, ' +
+          'AWS CodeCatalyst and Azure DevOps.\n' +
+          'Min Gradle version 7.0.'
     }
   }
 }

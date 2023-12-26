@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-class IntegrationTest {
+class IncompatiblePluginTest {
 
   @TempDir
   Path mProjectDir;
@@ -35,18 +35,9 @@ class IntegrationTest {
       writer.write(""
           + "sonarlint {\n"
           + "  dependencies {\n"
-          + "    //sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'\n"
           + "    sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.20.0.31692'\n"
+          + "    sonarlintPlugins 'org.sonarsource.text:sonar-text-plugin:2.0.1.611'\n"
           + "    //sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:10.0.1.20755'\n"
-          + "    //sonarlintPlugins 'org.sonarsource.kotlin:sonar-kotlin-plugin:2.13.0.2116'\n"
-          + "    //sonarlintPlugins 'org.sonarsource.php:sonar-php-plugin:3.25.0.9077'\n"
-          + "    //sonarlintPlugins 'org.sonarsource.python:sonar-python-plugin:3.17.0.10029'\n"
-          + "    //sonarlintPlugins 'org.sonarsource.slang:sonar-go-plugin:1.12.0.4259'\n"
-          + "    //sonarlintPlugins 'org.sonarsource.slang:sonar-ruby-plugin:1.11.0.3905'\n"
-          + "    //sonarlintPlugins 'org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905'\n"
-          + "    //sonarlintPlugins 'org.sonarsource.sonarlint.omnisharp:sonarlint-omnisharp-plugin:1.4.0.50839'\n"
-          + "    sonarlintPlugins 'org.sonarsource.text:sonar-text-plugin:1.2.0.510'\n"
-          + "    //sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'\n"
           + "  }\n"
           + "  includeRules = ['java:S1176']\n"
           + "}\n"
@@ -76,37 +67,13 @@ class IntegrationTest {
     createJavaFile(Files.createFile(mProjectDir.resolve("src/main/java/Hello.java")));
 
     // when sonarlintMain is run
-    BuildResult buildResult = runGradle(false, List.of("--debug", "sonarlintMain"));
+    BuildResult buildResult = runGradle(false, List.of("sonarlintMain"));
 
     // then the gradle build shall fail
     assertThat(buildResult.task(":sonarlintMain").getOutcome()).isEqualTo(TaskOutcome.FAILED);
-    // and the 3 sonarlint rules violated are
-    assertThat(buildResult.getOutput()).contains("3 SonarLint issue(s) were found.");
-    assertThat(buildResult.getOutput()).contains("java:S1186", "java:S1118", "java:S1220");
-    // since xml report is enabled the plugin shall print the location of the report
-    assertThat(buildResult.getOutput()).contains("Report generated at:");
-
-    assertThat(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.xml").toFile()).exists();
-    assertThat(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.sarif").toFile()).exists();
-
-    // CHECKSTYLE:OFF
-    System.err.println(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.sarif").toFile().getAbsolutePath());
-    System.err.println(buildResult.getOutput());
-    // CHECKSTYLE:ON
-  }
-
-  @Test
-  void testSonarlintListRules() throws IOException {
-    // given java plugin is configured and the sonarlint list rules task is created in the setup
-    // and java:S1176 rule is included which is default excluded.
-
-    // when sonarlintListRules is run
-    BuildResult buildResult = runGradle(true, List.of("sonarlintListRules"));
-
-    // then the gradle build shall succeed
-    assertThat(buildResult.task(":sonarlintListRules").getOutcome()).isEqualTo(TaskOutcome.SUCCESS);
-    // and the rules listed shall at least be
-    assertThat(buildResult.getOutput()).contains("[x] java:S1176", "[ ] java:S6411", "[x] java:S6437");
+    // and
+    assertThat(buildResult.getOutput())
+        .contains("Failed to load plugin 'Text Code Quality and Security' version 2.0.1.611.");
 
     // CHECKSTYLE:OFF
     System.err.println(buildResult.getOutput());

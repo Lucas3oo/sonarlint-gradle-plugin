@@ -40,7 +40,7 @@ Apply the plugin to your project.
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.16'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.17'
 }
 ```
 
@@ -96,7 +96,7 @@ dependencies {
   sonarlintPlugins 'org.sonarsource.slang:sonar-ruby-plugin:1.11.0.3905'
   sonarlintPlugins 'org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905'
   sonarlintPlugins 'org.sonarsource.sonarlint.omnisharp:sonarlint-omnisharp-plugin:1.4.0.50839'
-  sonarlintPlugins 'org.sonarsource.text:sonar-text-plugin:2.0.1.611'
+  sonarlintPlugins 'org.sonarsource.text:sonar-text-plugin:1.2.0.510' // versions after this will not work with sonarlint
   sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'
   // include a plugin not in Maven repo but can be grabbed from the IDEs
   sonarlintPlugins files("${System.getProperty('user.home')}/.p2/pool/plugins/org.sonarlint.eclipse.core_7.2.1.42550/plugins/sonar-secrets-plugin-1.1.0.36766.jar")
@@ -166,7 +166,7 @@ This example has TypeScript code under `projects/` and `src/`
 plugins {
   id 'base'
   id 'com.github.node-gradle.node' version '5.0.0'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.16'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.17'
 }
 repositories {
   mavenCentral()
@@ -213,7 +213,7 @@ Typical `gradle.build.kts`:
 plugins {
   // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
   id("org.jetbrains.kotlin.jvm") version "1.7.21"
-  id("se.solrike.sonarlint") version "1.0.0-beta.16"
+  id("se.solrike.sonarlint") version "1.0.0-beta.17"
 }
 
 repositories {
@@ -255,7 +255,7 @@ and `org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905` and any additionally 
 ```groovy
 plugins {
   id 'scala'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.16'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.17'
 }
 
 repositories {
@@ -293,7 +293,7 @@ Instead it has to be defined explicitly in the `build.gradle`.
 ```groovy
 plugins {
   id 'base'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.16'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.17'
 }
 repositories {
   mavenCentral()
@@ -335,7 +335,7 @@ To list all the rules in your configured plugins you will have to create the tas
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.16'
+  id 'se.solrike.sonarlint' version '1.0.0-beta.17'
   id 'com.github.node-gradle.node' version '5.0.0'
 }
 repositories {
@@ -590,10 +590,14 @@ You must install "SARIF SAST Scans Tab" from the marketplace into the Azure DevO
 
 
 ## Release notes
-### 1.0.0-beta.16
-Support for Gradle configuration cache <https://docs.gradle.org/current/userguide/configuration_cache.html>.
-Contributed by <https://github.com/lukasgraef>.
+### 1.0.0-beta.17
+If any problems with the sonarlint plugins are found, the build will break. For instance using a too new plugin version or
+missing dependencies or runtime (like NodeJS). This address issue [issue 5](https://github.com/Lucas3oo/sonarlint-gradle-plugin/issues/5)
+where Sonarlint silently continues even if some plugins fail to load.
 
+### 1.0.0-beta.16
+Support for [Gradle configuration cache](https://docs.gradle.org/current/userguide/configuration_cache.html).
+Contributed by [Lukas Gräf](https://github.com/lukasgraef).
 
 ### 1.0.0-beta.15
 Fix bug in detecting CPU architecture for selecting correct node binaries.
