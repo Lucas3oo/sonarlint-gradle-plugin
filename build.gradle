@@ -1,3 +1,5 @@
+import se.solrike.sonarlint.SonarlintListRules
+
 plugins {
   id 'eclipse'
   id 'groovy'
@@ -14,7 +16,7 @@ repositories {
 // latest core ? 8.11.0.56591
 dependencies {
   implementation('io.github.furstenheim:copy_down:1.1')
-  implementation('org.apache.commons:commons-text:1.9')
+  implementation('org.apache.commons:commons-text:1.10.0')
   implementation('org.sonarsource.sonarlint.core:sonarlint-core:8.0.2.42487')
 
   sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.17.0.31219'
@@ -32,7 +34,7 @@ version = '1.0.0-beta.16'
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
-tasks.withType(GroovyCompile) {
+tasks.withType(GroovyCompile).configureEach {
   configure(options) {
     options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
   }
@@ -166,7 +168,7 @@ wrapper {
 }
 
 
-task sonarlintListRules(type: se.solrike.sonarlint.SonarlintListRules) {
+tasks.register('sonarlintListRules', SonarlintListRules) {
   description = 'List sonarlint rules'
   group = 'verification'
 }

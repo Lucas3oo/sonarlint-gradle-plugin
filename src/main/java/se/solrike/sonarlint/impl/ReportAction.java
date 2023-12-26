@@ -21,7 +21,9 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.gradle.api.Project;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFile;
+import org.gradle.api.logging.Logger;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetails;
 
 import se.solrike.sonarlint.Sonarlint;
@@ -34,37 +36,39 @@ import se.solrike.sonarlint.impl.util.SpotbugsXmlBuilder;
  */
 public class ReportAction {
 
-  protected final Project mProject;
   protected final Sonarlint mTask;
-  protected final List<IssueEx> mIssues;
+  protected final Logger logger;
+  protected final ProjectLayout layout;
+  protected final ProviderFactory providerFactory;
   protected Map<String, Render> mReportRenders;
 
-  public ReportAction(Project project, Sonarlint task, List<IssueEx> issues) {
-    mProject = project;
+  public ReportAction(Sonarlint task, Logger logger, ProjectLayout layout, ProviderFactory providerFactory) {
+    this.logger = logger;
+    this.layout = layout;
+    this.providerFactory = providerFactory;
     mTask = task;
-    mIssues = issues;
     mReportRenders = ofEntries(entry("text", this::renderTextReport), entry("html", this::renderHtmlReport),
         entry("xml", this::renderXmlReport),  entry("sarif", this::renderSarifReport));
   }
 
   @SuppressWarnings("all")
-  public void report() {
+  public void report(List<IssueEx> issues) {
     Map<String, SonarlintReport> reports = mTask.getReports().getAsMap();
 
     // generate reports
     reports.forEach((name, report) -> {
       if (report.getEnabled().getOrElse(Boolean.FALSE)) {
-        RegularFile file = report.getOutputLocation().getOrElse(getDefaultReportOutputLocation(name).get());
+        RegularFile file = report.getOutputLocation().getOrElse(getDefaultReportOutputLocation(name));
         File parentDir = file.getAsFile().getParentFile();
-        mProject.mkdir(parentDir);
+        parentDir.mkdirs();
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAsFile(), Charset.forName("UTF-8")))) {
-          mReportRenders.get(name).render(writer, mIssues);
+          mReportRenders.get(name).render(writer, issues);
         }
         catch (IOException e) {
           throw new RuntimeException(e);
         }
-        mProject.getLogger().error("Report generated at: {}", file);
+        logger.error("Report generated at: {}", file);
       }
     });
   }
@@ -136,11 +140,11 @@ public class ReportAction {
   }
 
   protected void renderXmlReport(Writer writer, Collection<IssueEx> issues) {
-    new SpotbugsXmlBuilder().generateBugCollection(writer, issues, Set.of(mProject.getProjectDir()));
+    new SpotbugsXmlBuilder().generateBugCollection(writer, issues, Set.of(layout.getProjectDirectory().getAsFile()));
   }
 
   protected void renderSarifReport(Writer writer, Collection<IssueEx> issues) {
-    new SarifJsonBuilder().generateBugCollection(writer, issues, mProject.getProjectDir());
+    new SarifJsonBuilder().generateBugCollection(writer, issues, layout.getProjectDirectory().getAsFile());
   }
 
   // https://www.utf8-chartable.de/unicode-utf8-table.pl
@@ -171,11 +175,8 @@ public class ReportAction {
     return sIssueSeverityIcon.get(issueSeverity);
   }
 
-  protected Provider<RegularFile> getDefaultReportOutputLocation(String reportName) {
-    ProjectLayout layout = mProject.getLayout();
-    Provider<String> filePath = mProject.provider(
-        () -> new File(mTask.getReportsDir().get().getAsFile(), mTask.getName() + "." + reportName).getAbsolutePath());
-
+  protected RegularFile getDefaultReportOutputLocation(String reportName) {
+    String filePath = new File(mTask.getReportsDir().get().getAsFile(), mTask.getName() + "." + reportName).getAbsolutePath();
     return layout.getProjectDirectory().file(filePath);
   }
 

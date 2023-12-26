@@ -14,7 +14,7 @@ import org.sonarsource.sonarlint.core.commons.log.ClientLogOutput;
  */
 public class GradleClientLogOutput implements ClientLogOutput {
 
-  private Logger mLogger;
+  private final Logger mLogger;
 
   private static final Map<Level, LogLevel> sLevelMap = ofEntries(entry(Level.ERROR, LogLevel.ERROR),
       entry(Level.WARN, LogLevel.WARN), entry(Level.INFO, LogLevel.INFO), entry(Level.DEBUG, LogLevel.DEBUG),
@@ -34,6 +34,7 @@ public class GradleClientLogOutput implements ClientLogOutput {
   private boolean supress(String formattedMessage) {
     return formattedMessage.startsWith("No workDir in SonarLint")
         || formattedMessage.startsWith("Analysis engine interrupted")
+        || formattedMessage.startsWith("com.google.gson.JsonIOException")
         || formattedMessage.startsWith("java.lang.InterruptedException");
   }
 
