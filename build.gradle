@@ -5,9 +5,7 @@ plugins {
   id 'groovy'
   // Apply the Plugin Publish Plugin to make plugin publication possible
   id 'com.gradle.plugin-publish' version '1.0.0'
-  id 'com.github.spotbugs' version '5.0.13'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.14'
-  //id 'codenarc'
+  id 'se.solrike.conventions.java-conventions' version '1.0.0-beta.5'
 }
 
 repositories {
@@ -19,8 +17,6 @@ dependencies {
   implementation('org.apache.commons:commons-text:1.10.0')
   implementation('org.sonarsource.sonarlint.core:sonarlint-core:8.0.2.42487')
 
-  sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.17.0.31219'
-
   testImplementation('org.mockito:mockito-core:3.7.7')
   testImplementation('org.mockito:mockito-junit-jupiter:3.7.7')
 
@@ -31,14 +27,6 @@ dependencies {
 
 group = 'se.solrike.sonarlint'
 version = '1.0.0-beta.16'
-sourceCompatibility = '11'
-targetCompatibility = '11'
-
-tasks.withType(GroovyCompile).configureEach {
-  configure(options) {
-    options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
-  }
-}
 
 sourceSets {
   main {
@@ -61,63 +49,25 @@ groovydoc {
   enabled = false
 }
 
-// folder names that ends with 'nosync' will not be synced to iCloud drive.
-eclipse {
-  classpath {
-    def mainOutputDir = 'bin.nosync/main'
-    defaultOutputDir = file(mainOutputDir)
-    file {
-      whenMerged {
-        entries.findAll({it.kind == 'src'}).each {
-          if (it.path.contains('main') || it.path == '.apt_generated') {
-            it.output = mainOutputDir
-          }
-          else if (it.path.contains('test')) {
-            it.output = 'bin.nosync/test'
-          }
-        }
-      }
-    }
-  }
-}
-
-test {
-  useJUnitPlatform()
-}
-
-// Spotbugs
-spotbugsMain {
-  effort = 'less' // 'default', 'less' or 'max'
-  excludeFilter = file('./plugin-config/spotbugs/exclude.xml')
-  ignoreFailures = true
-  showStackTraces = false
-  dependencies {
-    // http://find-sec-bugs.github.io
-    spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
-    spotbugsPlugins 'com.mebigfatguy.sb-contrib:sb-contrib:7.4.7'
-    spotbugs 'com.github.spotbugs:spotbugs:4.7.1'
-  }
-  reports {
-    html.enabled = true
-    sarif.enabled = true
-  }
-}
-spotbugsTest {
-  enabled = false
-}
-
 sonarlintMain {
   reports {
     html.enabled = true
     sarif.enabled = true
   }
-  ignoreFailures = true
+  ignoreFailures = false
 }
 sonarlintTest {
   reports {
     sarif.enabled = true
   }
+  ignoreFailures = false
+}
+
+spotbugsMain {
   ignoreFailures = true
+}
+spotbugsTest {
+  enabled = false
 }
 
 

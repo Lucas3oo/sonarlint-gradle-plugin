@@ -80,11 +80,10 @@ class IntegrationTest {
     assertThat(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.xml").toFile()).exists();
     assertThat(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.sarif").toFile()).exists();
 
-
+    // CHECKSTYLE:OFF
     System.err.println(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.sarif").toFile().getAbsolutePath());
-
     System.err.println(buildResult.getOutput());
-
+    // CHECKSTYLE:ON
   }
 
   @Test
@@ -100,8 +99,9 @@ class IntegrationTest {
     // and the rules listed shall at least be
     assertThat(buildResult.getOutput()).contains("[x] java:S1176", "[ ] java:S6411", "[x] java:S6437");
 
+    // CHECKSTYLE:OFF
     System.err.println(buildResult.getOutput());
-
+    // CHECKSTYLE:ON
   }
 
   BuildResult runGradle(List<String> args) {
@@ -109,11 +109,12 @@ class IntegrationTest {
   }
 
   BuildResult runGradle(boolean isSuccessExpected, List<String> args) {
+    // to get plugin under test found by the runner
     GradleRunner gradleRunner = GradleRunner.create()
         .withDebug(true)
         .withArguments(args)
         .withProjectDir(mProjectDir.toFile())
-        .withPluginClasspath(); // to get plugin under test found by the runner
+        .withPluginClasspath();
     return isSuccessExpected ? gradleRunner.build() : gradleRunner.buildAndFail();
   }
 

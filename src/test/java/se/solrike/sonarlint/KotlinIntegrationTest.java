@@ -66,8 +66,9 @@ class KotlinIntegrationTest {
     assertThat(buildResult.getOutput()).contains("1 SonarLint issue(s) were found.");
     assertThat(buildResult.getOutput()).contains("kotlin:S1481");
 
+    // CHECKSTYLE:OFF
     System.err.println(buildResult.getOutput());
-
+    // CHECKSTYLE:ON
   }
 
   BuildResult runGradle(List<String> args) {
@@ -75,11 +76,12 @@ class KotlinIntegrationTest {
   }
 
   BuildResult runGradle(boolean isSuccessExpected, List<String> args) {
+    // to get plugin under test found by the runner
     GradleRunner gradleRunner = GradleRunner.create()
         .withDebug(true)
         .withArguments(args)
         .withProjectDir(mProjectDir.toFile())
-        .withPluginClasspath(); // to get plugin under test found by the runner
+        .withPluginClasspath();
     return isSuccessExpected ? gradleRunner.build() : gradleRunner.buildAndFail();
   }
 

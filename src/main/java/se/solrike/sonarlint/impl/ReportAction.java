@@ -18,11 +18,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.gradle.api.Project;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFile;
 import org.gradle.api.logging.Logger;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetails;
 
@@ -37,18 +35,18 @@ import se.solrike.sonarlint.impl.util.SpotbugsXmlBuilder;
 public class ReportAction {
 
   protected final Sonarlint mTask;
-  protected final Logger logger;
-  protected final ProjectLayout layout;
-  protected final ProviderFactory providerFactory;
+  protected final Logger mLogger;
+  protected final ProjectLayout mLayout;
+  protected final ProviderFactory mProviderFactory;
   protected Map<String, Render> mReportRenders;
 
   public ReportAction(Sonarlint task, Logger logger, ProjectLayout layout, ProviderFactory providerFactory) {
-    this.logger = logger;
-    this.layout = layout;
-    this.providerFactory = providerFactory;
+    mLogger = logger;
+    mLayout = layout;
+    mProviderFactory = providerFactory;
     mTask = task;
     mReportRenders = ofEntries(entry("text", this::renderTextReport), entry("html", this::renderHtmlReport),
-        entry("xml", this::renderXmlReport),  entry("sarif", this::renderSarifReport));
+        entry("xml", this::renderXmlReport), entry("sarif", this::renderSarifReport));
   }
 
   @SuppressWarnings("all")
@@ -68,7 +66,7 @@ public class ReportAction {
         catch (IOException e) {
           throw new RuntimeException(e);
         }
-        logger.error("Report generated at: {}", file);
+        mLogger.error("Report generated at: {}", file);
       }
     });
   }
@@ -140,28 +138,31 @@ public class ReportAction {
   }
 
   protected void renderXmlReport(Writer writer, Collection<IssueEx> issues) {
-    new SpotbugsXmlBuilder().generateBugCollection(writer, issues, Set.of(layout.getProjectDirectory().getAsFile()));
+    new SpotbugsXmlBuilder().generateBugCollection(writer, issues, Set.of(mLayout.getProjectDirectory().getAsFile()));
   }
 
   protected void renderSarifReport(Writer writer, Collection<IssueEx> issues) {
-    new SarifJsonBuilder().generateBugCollection(writer, issues, layout.getProjectDirectory().getAsFile());
+    new SarifJsonBuilder().generateBugCollection(writer, issues, mLayout.getProjectDirectory().getAsFile());
   }
 
   // https://www.utf8-chartable.de/unicode-utf8-table.pl
   // https://www.fileformat.info/info/unicode/char/1f600/index.htm
   // @formatter:off
+  //CHECKSTYLE:OFF
   private static final Map<String, String> sIssueTypeIcon = ofEntries(
       entry("BUG",           "\uD83D\uDE31 Bug  "), // FACE SCREAMING IN FEAR
       entry("CODE_SMELL",    "\uD83E\uDD22 Smell"), // NAUSEATED FACE
       entry("VULNERABILITY", "\uD83D\uDE08 Sec. ")  // SMILING FACE WITH HORNS
       );
   // @formatter:on
+  // CHECKSTYLE:ON
 
   public String getIssueTypeIcon(String issueType) {
     return sIssueTypeIcon.get(issueType);
   }
 
   // @formatter:off
+  //CHECKSTYLE:OFF
   private static final Map<String, String> sIssueSeverityIcon = ofEntries(
       entry("BLOCKER",  "\uD83C\uDF2A  Block"), // Cloud With Tornado
       entry("CRITICAL", "\uD83C\uDF29  Crit."), // Cloud With Lightning
@@ -170,14 +171,16 @@ public class ReportAction {
       entry("INFO",     "\uD83C\uDF24  Info ")  // White Sun With Small Cloud
       );
   // @formatter:on
+  // CHECKSTYLE:ON
 
   public String getIssueSeverityIcon(String issueSeverity) {
     return sIssueSeverityIcon.get(issueSeverity);
   }
 
   protected RegularFile getDefaultReportOutputLocation(String reportName) {
-    String filePath = new File(mTask.getReportsDir().get().getAsFile(), mTask.getName() + "." + reportName).getAbsolutePath();
-    return layout.getProjectDirectory().file(filePath);
+    File file = new File(mTask.getReportsDir().get().getAsFile(), mTask.getName() + "." + reportName);
+    String filePath = file.getAbsolutePath();
+    return mLayout.getProjectDirectory().file(filePath);
   }
 
   @FunctionalInterface

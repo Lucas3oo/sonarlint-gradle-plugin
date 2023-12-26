@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.gradle.api.GradleException;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.artifacts.result.ResolvedArtifactResult;
@@ -14,7 +16,11 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.logging.Logger;
-import org.gradle.api.provider.*;
+import org.gradle.api.provider.MapProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
+import org.gradle.api.provider.SetProperty;
 import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.CompileClasspath;
 import org.gradle.api.tasks.Input;
@@ -30,8 +36,6 @@ import se.solrike.sonarlint.impl.IssueEx;
 import se.solrike.sonarlint.impl.ReportAction;
 import se.solrike.sonarlint.impl.SonarlintAction;
 
-import javax.inject.Inject;
-
 /**
  * Gradle task to execute sonarlint stand alone code analysis.
  *
@@ -41,6 +45,7 @@ public abstract class Sonarlint extends SourceTask {
 
   private FileCollection mCompileClasspath;
   private FileCollection mClassFiles;
+  private final SonarlintAction mAction;
 
   /**
    * List of rules to exclude from the analysis. E.g 'java:S1186'.
@@ -156,13 +161,15 @@ public abstract class Sonarlint extends SourceTask {
   @Internal
   protected abstract SetProperty<File> getSonarlintConfiguration();
 
+  @SuppressWarnings("java:S5993")
   public Sonarlint() {
-    action = new SonarlintAction(this);
-    Provider<Set<ResolvedArtifactResult>> artifactProvider = getProject().getConfigurations().named(SonarlintPlugin.PLUGINS_CONFIG_NAME).flatMap(c -> c.getIncoming().getArtifacts().getResolvedArtifacts());
-    getSonarlintConfiguration().set(artifactProvider.map(p -> p.stream().map(ResolvedArtifactResult::getFile).collect(Collectors.toSet())));
+    mAction = new SonarlintAction(this);
+    Provider<Set<ResolvedArtifactResult>> artifactProvider = getProject().getConfigurations()
+        .named(SonarlintPlugin.PLUGINS_CONFIG_NAME)
+        .flatMap(c -> c.getIncoming().getArtifacts().getResolvedArtifacts());
+    getSonarlintConfiguration()
+        .set(artifactProvider.map(p -> p.stream().map(ResolvedArtifactResult::getFile).collect(Collectors.toSet())));
   }
-
-  private final SonarlintAction action;
 
   @TaskAction
   public void run() {
@@ -170,7 +177,7 @@ public abstract class Sonarlint extends SourceTask {
 
     logTaskParameters();
 
-    List<IssueEx> issues = action.run(this, getSonarlintConfiguration(), getProjectLayout());
+    List<IssueEx> issues = mAction.run(this, getSonarlintConfiguration(), getProjectLayout());
 
     String resultMessage = String.format("%d SonarLint issue(s) were found. Max issue(s) allowed: %d.", issues.size(),
         getMaxIssues().getOrElse(0));
@@ -206,7 +213,10 @@ public abstract class Sonarlint extends SourceTask {
       getLogger().debug("Source: {}", getSource().getAsPath());
       getLogger().debug("Source files: {}", getSource().getAsFileTree().getFiles());
       getLogger().debug("IsTestSource: {}", getIsTestSource().getOrElse(Boolean.FALSE));
-      String sonarlintPlugins = getSonarlintConfiguration().get().stream().map(File::getName).reduce("", (p1, p2) -> p1 + ", " + p2 );
+      String sonarlintPlugins = getSonarlintConfiguration().get()
+          .stream()
+          .map(File::getName)
+          .reduce("", (p1, p2) -> p1 + ", " + p2);
       getLogger().debug("Plugins: {}", sonarlintPlugins);
       getLogger().debug("<<< SonarLint task " + getName());
     }

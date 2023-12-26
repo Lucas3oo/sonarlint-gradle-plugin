@@ -97,7 +97,7 @@ public class SonarlintListRules extends DefaultTask {
 
   // if the key is like java:S1176 then it has a numeric "id" in it that we can sort on.
   boolean keyHasId(String key) {
-    return key.matches(".*:S[0-9]+");
+    return key.matches(".*:S\\d+");
   }
 
   // must be on form similar to java:S1176
