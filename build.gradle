@@ -5,7 +5,7 @@ plugins {
   id 'groovy'
   // Apply the Plugin Publish Plugin to make plugin publication possible
   id 'com.gradle.plugin-publish' version '1.0.0'
-  id 'se.solrike.conventions.java-conventions' version '1.0.0-beta.5'
+  id 'se.solrike.conventions.java-conventions' version '1.0.0-beta.7'
 }
 
 repositories {
