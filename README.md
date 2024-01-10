@@ -40,7 +40,7 @@ Apply the plugin to your project.
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.17'
+  id 'se.solrike.sonarlint' version '2.0.0'
 }
 ```
 
@@ -87,7 +87,7 @@ Configure `sonarlintPlugins` to apply any sonarlint plugin:
 ```groovy
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
-  sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.20.0.31692' // versions after this will not work with sonarlint
+  sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.30.1.34514'
   sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:10.0.1.20755' // both JS and TS but requires com.github.node-gradle.node
   sonarlintPlugins 'org.sonarsource.kotlin:sonar-kotlin-plugin:2.13.0.2116'
   sonarlintPlugins 'org.sonarsource.php:sonar-php-plugin:3.25.0.9077'
@@ -96,7 +96,7 @@ dependencies {
   sonarlintPlugins 'org.sonarsource.slang:sonar-ruby-plugin:1.11.0.3905'
   sonarlintPlugins 'org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905'
   sonarlintPlugins 'org.sonarsource.sonarlint.omnisharp:sonarlint-omnisharp-plugin:1.4.0.50839'
-  sonarlintPlugins 'org.sonarsource.text:sonar-text-plugin:1.2.0.510' // versions after this will not work with sonarlint
+  sonarlintPlugins 'org.sonarsource.text:sonar-text-plugin:2.0.1.611'
   sonarlintPlugins 'org.sonarsource.xml:sonar-xml-plugin:2.6.1.3686'
   // include a plugin not in Maven repo but can be grabbed from the IDEs
   sonarlintPlugins files("${System.getProperty('user.home')}/.p2/pool/plugins/org.sonarlint.eclipse.core_7.2.1.42550/plugins/sonar-secrets-plugin-1.1.0.36766.jar")
@@ -166,7 +166,7 @@ This example has TypeScript code under `projects/` and `src/`
 plugins {
   id 'base'
   id 'com.github.node-gradle.node' version '5.0.0'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.17'
+  id 'se.solrike.sonarlint' version '2.0.0'
 }
 repositories {
   mavenCentral()
@@ -204,8 +204,8 @@ means the Java plugin is applied too.
 The `Sonarlint` task will be generated for main and test classes. E.g. `sonarlintMain` and `sonarlintTest`.
 The source code and resources for the 'main' and 'test' source sets will be scanned using all the sonarlint plugins you
 configure. So if you have both Java and Kotlin source code then configure all
-the language plugins for your code. Like both `org.sonarsource.java:sonar-java-plugin:7.17.0.31219`
-and `org.sonarsource.kotlin:sonar-kotlin-plugin:2.13.0.2116` and any additionally plugin you need.
+the language plugins for your code. Like both `org.sonarsource.java:sonar-java-plugin:7.30.1.34514`
+and `org.sonarsource.kotlin:sonar-kotlin-plugin:2.20.0.4382` and any additionally plugin you need.
 
 Typical `gradle.build.kts`:
 
@@ -213,7 +213,7 @@ Typical `gradle.build.kts`:
 plugins {
   // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
   id("org.jetbrains.kotlin.jvm") version "1.7.21"
-  id("se.solrike.sonarlint") version "1.0.0-beta.17"
+  id("se.solrike.sonarlint") version "2.0.0"
 }
 
 repositories {
@@ -232,7 +232,7 @@ dependencies {
   // Use the Kotlin JUnit integration.
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 
-  sonarlintPlugins("org.sonarsource.kotlin:sonar-kotlin-plugin:2.13.0.2116")
+  sonarlintPlugins("org.sonarsource.kotlin:sonar-kotlin-plugin:2.20.0.4382")
 }
 
 // configure the tasks directly since the overloaded "extensions" like sonarlintMain will not work in Kotlin DSL
@@ -255,7 +255,7 @@ and `org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905` and any additionally 
 ```groovy
 plugins {
   id 'scala'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.17'
+  id 'se.solrike.sonarlint' version '2.0.0'
 }
 
 repositories {
@@ -293,7 +293,7 @@ Instead it has to be defined explicitly in the `build.gradle`.
 ```groovy
 plugins {
   id 'base'
-  id 'se.solrike.sonarlint' version '1.0.0-beta.17'
+  id 'se.solrike.sonarlint' version '2.0.0'
 }
 repositories {
   mavenCentral()
@@ -322,6 +322,7 @@ By default, this Gradle Plugin uses the [sonarlint core](https://github.com/Sona
 |Gradle Plugin|sonarlint|
 |-----:|-----:|
 | 1.0.0| 8.0.2.42487|
+| 2.0.0| 9.6.1.76766|
 
 
 ## sonarlint rules
@@ -335,7 +336,7 @@ To list all the rules in your configured plugins you will have to create the tas
 
 ```groovy
 plugins {
-  id 'se.solrike.sonarlint' version '1.0.0-beta.17'
+  id 'se.solrike.sonarlint' version '2.0.0'
   id 'com.github.node-gradle.node' version '5.0.0'
 }
 repositories {
@@ -345,7 +346,7 @@ dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
   sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.17.0.31219'
   sonarlintPlugins 'org.sonarsource.javascript:sonar-javascript-plugin:10.0.1.20755' // both JS and TS
-  sonarlintPlugins 'org.sonarsource.kotlin:sonar-kotlin-plugin:2.13.0.2116'
+  sonarlintPlugins 'org.sonarsource.kotlin:sonar-kotlin-plugin:2.20.0.4382'
   sonarlintPlugins 'org.sonarsource.php:sonar-php-plugin:3.25.0.9077'
   sonarlintPlugins 'org.sonarsource.python:sonar-python-plugin:3.17.0.10029'
   sonarlintPlugins 'org.sonarsource.slang:sonar-ruby-plugin:1.11.0.3905'
@@ -590,6 +591,10 @@ You must install "SARIF SAST Scans Tab" from the marketplace into the Azure DevO
 
 
 ## Release notes
+### 2.0.0
+Support for Sonarlint core 9.6 which means that newer plugins can be used.
+Like org.sonarsource.java:sonar-java-plugin:7.30.1.34514.
+
 ### 1.0.0-beta.17
 If any problems with the sonarlint plugins are found, the build will break. For instance using a too new plugin version or
 missing dependencies or runtime (like NodeJS). This address issue [issue 5](https://github.com/Lucas3oo/sonarlint-gradle-plugin/issues/5)

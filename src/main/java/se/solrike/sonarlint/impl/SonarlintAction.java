@@ -20,12 +20,12 @@ import org.gradle.api.provider.SetProperty;
 import org.sonarsource.sonarlint.core.StandaloneSonarLintEngineImpl;
 import org.sonarsource.sonarlint.core.analysis.api.AnalysisResults;
 import org.sonarsource.sonarlint.core.client.api.common.PluginDetails;
-import org.sonarsource.sonarlint.core.client.api.common.RuleKey;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneAnalysisConfiguration;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneGlobalConfiguration;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneGlobalConfiguration.Builder;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneSonarLintEngine;
 import org.sonarsource.sonarlint.core.commons.Language;
+import org.sonarsource.sonarlint.core.commons.RuleKey;
 import org.sonarsource.sonarlint.core.commons.Version;
 import org.sonarsource.sonarlint.core.plugin.commons.SkipReason;
 
@@ -76,6 +76,7 @@ public class SonarlintAction {
 
   }
 
+  @SuppressWarnings({ "java:S1874", "deprecation" })
   protected List<IssueEx> analyze(Sonarlint task, Logger logger, SetProperty<File> plugins, ProjectLayout layout) {
     Set<File> compileClasspath = Collections.emptySet();
     if (task.getCompileClasspath() != null) {

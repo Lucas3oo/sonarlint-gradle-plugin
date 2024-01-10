@@ -23,6 +23,8 @@ import org.gradle.api.file.RegularFile;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.provider.ProviderFactory;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetails;
+import org.sonarsource.sonarlint.core.commons.IssueSeverity;
+import org.sonarsource.sonarlint.core.commons.RuleType;
 
 import se.solrike.sonarlint.Sonarlint;
 import se.solrike.sonarlint.SonarlintReport;
@@ -86,9 +88,9 @@ public class ReportAction {
     writer.write("<h1>Summary</h1>\n");
     writer.write("<list>\n");
     // type, count
-    Map<String, Long> issueCountPerType = issues.stream()
+    Map<RuleType, Long> issueCountPerType = issues.stream()
         .collect(Collectors.groupingBy(IssueEx::getType, Collectors.counting()));
-    for (Entry<String, Long> issueType : issueCountPerType.entrySet()) {
+    for (Entry<RuleType, Long> issueType : issueCountPerType.entrySet()) {
       writer.write(String.format("<li>%s: %d</li>%n", getIssueTypeIcon(issueType.getKey()), issueType.getValue()));
     }
     writer.write("</list>\n");
@@ -149,31 +151,33 @@ public class ReportAction {
   // https://www.fileformat.info/info/unicode/char/1f600/index.htm
   // @formatter:off
   //CHECKSTYLE:OFF
-  private static final Map<String, String> sIssueTypeIcon = ofEntries(
-      entry("BUG",           "\uD83D\uDE31 Bug  "), // FACE SCREAMING IN FEAR
-      entry("CODE_SMELL",    "\uD83E\uDD22 Smell"), // NAUSEATED FACE
-      entry("VULNERABILITY", "\uD83D\uDE08 Sec. ")  // SMILING FACE WITH HORNS
+  private static final Map<RuleType, String> sIssueTypeIcon = ofEntries(
+      entry(RuleType.BUG,           "\uD83D\uDE31 Bug  "), // FACE SCREAMING IN FEAR
+      entry(RuleType.CODE_SMELL,    "\uD83E\uDD22 Smell"), // NAUSEATED FACE
+      entry(RuleType.VULNERABILITY, "\uD83D\uDE08 Sec. "),  // SMILING FACE WITH HORNS
+      // Needs review, but I don't think sonarlint will ever report this. Only SonarCloude.
+      entry(RuleType.SECURITY_HOTSPOT, "Review ")
       );
   // @formatter:on
   // CHECKSTYLE:ON
 
-  public String getIssueTypeIcon(String issueType) {
-    return sIssueTypeIcon.get(issueType);
+  public String getIssueTypeIcon(RuleType ruleType) {
+    return sIssueTypeIcon.get(ruleType);
   }
 
   // @formatter:off
   //CHECKSTYLE:OFF
-  private static final Map<String, String> sIssueSeverityIcon = ofEntries(
-      entry("BLOCKER",  "\uD83C\uDF2A  Block"), // Cloud With Tornado
-      entry("CRITICAL", "\uD83C\uDF29  Crit."), // Cloud With Lightning
-      entry("MAJOR",    "\uD83C\uDF28  Major️"), // Cloud With Snow
-      entry("MINOR",    "\uD83C\uDF26  Minor"), // White Sun Behind Cloud With Rain
-      entry("INFO",     "\uD83C\uDF24  Info ")  // White Sun With Small Cloud
+  private static final Map<IssueSeverity, String> sIssueSeverityIcon = ofEntries(
+      entry(IssueSeverity.BLOCKER,  "\uD83C\uDF2A  Block"), // Cloud With Tornado
+      entry(IssueSeverity.CRITICAL, "\uD83C\uDF29  Crit."), // Cloud With Lightning
+      entry(IssueSeverity.MAJOR,    "\uD83C\uDF28  Major️"), // Cloud With Snow
+      entry(IssueSeverity.MINOR,    "\uD83C\uDF26  Minor"), // White Sun Behind Cloud With Rain
+      entry(IssueSeverity.INFO,     "\uD83C\uDF24  Info ")  // White Sun With Small Cloud
       );
   // @formatter:on
   // CHECKSTYLE:ON
 
-  public String getIssueSeverityIcon(String issueSeverity) {
+  public String getIssueSeverityIcon(IssueSeverity issueSeverity) {
     return sIssueSeverityIcon.get(issueSeverity);
   }
 

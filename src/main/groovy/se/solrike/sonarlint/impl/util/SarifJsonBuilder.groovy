@@ -1,6 +1,10 @@
 package se.solrike.sonarlint.impl.util
 
+import static java.util.Map.entry
+import static java.util.Map.ofEntries
+
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetails
+import org.sonarsource.sonarlint.core.commons.IssueSeverity
 
 import groovy.json.JsonBuilder
 import io.github.furstenheim.CodeBlockStyle
@@ -9,7 +13,8 @@ import io.github.furstenheim.OptionsBuilder
 import se.solrike.sonarlint.impl.IssueEx
 
 /**
- * Generate SARIF JSON (https://sarifweb.azurewebsites.net) to be used when running in Github actions, Azure DevOps or AWS CodeCatalyst
+ * Generate SARIF JSON (https://sarifweb.azurewebsites.net) to be used when running in Github actions,
+ * Azure DevOps or AWS CodeCatalyst
  *
  *
  * @author lpersson
@@ -17,7 +22,18 @@ import se.solrike.sonarlint.impl.IssueEx
  */
 class SarifJsonBuilder {
 
-  private static final Map<String, String> sIssueSeverityToLevel = ['BLOCKER':'error', 'CRITICAL':'error', 'MAJOR':'error', 'MINOR':'warning', 'INFO':'note']
+  // @formatter:off
+  //CHECKSTYLE:OFF
+  private static final Map<IssueSeverity, String> sIssueSeverityToLevel  = ofEntries(
+      entry(IssueSeverity.BLOCKER,  'error'),
+      entry(IssueSeverity.CRITICAL, 'error'),
+      entry(IssueSeverity.MAJOR,    'error'),
+      entry(IssueSeverity.MINOR,    'warning'),
+      entry(IssueSeverity.INFO,     'note')
+      );
+  // @formatter:on
+  // CHECKSTYLE:ON
+
 
   public SarifJsonBuilder() {
     super()

@@ -13,6 +13,7 @@ import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -62,6 +63,7 @@ class IncompatiblePluginTest {
   }
 
   @Test
+  @Disabled("Not needed since theplugin in uses the latet sonarlint core")
   void testSonarlintMain() throws IOException {
     // given a java class with
     createJavaFile(Files.createFile(mProjectDir.resolve("src/main/java/Hello.java")));

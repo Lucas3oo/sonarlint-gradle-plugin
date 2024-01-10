@@ -12,7 +12,9 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetails;
+import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.Language;
+import org.sonarsource.sonarlint.core.commons.RuleType;
 
 import se.solrike.sonarlint.impl.IssueEx;
 import se.solrike.sonarlint.impl.util.SarifJsonBuilder;
@@ -26,8 +28,8 @@ class SarifJsonTest {
     List<IssueEx> issues = new ArrayList<>();
     IssueEx issue = mock(IssueEx.class);
     when(issue.getRuleKey()).thenReturn("java:S1220");
-    when(issue.getSeverity()).thenReturn("CRITICAL");
-    when(issue.getType()).thenReturn("VULNERABILITY");
+    when(issue.getSeverity()).thenReturn(IssueSeverity.CRITICAL);
+    when(issue.getType()).thenReturn(RuleType.VULNERABILITY);
     when(issue.getMessage()).thenReturn("The default unnamed package should not be used");
     when(issue.getStartLine()).thenReturn(31);
     when(issue.getEndLine()).thenReturn(83);

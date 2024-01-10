@@ -38,6 +38,7 @@ public class SonarlintListRules extends DefaultTask {
   protected Map<String, Map<String, String>> mRuleParameters;
 
   @TaskAction
+  @SuppressWarnings({ "java:S1874", "deprecation" })
   public void run() {
     Logger logger = getLogger();
 

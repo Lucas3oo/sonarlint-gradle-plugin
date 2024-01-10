@@ -1,14 +1,21 @@
 package se.solrike.sonarlint.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.sonarsource.sonarlint.core.analysis.api.ClientInputFile;
 import org.sonarsource.sonarlint.core.analysis.api.Flow;
 import org.sonarsource.sonarlint.core.analysis.api.QuickFix;
-import org.sonarsource.sonarlint.core.analysis.api.TextRange;
 import org.sonarsource.sonarlint.core.client.api.common.analysis.Issue;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneRuleDetails;
+import org.sonarsource.sonarlint.core.commons.CleanCodeAttribute;
+import org.sonarsource.sonarlint.core.commons.ImpactSeverity;
+import org.sonarsource.sonarlint.core.commons.IssueSeverity;
+import org.sonarsource.sonarlint.core.commons.RuleType;
+import org.sonarsource.sonarlint.core.commons.SoftwareQuality;
+import org.sonarsource.sonarlint.core.commons.TextRange;
+import org.sonarsource.sonarlint.core.commons.VulnerabilityProbability;
 
 /**
  * @author Lucas Persson
@@ -59,12 +66,12 @@ public class IssueEx implements Issue {
   }
 
   @Override
-  public String getSeverity() {
+  public IssueSeverity getSeverity() {
     return mSonarlintIssue.getSeverity();
   }
 
   @Override
-  public String getType() {
+  public RuleType getType() {
     return mSonarlintIssue.getType();
   }
 
@@ -115,6 +122,26 @@ public class IssueEx implements Issue {
     else {
       return "global";
     }
+  }
+
+  @Override
+  public Optional<CleanCodeAttribute> getCleanCodeAttribute() {
+    return mSonarlintIssue.getCleanCodeAttribute();
+  }
+
+  @Override
+  public Map<SoftwareQuality, ImpactSeverity> getImpacts() {
+    return mSonarlintIssue.getImpacts();
+  }
+
+  @Override
+  public Optional<String> getRuleDescriptionContextKey() {
+    return mSonarlintIssue.getRuleDescriptionContextKey();
+  }
+
+  @Override
+  public Optional<VulnerabilityProbability> getVulnerabilityProbability() {
+    return mSonarlintIssue.getVulnerabilityProbability();
   }
 
 }

@@ -1,6 +1,12 @@
 package se.solrike.sonarlint.impl.util
 
+import static java.util.Map.entry
+import static java.util.Map.ofEntries
+
 import java.util.stream.Collectors
+
+import org.sonarsource.sonarlint.core.commons.IssueSeverity
+import org.sonarsource.sonarlint.core.commons.RuleType
 
 import groovy.xml.MarkupBuilder
 import se.solrike.sonarlint.impl.BugPattern
@@ -8,8 +14,23 @@ import se.solrike.sonarlint.impl.IssueEx
 
 class SpotbugsXmlBuilder {
 
-  private static final Map<String, Integer> sIssueSeverityToRank = ['BLOCKER':1, 'CRITICAL':3, 'MAJOR':5, 'MINOR':7, 'INFO':20]
-  private static final Map<String, String> sIssueTypeToCategory = ['BUG':'CORRECTNESS', 'CODE_SMELL':'STYLE', 'VULNERABILITY':'SECURITY']
+  // @formatter:off
+  //CHECKSTYLE:OFF
+  private static final Map<IssueSeverity, Integer> sIssueSeverityToRank  = ofEntries(
+      entry(IssueSeverity.BLOCKER,  1),
+      entry(IssueSeverity.CRITICAL, 3),
+      entry(IssueSeverity.MAJOR,    5),
+      entry(IssueSeverity.MINOR,    7),
+      entry(IssueSeverity.INFO,     20)
+      );
+  private static final Map<RuleType, String> sRuleTypeToCategory = ofEntries(
+      entry(RuleType.BUG,              'CORRECTNESS'),
+      entry(RuleType.CODE_SMELL,       'STYLE'),
+      entry(RuleType.VULNERABILITY,    'SECURITY'),
+      entry(RuleType.SECURITY_HOTSPOT, 'SECURITY')
+      );
+  // @formatter:on
+  // CHECKSTYLE:ON
 
   public SpotbugsXmlBuilder() {
     super()
@@ -26,7 +47,7 @@ class SpotbugsXmlBuilder {
         }
       }
       issues.each { issue ->
-        builder.BugInstance (type: issue.ruleKey, priority: 1, rank: sIssueSeverityToRank.get(issue.severity), category: sIssueTypeToCategory.get(issue.type), instanceHash: issue.id) {
+        builder.BugInstance (type: issue.ruleKey, priority: 1, rank: sIssueSeverityToRank.get(issue.severity), category: sRuleTypeToCategory.get(issue.type), instanceHash: issue.id) {
           ShortMessage {
             mkp.yieldUnescaped('<![CDATA[' + issue.message + ']]>')
           }
@@ -57,7 +78,7 @@ class SpotbugsXmlBuilder {
 
   private Collection<BugPattern> getBugPatters(Collection<IssueEx> issues) {
     return issues.stream().map({ issue ->
-      new BugPattern(issue.ruleKey, sIssueTypeToCategory.get(issue.type), issue.message,
+      new BugPattern(issue.ruleKey, sRuleTypeToCategory.get(issue.type), issue.message,
           issue.rulesDetails.map({rd -> rd.htmlDescription}).orElse(issue.message))
     }).collect(Collectors.toSet())
   }
