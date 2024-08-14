@@ -150,7 +150,7 @@ sonarlintMain {
 ```
 Kotlin syntax:
 ```gradle.kts
-tasks.sonarlintMain<se.solrike.sonarlint.Sonarlint> {
+tasks.sonarlintMain {
     reports {
         reports.create("html") {
             enabled = true
@@ -158,7 +158,7 @@ tasks.sonarlintMain<se.solrike.sonarlint.Sonarlint> {
         }
     }
 }
-tasks.sonarlintTest<se.solrike.sonarlint.Sonarlint> {
+tasks.sonarlintTest {
     ignoreFailures = true
 }
 ```
