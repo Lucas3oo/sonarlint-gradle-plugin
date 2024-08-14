@@ -37,19 +37,11 @@ import se.solrike.sonarlint.impl.util.NodePluginUtil;
  */
 public class SonarlintAction {
 
-  private final Map<String, String> mSonarProperties = new HashMap<>();
-
   private Path mNodeExec;
   private String mNodeVersion;
 
   public SonarlintAction(Sonarlint task) {
     Project project = task.getProject();
-    // Java sourceCompatibility
-    if (project.getProperties().containsKey("sourceCompatibility")) {
-      String sourceCompatibility = project.getProperties().get("sourceCompatibility").toString();
-      mSonarProperties.put("sonar.java.source", sourceCompatibility);
-    }
-
     if (project.getExtensions().findByName("node") != null) {
       NodePluginUtil nodeUtil = new NodePluginUtil();
       if (nodeUtil.getDownload(project)) {
@@ -78,6 +70,14 @@ public class SonarlintAction {
 
   @SuppressWarnings({ "java:S1874", "deprecation" })
   protected List<IssueEx> analyze(Sonarlint task, Logger logger, SetProperty<File> plugins, ProjectLayout layout) {
+    Map<String, String> sonarProperties = new HashMap<>();
+
+    Project project = task.getProject();
+    // Java sourceCompatibility
+    if (project.getProperties().containsKey("sourceCompatibility")) {
+      String sourceCompatibility = project.getProperties().get("sourceCompatibility").toString();
+      sonarProperties.put("sonar.java.source", sourceCompatibility);
+    }
     Set<File> compileClasspath = Collections.emptySet();
     if (task.getCompileClasspath() != null) {
       compileClasspath = task.getCompileClasspath().getFiles();
@@ -87,14 +87,14 @@ public class SonarlintAction {
       classFiles = task.getClassFiles().getFiles();
     }
     String libs = compileClasspath.stream().filter(File::exists).map(File::getPath).collect(Collectors.joining(","));
-    mSonarProperties.put("sonar.java.libraries", libs);
+    sonarProperties.put("sonar.java.libraries", libs);
     String binaries = classFiles.stream().filter(File::exists).map(File::getPath).collect(Collectors.joining(","));
-    mSonarProperties.put("sonar.java.binaries", binaries);
+    sonarProperties.put("sonar.java.binaries", binaries);
     boolean isTestSource = task.getIsTestSource().getOrElse(Boolean.FALSE);
 
     if (isTestSource) {
-      mSonarProperties.put("sonar.java.test.libraries", libs);
-      mSonarProperties.put("sonar.java.test.binaries", binaries);
+      sonarProperties.put("sonar.java.test.libraries", libs);
+      sonarProperties.put("sonar.java.test.binaries", binaries);
     }
 
     Set<File> sourceFiles = task.getSource().getFiles();
@@ -125,7 +125,7 @@ public class SonarlintAction {
         .addExcludedRules(getRuleKeys(excludeRules))
         .addIncludedRules(getRuleKeys(includeRules))
         .addRuleParameters(getRuleParameters(ruleParameters))
-        .putAllExtraProperties(mSonarProperties)
+        .putAllExtraProperties(sonarProperties)
         .build();
 
     StandaloneGlobalConfiguration globalConfiguration = builder.build();
