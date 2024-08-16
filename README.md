@@ -117,6 +117,7 @@ If [the `java-test-fixtures` plugin](https://docs.gradle.org/current/userguide/j
 
 Configure `Sonarlint` directly, to set task-specific properties.
 
+Groovy syntax:
 ```groovy
 // Example to configure HTML report
 sonarlintMain {
@@ -147,7 +148,20 @@ sonarlintMain {
   exclude '**/org/example/some/package2/*'
 }
 ```
-
+Kotlin syntax:
+```gradle.kts
+tasks.sonarlintMain {
+    reports {
+        reports.create("html") {
+            enabled = true
+            outputLocation = layout.buildDirectory.file("reports/sonarlint/sonarlint.html")
+        }
+    }
+}
+tasks.sonarlintTest {
+    ignoreFailures = true
+}
+```
 
 ### Apply to Node project
 
