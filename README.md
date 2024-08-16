@@ -604,6 +604,11 @@ You must install "SARIF SAST Scans Tab" from the marketplace into the Azure DevO
 
 
 ## Release notes
+### 2.0.1 - unreleased
+Fix for issue https://github.com/Lucas3oo/sonarlint-gradle-plugin/issues/7. Contributed by [scscgit](https://github.com/scscgit). Correct samples for Kotlin DSL.
+
+Fix for issue https://github.com/Lucas3oo/sonarlint-gradle-plugin/issues/9. Contributed by [Chris Ribble](https://github.com/chrisribble). Java sourceCompatibility properties are now correctly read.
+
 ### 2.0.0
 Support for Sonarlint core 9.6 which means that newer plugins can be used.
 Like org.sonarsource.java:sonar-java-plugin:7.30.1.34514.
