@@ -117,7 +117,8 @@ If [the `java-test-fixtures` plugin](https://docs.gradle.org/current/userguide/j
 
 Configure `Sonarlint` directly, to set task-specific properties.
 
-Groovy syntax:
+Groovy DSL:
+
 ```groovy
 // Example to configure HTML report
 sonarlintMain {
@@ -133,6 +134,7 @@ sonarlintMain {
   }
 }
 ```
+
 ```groovy
 // Example to configure different rules etc for the test source
 sonarlintTest {
@@ -141,6 +143,7 @@ sonarlintTest {
   ignoreFailures = true
 }
 ```
+
 ```groovy
 // Exclude files from the scan (e.g. generated source code):
 sonarlintMain {
@@ -148,8 +151,10 @@ sonarlintMain {
   exclude '**/org/example/some/package2/*'
 }
 ```
-Kotlin syntax:
-```gradle.kts
+
+Kotlin DSL:
+
+```kotlinscript
 tasks.sonarlintMain {
     reports {
         reports.create("html") {
@@ -223,7 +228,7 @@ and `org.sonarsource.kotlin:sonar-kotlin-plugin:2.20.0.4382` and any additionall
 
 Typical `gradle.build.kts`:
 
-```kotlin
+```kotlinscript
 plugins {
   // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
   id("org.jetbrains.kotlin.jvm") version "1.7.21"
