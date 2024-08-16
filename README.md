@@ -241,6 +241,8 @@ and `org.sonarsource.kotlin:sonar-kotlin-plugin:2.20.0.4382` and any additionall
 Typical `gradle.build.kts`:
 
 ```Gradle Kotlin DSL
+import se.solrike.sonarlint.*
+
 plugins {
   // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
   id("org.jetbrains.kotlin.jvm") version "1.7.21"

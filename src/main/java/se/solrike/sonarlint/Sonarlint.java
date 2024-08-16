@@ -171,6 +171,9 @@ public abstract class Sonarlint extends SourceTask {
         .set(artifactProvider.map(p -> p.stream().map(ResolvedArtifactResult::getFile).collect(Collectors.toSet())));
   }
 
+  /**
+   * Execute the Sonarlint analysis on the source code.
+   */
   @TaskAction
   public void run() {
     Logger logger = getLogger();
