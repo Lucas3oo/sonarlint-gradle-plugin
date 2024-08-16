@@ -235,8 +235,7 @@ dependencies {
   sonarlintPlugins("org.sonarsource.kotlin:sonar-kotlin-plugin:2.20.0.4382")
 }
 
-// configure the tasks directly since the overloaded "extensions" like sonarlintMain will not work in Kotlin DSL
-tasks.sonarlintMain {
+sonarlint {
   maxIssues.set(1)
 }
 

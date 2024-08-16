@@ -13,6 +13,8 @@ import org.gradle.api.provider.Property;
  * <ul>
  * <li>html
  * <li>text
+ * <li>sarif
+ * <li>xml
  * </ul>
  * <p>
  * The reporting aspects of a {@link Sonarlint} task can be configured as such:
@@ -26,8 +28,8 @@ import org.gradle.api.provider.Property;
  *             // override default report file location for text report
  *             outputLocation = layout.buildDirectory.file('my_sonarlint.txt')
  *         }
- *         xml.enabled = true // default false
  *         sarif.enabled = true // default false
+ *         xml.enabled = true // default false
  *     }
  * }
  * </pre>

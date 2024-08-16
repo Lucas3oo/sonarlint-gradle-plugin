@@ -9,6 +9,8 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.ReportingBasePlugin;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.reporting.ReportingExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
@@ -123,8 +125,8 @@ public class SonarlintPlugin implements Plugin<Project> {
       task.getRuleParameters().set(extension.getRuleParameters());
       task.getShowIssues().set(extension.getShowIssues());
       task.getReportsDir().set(extension.getReportsDir());
+      // below doesn't seesm to work
       task.getReports().addAll(extension.getReports().getAsMap().values());
-
     });
 
     // let "check" task depend on sonarlint so it gets run automatically
