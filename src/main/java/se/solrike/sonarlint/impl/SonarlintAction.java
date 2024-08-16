@@ -61,23 +61,20 @@ public class SonarlintAction {
    * @return list of sonarlint issues
    */
   public List<IssueEx> run(Sonarlint task, SetProperty<File> plugins, ProjectLayout layout) {
-
-    Logger logger = task.getLogger();
-
-    return analyze(task, logger, plugins, layout);
-
+    return analyze(task, task.getLogger(), plugins, layout);
   }
 
   @SuppressWarnings({ "java:S1874", "deprecation" })
   protected List<IssueEx> analyze(Sonarlint task, Logger logger, SetProperty<File> plugins, ProjectLayout layout) {
-    Map<String, String> sonarProperties = new HashMap<>();
+	Map<String, String> sonarProperties = new HashMap<>();
 
     Project project = task.getProject();
-    // Java sourceCompatibility
+    // Java sourceCompatibility needs to be read so project is actually configured
     if (project.getProperties().containsKey("sourceCompatibility")) {
       String sourceCompatibility = project.getProperties().get("sourceCompatibility").toString();
       sonarProperties.put("sonar.java.source", sourceCompatibility);
     }
+
     Set<File> compileClasspath = Collections.emptySet();
     if (task.getCompileClasspath() != null) {
       compileClasspath = task.getCompileClasspath().getFiles();

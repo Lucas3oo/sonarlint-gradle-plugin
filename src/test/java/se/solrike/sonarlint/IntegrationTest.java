@@ -58,6 +58,9 @@ class IntegrationTest {
           + "    sarif.enabled = true\n"
           + "  }\n"
           + "}\n"
+          + "java {\n"
+          + "   sourceCompatibility = '1.8'\n"
+          + "}"
           );
       // @formatter:on
     }
@@ -112,6 +115,28 @@ class IntegrationTest {
     System.err.println(buildResult.getOutput());
     // CHECKSTYLE:ON
   }
+
+  @Test
+  void testJavaVersion() throws IOException {
+	// given the project has source comparability set to 1.8 the sonarlist component shall be invokded with that.
+	// and given that default java runtime is java11
+
+	createJavaFile(Files.createFile(mProjectDir.resolve("src/main/java/Hello.java")));
+
+	// when sonarlintMain is run with debug printouts
+	BuildResult buildResult = runGradle(false, List.of("--debug", "sonarlintMain"));
+
+	// then java source shall be 1.8
+	assertThat(buildResult.getOutput()).contains("extraProperties: {sonar.java.source=1.8");
+
+    // CHECKSTYLE:OFF
+    System.err.println(buildResult.getOutput());
+    // CHECKSTYLE:ON
+  }
+
+
+
+
 
   BuildResult runGradle(List<String> args) {
     return runGradle(true, args);
