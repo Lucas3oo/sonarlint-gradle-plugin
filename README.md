@@ -38,7 +38,7 @@ But possible to configure it for other languages that sonarlint has plugins for 
 
 Apply the plugin to your project.
 
-```groovy
+```gradle
 plugins {
   id 'se.solrike.sonarlint' version '2.0.0'
 }
@@ -53,7 +53,7 @@ In a Java project there will be one sonarlint task automatically created for eac
 Typically `sonarlintMain` and `sonarlintTest`, see more below.
 The task for listing the rules `sonarlintListRules` has to be manually created, see more below.
 
-```groovy
+```gradle
 task sonarlintListRules(type: se.solrike.sonarlint.SonarlintListRules) {
   description = 'List sonarlint rules'
   group = 'verification'
@@ -65,7 +65,7 @@ task sonarlintListRules(type: se.solrike.sonarlint.SonarlintListRules) {
 
 Configure `sonarlint` extension to configure the behavior of tasks:
 
-```groovy
+```gradle
 sonarlint {
   excludeRules = ['java:S1186']
   includeRules = ['java:S1176', 'java:S1696', 'java:S4266']
@@ -84,7 +84,7 @@ sonarlint {
 
 Configure `sonarlintPlugins` to apply any sonarlint plugin:
 
-```groovy
+```gradle
 dependencies {
   sonarlintPlugins 'org.sonarsource.html:sonar-html-plugin:3.6.0.3106'
   sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.30.1.34514'
@@ -119,7 +119,7 @@ Configure `Sonarlint` directly, to set task-specific properties.
 
 Groovy DSL:
 
-```groovy
+```gradle
 // Example to configure HTML report
 sonarlintMain {
   reports {
@@ -135,7 +135,7 @@ sonarlintMain {
 }
 ```
 
-```groovy
+```gradle
 // Example to configure different rules etc for the test source
 sonarlintTest {
   excludeRules = ['java:S1001']
@@ -144,7 +144,7 @@ sonarlintTest {
 }
 ```
 
-```groovy
+```gradle
 // Exclude files from the scan (e.g. generated source code):
 sonarlintMain {
   exclude '**/org/example/some/package1/*'
@@ -154,7 +154,7 @@ sonarlintMain {
 
 Kotlin DSL:
 
-```kotlinscript
+```Gradle Kotlin DSL
 tasks.sonarlintMain {
     reports {
         reports.create("html") {
@@ -181,7 +181,7 @@ Sonarlint needs a node executable in order to perform the analysis. This plugin 
 
 This example has TypeScript code under `projects/` and `src/`
 
-```groovy
+```gradle
 plugins {
   id 'base'
   id 'com.github.node-gradle.node' version '5.0.0'
@@ -228,7 +228,7 @@ and `org.sonarsource.kotlin:sonar-kotlin-plugin:2.20.0.4382` and any additionall
 
 Typical `gradle.build.kts`:
 
-```kotlinscript
+```Gradle Kotlin DSL
 plugins {
   // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
   id("org.jetbrains.kotlin.jvm") version "1.7.21"
@@ -270,7 +270,7 @@ the language plugins for your code. Like both `org.sonarsource.java:sonar-java-p
 and `org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905` and any additionally plugin you need.
 
 
-```groovy
+```gradle
 plugins {
   id 'scala'
   id 'se.solrike.sonarlint' version '2.0.0'
@@ -308,7 +308,7 @@ Instead it has to be defined explicitly in the `build.gradle`.
 
 #### Create the sonarlint task when it is not auto created
 
-```groovy
+```gradle
 plugins {
   id 'base'
   id 'se.solrike.sonarlint' version '2.0.0'
@@ -352,7 +352,7 @@ Rules are described [here](https://rules.sonarsource.com/). Note that some rules
 
 To list all the rules in your configured plugins you will have to create the task manually. Complete example:
 
-```groovy
+```gradle
 plugins {
   id 'se.solrike.sonarlint' version '2.0.0'
   id 'com.github.node-gradle.node' version '5.0.0'
