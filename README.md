@@ -458,7 +458,7 @@ The sonarlint gradle plugin can generate Spotbugs/Findbugs compatible XML files 
 
 Enable as follows:
 
-```groovy
+```gradle
 sonarlintMain {
   reports {
     xml.enabled = true // default false
