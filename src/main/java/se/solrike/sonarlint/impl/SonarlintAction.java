@@ -66,7 +66,7 @@ public class SonarlintAction {
 
   @SuppressWarnings({ "java:S1874", "deprecation" })
   protected List<IssueEx> analyze(Sonarlint task, Logger logger, SetProperty<File> plugins, ProjectLayout layout) {
-	Map<String, String> sonarProperties = new HashMap<>();
+    Map<String, String> sonarProperties = new HashMap<>();
 
     Project project = task.getProject();
     // Java sourceCompatibility needs to be read so project is actually configured

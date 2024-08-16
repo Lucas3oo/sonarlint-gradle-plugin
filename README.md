@@ -169,15 +169,14 @@ Kotlin DSL:
 
 ```Gradle Kotlin DSL
 tasks.sonarlintMain {
-    reports {
-        reports.create("html") {
-            enabled = true
-            outputLocation = layout.buildDirectory.file("reports/sonarlint/sonarlint.html")
-        }
+  reports {
+    reports.create("html") {
+      enabled.set(true)
     }
+  }
 }
 tasks.sonarlintTest {
-    ignoreFailures = true
+  ignoreFailures.set(true)
 }
 ```
 
@@ -690,16 +689,16 @@ This plugin picks the node executable from that but since the node path contains
 
 ### future
 Improvements that might be implemented are:
+* Support config of reports in the `sonarlint` extension and not only per task. Need to investigate more on how to lazy load NamedDomainObjectContainer.
 * Support for windows when using node.
 * Support to specify sonarlint properties. For instance the node exec can be configured that way using 'sonar.nodejs.executable'.
 * Support to find node on the $PATH using org.sonarsource.sonarlint.core.NodeJsHelper
 * Support for a list of suppressed issues like Checkstyle and Spotbug have.
 * specify stylesheet for the html reports
-* Be able to specify the source sets in the sonarlint DSL
 * specify the sonarlint-core version via a toolsversion property and invoke it via WorkerAPI
 * make sure up-to-date checks are resonable
 * link to rules description in the report
-* it might exists more issue types: "SECURITY_HOTSPOT" but they are not in sonarlint
+* it might exists more issue types: "SECURITY_HOTSPOT" but they are not in sonarlint. They are only in SonarCloud.
 
 
 SARIF
