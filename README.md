@@ -104,6 +104,19 @@ dependencies {
 }
 ```
 
+To enable reports you currently have to enable that per task. E.g.
+
+Groovy DSL:
+
+```gradle
+sonarlintMain {
+  reports {
+    sarif.enabled = true // default false
+  }
+}
+```
+
+
 ### Apply to Java project
 
 Apply this plugin with [the `java` plugin](https://docs.gradle.org/current/userguide/java_plugin.html) to your project,
