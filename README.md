@@ -106,8 +106,6 @@ dependencies {
 
 To enable reports you can configure the extension and/or individual tasks. E.g.
 
-Groovy DSL:
-
 ```gradle
 sonarlint {
   reports {
@@ -366,7 +364,7 @@ By default, this Gradle Plugin uses the [sonarlint core](https://github.com/Sona
 |-----:|-----:|-----:|
 | 1.0.0| 8.0.2.42487|7.0|
 | 2.0.0| 9.6.1.76766|7.0|
-| 2.1.0| 9.6.1.76766|7.5|
+| 2.1.0| 9.8.0.76914|7.5|
 
 
 ## sonarlint rules
@@ -651,6 +649,8 @@ sonarlint {
 Fix for issue https://github.com/Lucas3oo/sonarlint-gradle-plugin/issues/7. Contributed by [scscgit](https://github.com/scscgit). Correct samples for Kotlin DSL.
 
 Fix for issue https://github.com/Lucas3oo/sonarlint-gradle-plugin/issues/9. Contributed by [Chris Ribble](https://github.com/chrisribble). Java sourceCompatibility property is now correctly read.
+
+Support for Sonarlint core 9.8.0.76914.
 
 ### 2.0.0
 Support for Sonarlint core 9.6 which means that newer plugins can be used.
