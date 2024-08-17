@@ -5,14 +5,16 @@ import static java.util.Map.ofEntries;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.logging.Logger;
-import org.sonarsource.sonarlint.core.commons.log.ClientLogOutput;
+import org.sonarsource.sonarlint.core.commons.log.LogOutput;
 
 /**
  * @author Lucas Persson
  */
-public class GradleClientLogOutput implements ClientLogOutput {
+public class GradleClientLogOutput implements LogOutput {
 
   private final Logger mLogger;
 
@@ -25,11 +27,15 @@ public class GradleClientLogOutput implements ClientLogOutput {
   }
 
   @Override
-  public void log(String formattedMessage, Level level) {
-    if (!supress(formattedMessage)) {
+  public void log(@Nullable String formattedMessage, Level level, @Nullable String stacktrace) {
+    if (formattedMessage != null && !supress(formattedMessage)) {
       mLogger.log(sLevelMap.get(level), formattedMessage);
     }
+    if (stacktrace != null ) {
+      mLogger.log(sLevelMap.get(level), stacktrace);
+    }
   }
+
 
   private boolean supress(String formattedMessage) {
     return formattedMessage.startsWith("No workDir in SonarLint")
