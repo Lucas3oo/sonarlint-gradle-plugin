@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class SonarlintPlugin implements Plugin<Project> {
 
   private static final Logger sLogger = LoggerFactory.getLogger(SonarlintPlugin.class);
-  private static final GradleVersion SUPPORTED_VERSION = GradleVersion.version("7.0");
+  private static final GradleVersion SUPPORTED_VERSION = GradleVersion.version("7.5");
 
   public static final String CONFIG_NAME = "sonarlint";
   public static final String PLUGINS_CONFIG_NAME = "sonarlintPlugins";
@@ -123,8 +123,7 @@ public class SonarlintPlugin implements Plugin<Project> {
       task.getRuleParameters().set(extension.getRuleParameters());
       task.getShowIssues().set(extension.getShowIssues());
       task.getReportsDir().set(extension.getReportsDir());
-      // below doesn't seesm to work
-      task.getReports().addAll(extension.getReports().getAsMap().values());
+      extension.getReports().whenObjectAdded(report -> task.getReports().add(report));
     });
 
     // let "check" task depend on sonarlint so it gets run automatically

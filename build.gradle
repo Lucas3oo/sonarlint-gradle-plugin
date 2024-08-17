@@ -4,7 +4,7 @@ plugins {
   id 'eclipse'
   id 'groovy'
   // Apply the Plugin Publish Plugin to make plugin publication possible
-  id 'com.gradle.plugin-publish' version '1.0.0'
+  id 'com.gradle.plugin-publish' version '1.2.1'
   id 'se.solrike.conventions.java-conventions' version '1.0.0-beta.7'
 }
 
@@ -26,7 +26,7 @@ dependencies {
 }
 
 group = 'se.solrike.sonarlint'
-version = '2.0.1-beta1'
+version = '2.1.0'
 
 sourceSets {
   main {
@@ -85,7 +85,7 @@ gradlePlugin {
           'The plugin supports Gradle configuration cache.\n' +
           'The plugin can produce Spotbugs compatible XML reports and also SARIF which can be used by Github actions, Jenkins, ' +
           'AWS CodeCatalyst and Azure DevOps.\n' +
-          'Min Gradle version 7.0.'
+          'Min Gradle version 7.5.'
     }
   }
 }
@@ -116,7 +116,7 @@ pluginBundle {
 
 // to upgrade the metainfo about which gradle version we shall use. Run ./gradlew wrapper after you have updated the version. The commit the new wrapper files except the gradlew.bat
 wrapper {
-  gradleVersion = '7.5.1'
+  gradleVersion = '7.5'
 }
 
 

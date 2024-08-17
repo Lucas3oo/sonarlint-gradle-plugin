@@ -1,10 +1,9 @@
 package se.solrike.sonarlint;
 
-import javax.inject.Inject;
-
 import org.gradle.api.Named;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
 
 /**
  * The reporting configuration for the {@link Sonarlint} task.
@@ -12,8 +11,8 @@ import org.gradle.api.provider.Property;
  * One of
  * <ul>
  * <li>html
- * <li>text
  * <li>sarif
+ * <li>text
  * <li>xml
  * </ul>
  * <p>
@@ -38,27 +37,14 @@ import org.gradle.api.provider.Property;
  *
  * @author Lucas Persson
  */
-public abstract class SonarlintReport implements Named {
-  private final String mName;
+//https://docs.gradle.org/8.6/userguide/custom_gradle_types.html#nameddomainobjectset
 
-  @SuppressWarnings("all")
-  @Inject
-  public SonarlintReport(String name) {
-    mName = name;
-  }
+public interface SonarlintReport extends Named {
 
-  @Override
-  public String getName() {
-    return mName;
-  }
+  @Input
+  Property<Boolean> getEnabled();
 
-  public abstract Property<Boolean> getEnabled();
-
-  public abstract RegularFileProperty getOutputLocation();
-
-  @Override
-  public String toString() {
-    return getEnabled().getOrElse(Boolean.FALSE) + ", location: " + getOutputLocation().getOrNull();
-  }
+  @Input
+  RegularFileProperty getOutputLocation();
 
 }

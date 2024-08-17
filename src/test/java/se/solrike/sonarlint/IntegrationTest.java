@@ -52,9 +52,14 @@ class IntegrationTest {
           + "}\n"
           + "task sonarlintListRules(type: se.solrike.sonarlint.SonarlintListRules) {\n"
           + "}\n"
-          + "sonarlintMain {\n"
+          + "sonarlint {\n"
           + "  reports {"
           + "    xml.enabled = true\n"
+          + "    xml.outputLocation = layout.buildDirectory.file('my_sonarlint.xml')\n"
+          + "  }\n"
+          + "}\n"
+          + "sonarlintMain {\n"
+          + "  reports {"
           + "    sarif.enabled = true\n"
           + "  }\n"
           + "}\n"
@@ -89,7 +94,7 @@ class IntegrationTest {
     // since xml report is enabled the plugin shall print the location of the report
     assertThat(buildResult.getOutput()).contains("Report generated at:");
 
-    assertThat(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.xml").toFile()).exists();
+    assertThat(mProjectDir.resolve("build/my_sonarlint.xml").toFile()).exists();
     assertThat(mProjectDir.resolve("build/reports/sonarlint/sonarlintMain.sarif").toFile()).exists();
 
     // CHECKSTYLE:OFF
@@ -118,7 +123,7 @@ class IntegrationTest {
 
   @Test
   void testJavaVersion() throws IOException {
-    // given the project has source comparability set to 1.8 the sonarlist component shall be invokded with that.
+    // given the project has source comparability set to 1.8 the sonarlist component shall be invoked with that.
     // and given that default java runtime is java11
 
     createJavaFile(Files.createFile(mProjectDir.resolve("src/main/java/Hello.java")));

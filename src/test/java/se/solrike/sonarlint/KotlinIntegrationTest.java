@@ -40,7 +40,18 @@ class KotlinIntegrationTest {
           + "  testImplementation('org.jetbrains.kotlin:kotlin-test')\n"
           + "  testImplementation('org.jetbrains.kotlin:kotlin-test-junit')\n"
           + "  sonarlintPlugins('org.sonarsource.kotlin:sonar-kotlin-plugin:2.20.0.4382')\n"
-          + "}\n");
+          + "}\n"
+          + "sonarlint {\n"
+          + "  maxIssues.set(1)\n"
+          + "  reports {\n"
+          + "    create(\"sarif\") {\n"
+          + "      enabled.set(true)\n"
+          + "      outputLocation.set(layout.buildDirectory.file(\"reports/sonarlint/mySarif.sarif\"))"
+          + "    }\n"
+          + "  }\n"
+          + "}\n"
+          + ""
+          );
       // @formatter:on
     }
     catch (IOException e) {
@@ -58,13 +69,15 @@ class KotlinIntegrationTest {
     createKotlinFile(Files.createFile(mProjectDir.resolve("src/main/kotlin/Hello.kt")));
 
     // when sonarlintKotlinMain is run
-    BuildResult buildResult = runGradle(false, List.of("sonarlintMain"));
+    BuildResult buildResult = runGradle(true, List.of("sonarlintMain"));
 
     // then the gradle build shall fail
-    assertThat(buildResult.task(":sonarlintMain").getOutcome()).isEqualTo(TaskOutcome.FAILED);
+    assertThat(buildResult.task(":sonarlintMain").getOutcome()).isEqualTo(TaskOutcome.SUCCESS);
     // and the 1 sonarlint rules violated are
     assertThat(buildResult.getOutput()).contains("1 SonarLint issue(s) were found.");
     assertThat(buildResult.getOutput()).contains("kotlin:S1481");
+    // and report shall be generated
+    assertThat(mProjectDir.resolve("build/reports/sonarlint/mySarif.sarif").toFile()).exists();
 
     // CHECKSTYLE:OFF
     System.err.println(buildResult.getOutput());

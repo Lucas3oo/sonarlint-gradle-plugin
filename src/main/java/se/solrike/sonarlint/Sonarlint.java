@@ -99,6 +99,8 @@ public abstract class Sonarlint extends SourceTask {
    *
    * @return the reports
    */
+  // if annotated with @Input then Gradle tries to fingerprint the reports and
+  // serialise it which will not work if you specify outputLocation which is a File object.
   @Internal
   public abstract NamedDomainObjectContainer<SonarlintReport> getReports();
 

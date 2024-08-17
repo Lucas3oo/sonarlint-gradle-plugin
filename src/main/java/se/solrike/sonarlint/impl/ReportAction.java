@@ -55,8 +55,6 @@ public class ReportAction {
   public void report(List<IssueEx> issues) {
     Map<String, SonarlintReport> reports = mTask.getReports().getAsMap();
 
-    mLogger.error("Reports configured: {}", reports);
-
     // generate reports
     reports.forEach((name, report) -> {
       if (report.getEnabled().getOrElse(Boolean.FALSE)) {

@@ -40,11 +40,11 @@ Apply the plugin to your project.
 
 ```gradle
 plugins {
-  id 'se.solrike.sonarlint' version '2.0.0'
+  id 'se.solrike.sonarlint' version '2.1.0'
 }
 ```
 
-Gradle 7.0 or later must be used.
+Gradle **7.5** or later must be used.
 
 
 ### Tasks in this plugin
@@ -104,14 +104,20 @@ dependencies {
 }
 ```
 
-To enable reports you currently have to enable that per task. E.g.
+To enable reports you can configure the extension and/or individual tasks. E.g.
 
 Groovy DSL:
 
 ```gradle
-sonarlintMain {
+sonarlint {
   reports {
     sarif.enabled = true // default false
+  }
+}
+
+sonarlintMain {
+  reports {
+    xml.enabled = true // default false
   }
 }
 ```
@@ -170,7 +176,7 @@ Kotlin DSL:
 ```Gradle Kotlin DSL
 tasks.sonarlintMain {
   reports {
-    reports.create("html") {
+    create("html") {
       enabled.set(true)
     }
   }
@@ -197,7 +203,7 @@ This example has TypeScript code under `projects/` and `src/`
 plugins {
   id 'base'
   id 'com.github.node-gradle.node' version '5.0.0'
-  id 'se.solrike.sonarlint' version '2.0.0'
+  id 'se.solrike.sonarlint' version '2.1.0'
 }
 repositories {
   mavenCentral()
@@ -246,7 +252,7 @@ import se.solrike.sonarlint.*
 plugins {
   // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
   id("org.jetbrains.kotlin.jvm") version "1.7.21"
-  id("se.solrike.sonarlint") version "2.0.0"
+  id("se.solrike.sonarlint") version "2.0.1-beta.1"
 }
 
 repositories {
@@ -270,6 +276,11 @@ dependencies {
 
 sonarlint {
   maxIssues.set(1)
+  reports {
+    create("sarif") {
+      enabled.set(true)
+    }
+  }
 }
 
 ```
@@ -287,7 +298,7 @@ and `org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905` and any additionally 
 ```gradle
 plugins {
   id 'scala'
-  id 'se.solrike.sonarlint' version '2.0.0'
+  id 'se.solrike.sonarlint' version '2.1.0'
 }
 
 repositories {
@@ -325,7 +336,7 @@ Instead it has to be defined explicitly in the `build.gradle`.
 ```gradle
 plugins {
   id 'base'
-  id 'se.solrike.sonarlint' version '2.0.0'
+  id 'se.solrike.sonarlint' version '2.1.0'
 }
 repositories {
   mavenCentral()
@@ -351,10 +362,11 @@ By default, this Gradle Plugin uses the [sonarlint core](https://github.com/Sona
 
 
 
-|Gradle Plugin|sonarlint|
-|-----:|-----:|
-| 1.0.0| 8.0.2.42487|
-| 2.0.0| 9.6.1.76766|
+|Gradle Plugin|sonarlint|Gradle|
+|-----:|-----:|-----:|
+| 1.0.0| 8.0.2.42487|7.0|
+| 2.0.0| 9.6.1.76766|7.0|
+| 2.1.0| 9.6.1.76766|7.5|
 
 
 ## sonarlint rules
@@ -368,7 +380,7 @@ To list all the rules in your configured plugins you will have to create the tas
 
 ```gradle
 plugins {
-  id 'se.solrike.sonarlint' version '2.0.0'
+  id 'se.solrike.sonarlint' version '2.1.0'
   id 'com.github.node-gradle.node' version '5.0.0'
 }
 repositories {
@@ -623,7 +635,19 @@ You must install "SARIF SAST Scans Tab" from the marketplace into the Azure DevO
 
 
 ## Release notes
-### 2.0.1 - unreleased
+### 2.1.0
+Minimum Gradle version is now 7.5.
+
+It is now possible to enable reports using the sonarlint extension:
+
+```gradle
+sonarlint {
+  reports {
+    sarif.enabled = true // default false
+  }
+}
+```
+
 Fix for issue https://github.com/Lucas3oo/sonarlint-gradle-plugin/issues/7. Contributed by [scscgit](https://github.com/scscgit). Correct samples for Kotlin DSL.
 
 Fix for issue https://github.com/Lucas3oo/sonarlint-gradle-plugin/issues/9. Contributed by [Chris Ribble](https://github.com/chrisribble). Java sourceCompatibility property is now correctly read.
@@ -708,7 +732,7 @@ SARIF
  A set of strings used to track the unique identity of the result. Code scanning uses partialFingerprints to accurately identify which results are the same across commits and branches.
  Note: Code scanning only uses the primaryLocationLineHash.
 
-           "partialFingerprints": {
+          "partialFingerprints": {
             "primaryLocationLineHash": "39fa2ee980eb94b0:1"
           }
 
