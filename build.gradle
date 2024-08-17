@@ -124,3 +124,5 @@ tasks.register('sonarlintListRules', SonarlintListRules) {
   description = 'List sonarlint rules'
   group = 'verification'
 }
+
+// ./gradlew clean test --tests 'KotlinIntegrationTest.testSonarlintMain'
