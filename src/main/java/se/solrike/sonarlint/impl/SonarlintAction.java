@@ -16,6 +16,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.logging.Logger;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.SetProperty;
 import org.sonarsource.sonarlint.core.StandaloneSonarLintEngineImpl;
 import org.sonarsource.sonarlint.core.analysis.api.AnalysisResults;
@@ -32,6 +33,8 @@ import org.sonarsource.sonarlint.core.plugin.commons.SkipReason;
 import se.solrike.sonarlint.Sonarlint;
 import se.solrike.sonarlint.impl.util.NodePluginUtil;
 
+import javax.annotation.Nullable;
+
 /**
  * @author Lucas Persson
  */
@@ -39,9 +42,12 @@ public class SonarlintAction {
 
   private Path mNodeExec;
   private String mNodeVersion;
+  @Nullable
+  private final JavaPluginExtension mJavaExtension;
 
   public SonarlintAction(Sonarlint task) {
     Project project = task.getProject();
+    mJavaExtension = project.getExtensions().findByType(JavaPluginExtension.class);
     if (project.getExtensions().findByName("node") != null) {
       NodePluginUtil nodeUtil = new NodePluginUtil();
       if (nodeUtil.getDownload(project)) {
@@ -68,10 +74,9 @@ public class SonarlintAction {
   protected List<IssueEx> analyze(Sonarlint task, Logger logger, SetProperty<File> plugins, ProjectLayout layout) {
     Map<String, String> sonarProperties = new HashMap<>();
 
-    Project project = task.getProject();
     // Java sourceCompatibility needs to be read so project is actually configured
-    if (project.getProperties().containsKey("sourceCompatibility")) {
-      String sourceCompatibility = project.getProperties().get("sourceCompatibility").toString();
+    if (mJavaExtension != null) {
+      String sourceCompatibility = mJavaExtension.getSourceCompatibility().toString();
       sonarProperties.put("sonar.java.source", sourceCompatibility);
     }
 
