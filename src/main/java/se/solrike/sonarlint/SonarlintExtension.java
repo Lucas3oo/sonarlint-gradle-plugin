@@ -43,6 +43,14 @@ public interface SonarlintExtension {
   Property<Integer> getMaxIssues();
 
   /**
+   * The minimum issues severity that are tolerated before breaking the build or setting the failure property.
+   * Issues severity is defined at org.sonarsource.sonarlint.core.commons.IssueSeverity.
+   *
+   * @return the minimum issue severity allowed
+   */
+  Property<Integer> getMinSeverity();
+
+  /**
    * The default directory where reports will be generated.
    *
    * @return reports main directory

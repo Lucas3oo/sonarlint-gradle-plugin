@@ -170,7 +170,7 @@ public class ReportAction {
   private static final Map<IssueSeverity, String> sIssueSeverityIcon = ofEntries(
       entry(IssueSeverity.BLOCKER,  "\uD83C\uDF2A  Block"), // Cloud With Tornado
       entry(IssueSeverity.CRITICAL, "\uD83C\uDF29  Crit."), // Cloud With Lightning
-      entry(IssueSeverity.MAJOR,    "\uD83C\uDF28  Major️"), // Cloud With Snow
+      entry(IssueSeverity.MAJOR,    "\uD83C\uDF28  Major"), // Cloud With Snow
       entry(IssueSeverity.MINOR,    "\uD83C\uDF26  Minor"), // White Sun Behind Cloud With Rain
       entry(IssueSeverity.INFO,     "\uD83C\uDF24  Info ")  // White Sun With Small Cloud
       );
