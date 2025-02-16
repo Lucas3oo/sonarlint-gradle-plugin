@@ -65,6 +65,7 @@ public class SonarlintPlugin implements Plugin<Project> {
 
     extension.getIgnoreFailures().set(Boolean.FALSE);
     extension.getMaxIssues().set(0);
+    extension.getMinSeverity().set(0);
     extension.getShowIssues().set(Boolean.TRUE);
 
     DirectoryProperty sonarlintReportsDirectory = project.getObjects()
@@ -119,6 +120,7 @@ public class SonarlintPlugin implements Plugin<Project> {
       task.getExcludeRules().set(extension.getExcludeRules());
       task.getIncludeRules().set(extension.getIncludeRules());
       task.getMaxIssues().set(extension.getMaxIssues());
+      task.getMinSeverity().set(extension.getMinSeverity());
       task.getIgnoreFailures().set(extension.getIgnoreFailures());
       task.getRuleParameters().set(extension.getRuleParameters());
       task.getShowIssues().set(extension.getShowIssues());

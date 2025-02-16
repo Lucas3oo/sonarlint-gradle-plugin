@@ -71,6 +71,7 @@ sonarlint {
   includeRules = ['java:S1176', 'java:S1696', 'java:S4266']
   ignoreFailures = false
   maxIssues = 0 // default 0
+  minSeverity = 0 // default 0
   reportsDir = 'someFolder' // default build/reports/sonarlint
   // note that rule parameter names are case sensitive
   ruleParameters = [

@@ -62,6 +62,7 @@ class IntegrationTest {
           + "  reports {"
           + "    sarif.enabled = true\n"
           + "  }\n"
+          + "  minSeverity = 2\n"
           + "}\n"
           + "java {\n"
           + "   sourceCompatibility = '1.8'\n"
@@ -88,8 +89,8 @@ class IntegrationTest {
 
     // then the gradle build shall fail
     assertThat(buildResult.task(":sonarlintMain").getOutcome()).isEqualTo(TaskOutcome.FAILED);
-    // and the 3 sonarlint rules violated are
-    assertThat(buildResult.getOutput()).contains("3 SonarLint issue(s) were found.");
+    // and the 1 sonarlint rules violated, filtered by min severity are
+    assertThat(buildResult.getOutput()).contains("1 SonarLint issue(s) were found.");
     assertThat(buildResult.getOutput()).contains("java:S1186", "java:S1118", "java:S1220");
     // since xml report is enabled the plugin shall print the location of the report
     assertThat(buildResult.getOutput()).contains("Report generated at:");
