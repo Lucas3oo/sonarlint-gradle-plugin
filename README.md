@@ -40,7 +40,7 @@ Apply the plugin to your project.
 
 ```gradle
 plugins {
-  id 'se.solrike.sonarlint' version '2.1.0'
+  id 'se.solrike.sonarlint' version '2.2.0'
 }
 ```
 
@@ -66,12 +66,15 @@ task sonarlintListRules(type: se.solrike.sonarlint.SonarlintListRules) {
 Configure `sonarlint` extension to configure the behavior of tasks:
 
 ```gradle
+import org.sonarsource.sonarlint.core.commons.IssueSeverity
+
 sonarlint {
   excludeRules = ['java:S1186']
   includeRules = ['java:S1176', 'java:S1696', 'java:S4266']
   ignoreFailures = false
   maxIssues = 0 // default 0
-  minSeverity = 0 // default 0
+  minSeverity = IssueSeverity.INFO // default not set, e.g IssueSeverity.INFO, IssueSeverity.MINOR ...
+                                   // When set to IssueSeverity.MINOR all issues with INFO and MINOR will be ignored.
   reportsDir = 'someFolder' // default build/reports/sonarlint
   // note that rule parameter names are case sensitive
   ruleParameters = [
@@ -202,7 +205,7 @@ This example has TypeScript code under `projects/` and `src/`
 plugins {
   id 'base'
   id 'com.github.node-gradle.node' version '5.0.0'
-  id 'se.solrike.sonarlint' version '2.1.0'
+  id 'se.solrike.sonarlint' version '2.2.0'
 }
 repositories {
   mavenCentral()
@@ -297,7 +300,7 @@ and `org.sonarsource.slang:sonar-scala-plugin:1.11.0.3905` and any additionally 
 ```gradle
 plugins {
   id 'scala'
-  id 'se.solrike.sonarlint' version '2.1.0'
+  id 'se.solrike.sonarlint' version '2.2.0'
 }
 
 repositories {
@@ -335,7 +338,7 @@ Instead it has to be defined explicitly in the `build.gradle`.
 ```gradle
 plugins {
   id 'base'
-  id 'se.solrike.sonarlint' version '2.1.0'
+  id 'se.solrike.sonarlint' version '2.2.0'
 }
 repositories {
   mavenCentral()
@@ -366,6 +369,7 @@ By default, this Gradle Plugin uses the [sonarlint core](https://github.com/Sona
 | 1.0.0| 8.0.2.42487|7.0|
 | 2.0.0| 9.6.1.76766|7.0|
 | 2.1.0| 9.8.0.76914|7.5|
+| 2.2.0| 9.8.0.76914|7.5|
 
 
 ## sonarlint rules
@@ -379,7 +383,7 @@ To list all the rules in your configured plugins you will have to create the tas
 
 ```gradle
 plugins {
-  id 'se.solrike.sonarlint' version '2.1.0'
+  id 'se.solrike.sonarlint' version '2.2.0'
   id 'com.github.node-gradle.node' version '5.0.0'
 }
 repositories {
@@ -634,6 +638,16 @@ You must install "SARIF SAST Scans Tab" from the marketplace into the Azure DevO
 
 
 ## Release notes
+### 2.2.0
+
+Support for minSeverity option.
+
+Contributions:
+
+* Feature of https://github.com/Lucas3oo/sonarlint-gradle-plugin/pull/12 by [Liran M](https://github.com/liran2000). Adding minSeverity option.
+* Fix issue https://github.com/Lucas3oo/sonarlint-gradle-plugin/pull/11 by [Lukas Gräf](https://github.com/lukasgraef). Fix for cache.
+
+
 ### 2.1.0
 Minimum Gradle version is now 7.5.
 

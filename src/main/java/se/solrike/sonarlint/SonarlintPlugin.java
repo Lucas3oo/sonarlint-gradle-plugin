@@ -65,7 +65,6 @@ public class SonarlintPlugin implements Plugin<Project> {
 
     extension.getIgnoreFailures().set(Boolean.FALSE);
     extension.getMaxIssues().set(0);
-    extension.getMinSeverity().set(0);
     extension.getShowIssues().set(Boolean.TRUE);
 
     DirectoryProperty sonarlintReportsDirectory = project.getObjects()

@@ -8,6 +8,7 @@ import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.SetProperty;
 import org.gradle.api.tasks.Nested;
+import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 
 /**
  * @author Lucas Persson
@@ -43,12 +44,12 @@ public interface SonarlintExtension {
   Property<Integer> getMaxIssues();
 
   /**
-   * The minimum issues severity that are tolerated before breaking the build or setting the failure property.
-   * Issues severity is defined at org.sonarsource.sonarlint.core.commons.IssueSeverity.
+   * The minimum issue severity that are tolerated before breaking the build or setting the failure property. Issue
+   * severity is defined at org.sonarsource.sonarlint.core.commons.IssueSeverity.
    *
    * @return the minimum issue severity allowed
    */
-  Property<Integer> getMinSeverity();
+  Property<IssueSeverity> getMinSeverity();
 
   /**
    * The default directory where reports will be generated.

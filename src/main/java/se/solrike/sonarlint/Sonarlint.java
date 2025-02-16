@@ -31,6 +31,7 @@ import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SourceTask;
 import org.gradle.api.tasks.TaskAction;
+import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 
 import se.solrike.sonarlint.impl.IssueEx;
 import se.solrike.sonarlint.impl.ReportAction;
@@ -86,14 +87,14 @@ public abstract class Sonarlint extends SourceTask {
   public abstract Property<Integer> getMaxIssues();
 
   /**
-   * The minimum issues severity that are tolerated before breaking the build or setting the failure property.
-   * Issues severity is defined at org.sonarsource.sonarlint.core.commons.IssueSeverity.
+   * The minimum issue severity that are tolerated before breaking the build or setting the failure property. Issue
+   * severity is defined at org.sonarsource.sonarlint.core.commons.IssueSeverity.
    *
    * @return the minimum issue severity allowed
    */
   @Input
   @Optional
-  public abstract Property<Integer> getMinSeverity();
+  public abstract Property<IssueSeverity> getMinSeverity();
 
   /**
    * Whether issues are to be displayed on the console. Defaults to <code>true</code>.
@@ -193,22 +194,17 @@ public abstract class Sonarlint extends SourceTask {
     logTaskParameters();
 
     List<IssueEx> issues = mAction.run(this, getSonarlintConfiguration(), getProjectLayout());
-    List<IssueEx> filteredIssues = issues;
-    if (getMinSeverity().get() > 0) {
-      filteredIssues = issues.stream()
-              .filter(issue -> issue.getSeverity().ordinal() > getMinSeverity().get()).collect(Collectors.toList());
-    }
 
-    String resultMessage = String.format("%d SonarLint issue(s) were found. Max issue(s) allowed: %d.", filteredIssues.size(),
+    String resultMessage = String.format("%d SonarLint issue(s) were found. Max issue(s) allowed: %d.", issues.size(),
         getMaxIssues().getOrElse(0));
     logger.error(resultMessage);
 
     ReportAction reportAction = new ReportAction(this, logger, getProjectLayout(), getProjectProvider());
-    reportAction.report(filteredIssues);
+    reportAction.report(issues);
 
     // optionally generate console info
     if (Boolean.TRUE.equals(getShowIssues().getOrElse(Boolean.TRUE)) && logger.isErrorEnabled()) {
-      for (IssueEx issue : filteredIssues) {
+      for (IssueEx issue : issues) {
         logger.error("\n{} {} {} {} at: {}:{}:{}", reportAction.getIssueTypeIcon(issue.getType()),
             reportAction.getIssueSeverityIcon(issue.getSeverity()), issue.getRuleKey(), issue.getMessage(),
             issue.getInputFileRelativePath(), issue.getStartLine(), issue.getStartLineOffset());
@@ -216,7 +212,7 @@ public abstract class Sonarlint extends SourceTask {
     }
 
     boolean ignoreFailures = getIgnoreFailures().getOrElse(Boolean.FALSE);
-    if ((!ignoreFailures) && filteredIssues.size() > getMaxIssues().getOrElse(0)) {
+    if ((!ignoreFailures) && issues.size() > getMaxIssues().getOrElse(0)) {
       // fail build
       throw new GradleException(resultMessage);
     }

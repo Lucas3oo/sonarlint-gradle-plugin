@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.file.ProjectLayout;
@@ -32,8 +34,6 @@ import org.sonarsource.sonarlint.core.plugin.commons.SkipReason;
 
 import se.solrike.sonarlint.Sonarlint;
 import se.solrike.sonarlint.impl.util.NodePluginUtil;
-
-import javax.annotation.Nullable;
 
 /**
  * @author Lucas Persson
@@ -154,6 +154,12 @@ public class SonarlintAction {
 
     List<IssueEx> issues = collector.getIssues();
     issues.forEach(i -> i.setRulesDetails(engine.getRuleDetails(i.getRuleKey())));
+
+    if (task.getMinSeverity().getOrNull() != null) {
+      issues = issues.stream()
+          .filter(issue -> issue.getSeverity().compareTo(task.getMinSeverity().get()) > 0)
+          .collect(Collectors.toList());
+    }
 
     logger.debug("Files: {}", results.indexedFileCount());
     logger.debug("Issues: {}", issues);

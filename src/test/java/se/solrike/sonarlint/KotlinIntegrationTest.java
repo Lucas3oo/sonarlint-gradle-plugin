@@ -75,7 +75,7 @@ class KotlinIntegrationTest {
     assertThat(buildResult.task(":sonarlintMain").getOutcome()).isEqualTo(TaskOutcome.SUCCESS);
     // and the 1 sonarlint rules violated are
     assertThat(buildResult.getOutput()).contains("1 SonarLint issue(s) were found.");
-    assertThat(buildResult.getOutput()).contains("kotlin:S1481");
+    assertThat(buildResult.getOutput()).contains("Minor kotlin:S1481");
     // and report shall be generated
     assertThat(mProjectDir.resolve("build/reports/sonarlint/mySarif.sarif").toFile()).exists();
 
